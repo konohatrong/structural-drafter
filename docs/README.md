@@ -23,6 +23,7 @@ the documents rather than in one drawing.
 | `general/ANNOTATION_ALIGNMENT_GUIDE.md` | Where and how annotation goes: note columns and rows, leaders (standard angle and orthogonal), terminators, clean dimensioning, **units on numbers**, view titles, keep-out zones, member tags, cutting planes, detail callouts, labels on the member, fitting views. §0 maps the rules to structure types |
 | `general/SYMBOLS.md` | Catalogue of every symbol: reference, annotation, concrete and steel symbols, with layer, helper and rule |
 | `general/GENERAL_NOTES_DRAWING_INSTRUCTION.md` | Layout of a general-notes sheet: sizes (Rev B: normal sizes, flowing over sheets; Rev A: × 0.625), anatomy, wording, tables, layout engine, checklist. Its §4.3 lists what a concrete notes sheet must carry; steel equivalents are in the steel instruction S1 and S9 |
+| `general/DRAWING_ENGINE.md` | The shared engine (`drafter/td_engine.py`): model space and blocks, title block, linetypes and pens, the functions a job calls, opt-in options, checks, working in AutoCAD, pitfalls |
 | `general/DRAWING_PRODUCTION.md` | The pipeline (calc → engine → views → build → look → plot → test → review), the engine, the `!!` checks, requirements, commands, plotting without AutoCAD, environment pitfalls |
 
 ### concrete/

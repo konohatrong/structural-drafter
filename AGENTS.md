@@ -18,7 +18,8 @@ to the Thai drafting standard EIT 011006-19 and the office conventions. It has t
    - `ANNOTATION_ALIGNMENT_GUIDE.md`: notes, leaders, terminators, units, tags, cutting planes, callouts. Its §0 says
      which parts apply to which structure;
    - `SYMBOLS.md`: every symbol with its layer, helper and rule;
-   - `DRAWING_PRODUCTION.md`: the pipeline, the engine, the checks, the commands and the environment.
+   - `DRAWING_PRODUCTION.md`: the pipeline, the checks, the commands and the environment;
+   - `DRAWING_ENGINE.md`: the shared engine, when writing or changing code.
 3. The material folder: `docs/concrete/README.md` or `docs/steel/README.md`, then its instruction files.
 4. The closest example job in `jobs/README.md`: its README, then its code.
 5. Sources (`docs/*/reference/`) when a rule or value needs checking. Check the code itself when the value matters.
@@ -36,7 +37,8 @@ Fix the disagreement in the documents, not only in one drawing.
 
 | Task | Read |
 |---|---|
-| Start a new set or job | `jobs/README.md` §3, the closest job's README, `DRAWING_PRODUCTION.md` §1 – §2 |
+| Start a new set or job | `jobs/README.md` §3, the closest job's README, `DRAWING_PRODUCTION.md` §1, `DRAWING_ENGINE.md` §1 |
+| Engine functions, blocks, title block, AutoCAD workflow | `DRAWING_ENGINE.md` |
 | Sheet, title block, revision, drawing number | EIT §3, §13, §19.1 |
 | Line weight, linetype, layer, colour | EIT §0, §19.2 (current engine), material instruction (steel S4) |
 | Place notes and leaders | Guide §0, §1, §3 – §5 (standard angle) or §9.1 (orthogonal), §2.1 terminators |
@@ -98,7 +100,8 @@ The rules come from the user's reviews of real sets. When the user corrects a dr
 | Sheet, title block, lines, pens, text, scales, grids, levels, marks, numbering | `docs/general/DRAWING_STANDARD_EIT-011006-19.md` (§19 for office conventions) |
 | Notes, leaders, terminators, dimensions placement, units, tags, cutting planes, callouts, labels | `docs/general/ANNOTATION_ALIGNMENT_GUIDE.md` |
 | A symbol's form, layer and helper | `docs/general/SYMBOLS.md` |
-| Pipeline, engine, checks, plotting, environment | `docs/general/DRAWING_PRODUCTION.md` |
+| Pipeline, checks, plotting, environment | `docs/general/DRAWING_PRODUCTION.md` |
+| Engine mechanics, functions, options, engine pitfalls | `docs/general/DRAWING_ENGINE.md` |
 | General-notes sheet layout | `docs/general/GENERAL_NOTES_DRAWING_INSTRUCTION.md` |
 | Bars, RC content, typical details, stairs, concrete notes | `docs/concrete/` |
 | Steel content, welds, bolts, marks, bills, erection | `docs/steel/STEEL_DETAILING_INSTRUCTION.md` |

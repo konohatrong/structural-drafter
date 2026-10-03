@@ -621,7 +621,7 @@ These conventions were agreed with the engineer during NRW-ST Rev A and apply to
     patterns, LTSCALE 3.75, PSLTSCALE 0 on **every** layout, MSLTSCALE 0. Hidden = HIDDENX2 (1.9 / 0.95 plotted),
     fine hidden = HIDDEN (0.95 / 0.48), centre and cutting plane = CENTER (4.8 / 0.95 / 0.95 / 0.95), property =
     PHANTOM. Steel adds `EIT_GRID` (12 / 2 / 2 / 2) for centre and work lines. Details and pitfalls:
-    `jobs/standard_set_R2/MODEL_SPACE_SHEETS.md` (R2 rules).
+    `DRAWING_ENGINE.md` §4, §9.
   - **NRW engine** (`build_rw.py`; NRW, stair, general notes Rev A; kept as issued): the project `EIT_*` linetypes
     and values in the bullets below.
 - (NRW engine) Linetypes use project names `EIT_*` so `acadiso.lin` can't overwrite them.

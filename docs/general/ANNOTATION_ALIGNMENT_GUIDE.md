@@ -10,7 +10,8 @@
 - **Companions:**
   - `DRAWING_STANDARD_EIT-011006-19.md` covers *what* to draw: lines, pens, marks, callouts, EIT rules.
   - `SYMBOLS.md` catalogues every symbol: its form, layer, helper and rule.
-  - `DRAWING_PRODUCTION.md` covers how a set is built, checked and plotted.
+  - `DRAWING_PRODUCTION.md` covers how a set is built, checked and plotted; `DRAWING_ENGINE.md` is the engine
+    reference.
   - CAD setup (linetypes, pens, CTB): EIT §19.2 and `DRAWING_PRODUCTION.md`. The NRW job's own
     `NRW-ST_Linetype_and_Lineweight_Guide.md` is outside the repository (its `Drawings\` folder).
   - This guide covers *where and how* annotation is placed, so every sheet reads as calm, aligned columns of notes.
@@ -49,7 +50,7 @@
   and the general notes.
   - R2 variant (user, 2026-09-30): the leader form is chosen per target. A note aimed at a vertical line, a corner,
     a dot or an area is placed at its height and gets one horizontal leader. Only a target on a horizontal line gets
-    the inclined leg (`_target_kind`, `_snap_tip`; `jobs/standard_set_R2/MODEL_SPACE_SHEETS.md`).
+    the inclined leg (`_target_kind`, `_snap_tip`; `DRAWING_ENGINE.md` §6).
 - **Orthogonal** (§9.1): straight, or an L with a real second leg. Used on SRT.
 - A new set of any structure type may use either. The orthogonal style suits views where many targets sit close
   together, such as connections, framing nodes and congested reinforcement.

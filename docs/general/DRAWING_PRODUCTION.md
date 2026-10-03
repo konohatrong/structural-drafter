@@ -24,30 +24,22 @@ Every set is a script, and its drawings are rebuilt from it. Nothing is drawn by
 
 ## 2. How the drawings are built (engine `drafter/td_engine.py`)
 
-- **Model space at real size.**
-  - Every detail is a block (`DET-<sheet>-<id>`), inserted at 1/scale.
-  - Each sheet is one paper-space layout, with the title block `TB-A3-NRW` (attributes) and one locked viewport.
-  - `capture(fn, ...)` runs a view function, lays out its leader notes, checks its dimensions and stores it as a
-    block.
-  - Details: `jobs/standard_set_R2/MODEL_SPACE_SHEETS.md`.
+The full reference is `DRAWING_ENGINE.md`. In short:
+
+- **Model space at real size.** Every view is a block `DET-<sheet>-<id>`, made by `capture()` and placed on its
+  sheet by `viewport()`. Each sheet is one layout with the title block `TB-A3-NRW` and one locked viewport.
 - **Scale.**
   - RC typical details are N.T.S., laid out at a dummy 1:25 (`SC`), with member sizes from one catalogue. Only
     lengths are shortened, with break lines.
   - Steel views are drawn to their stated scale (1:50, 1:20, 1:10, 1:5, 1:1). See the presentation approach in
     `docs/concrete/README.md` and `docs/steel/README.md`.
-- **Linetypes:** `acadiso.lin` patterns (HIDDENX2, HIDDEN, CENTER, PHANTOM, DASHED, kept in `ACADISO`); LTSCALE
-  3.75, PSLTSCALE 0 (on every layout), MSLTSCALE 0. Steel adds `EIT_GRID`. Never set an entity ltscale inside a
-  detail block. (The older NRW engine uses `EIT_*` linetypes at LTSCALE 1: EIT §19.2.)
-- **Pens by colour:** the `PEN` table (`drafter/pens.py`) maps each colour to a lineweight. `plot.py`
-  writes the matching CTB. Greys (ACI 8, 9, 252) are screened.
-- **Annotation engine:** `leader()` collects the notes and `_layout_notes()` packs them into columns or rows, then
-  routes the leaders. The rules are in `ANNOTATION_ALIGNMENT_GUIDE.md`.
-  - Opt-in modes (off by default, on for the steel set): orthogonal leaders (`LEADER_ORTH`), bolt rings
-    (`leader(..., bolt=)`), unit-safe wrapping (`WRAP_UNITS`).
-- **Tables:** `tbl(..., title=TABT(key))`. Every table is "TABLE n - NAME", numbered in one sequence per set from a
-  register (`TABLES`). Notes cite "TABLE n", never a drawing number.
-- **Keep one set per process.** `td_engine` creates its document on import, and `build.py all` runs each set
-  separately.
+- **Linetypes and pens:** acadiso patterns at LTSCALE 3.75, PSLTSCALE 0 on every layout; pens by colour
+  (`drafter/pens.py`), from which the plot scripts write the CTB. (The older NRW engine uses `EIT_*` linetypes at
+  LTSCALE 1: EIT §19.2.)
+- **Annotation engine:** `leader()` collects the notes and the engine packs them into columns or rows, then routes the
+  leaders (`ANNOTATION_ALIGNMENT_GUIDE.md`). Opt-in: orthogonal leaders, bolt rings, unit-safe wrapping.
+- **Tables:** "TABLE n - NAME" from the register `TABLES`; notes cite "TABLE n" only.
+- **One set per process:** the engine creates its document on import.
 
 ## 3. The checks (`!!` lines)
 

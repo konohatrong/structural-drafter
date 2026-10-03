@@ -6,7 +6,7 @@ plot fallback renders whole sets without AutoCAD.
     pytest -q
 
 Plotting with AutoCAD Core Console is not tested here. Each build runs in its own process, because the engines
-create their drawing at import (one set per process, see jobs/standard_set_R2/MODEL_SPACE_SHEETS.md).
+create their drawing at import (one set per process, see docs/general/DRAWING_ENGINE.md).
 """
 import os
 import subprocess

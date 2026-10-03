@@ -43,7 +43,7 @@ This file explains how to draw the office typical-detail sheets. **Current set R
   - the shared engine is `drafter/td_engine.py` with `drafter/pens.py` (pens by colour); `members.py` holds the typical member sizes;
   - `td_columns.py`, `td_beams.py` and `td_slabs.py` hold the content;
   - `build.py <set|all>` and `plot.py <set|all>` are the drivers. A build with any `!!` layout problem exits 1.
-  - Sheets are laid out in model space from blocks at real size (see `jobs/standard_set_R2/MODEL_SPACE_SHEETS.md`).
+  - Sheets are laid out in model space from blocks at real size (engine: `docs/general/DRAWING_ENGINE.md`; R2 rules and history: `jobs/standard_set_R2/MODEL_SPACE_SHEETS.md`).
   - `jobs/standard_set/` holds the frozen R1 set and the general notes Rev B (`gn_notes.py`); `jobs/typical_details/` is the superseded paper-space version.
 - **Output:** `jobs/standard_set_R2/out/`, one DXF / DWG / PDF per set:
   - `STR-ST-1101_Typical_Column_Details_A3_R2.*`;

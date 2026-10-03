@@ -68,4 +68,4 @@ Reference jobs:
   `encoding="utf-8", newline="\n"`.
 - Use a Python with `ezdxf` (a venv from `requirements.txt`).
 - Plot from PowerShell, not Git Bash. Set `PYTHONIOENCODING=utf-8`.
-- PSLTSCALE is per layout, and the CTB lineweights must be standard entries (`jobs/standard_set_R2/MODEL_SPACE_SHEETS.md`).
+- PSLTSCALE is per layout, and the CTB lineweights must be standard entries (`docs/general/DRAWING_ENGINE.md` §9).

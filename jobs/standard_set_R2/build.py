@@ -9,7 +9,7 @@ Also writes library/INDEX_<set>.csv (every block: detail, title block, view titl
 Output folders are fixed (next to this file) so a plot can never pick up a stale DXF.
 Exit code 1 when the build finds a layout problem ("!!" lines) or the DXF audit reports an error; the DXF is
 still written so the problem can be inspected.
-Engine: drafter/td_engine.py.   Guide: MODEL_SPACE_SHEETS.md
+Engine: drafter/td_engine.py (docs/general/DRAWING_ENGINE.md).   R2 rules: MODEL_SPACE_SHEETS.md
 """
 import importlib
 import subprocess

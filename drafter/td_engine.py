@@ -5,7 +5,7 @@ table / notes helpers. Import it as `from drafter import td_engine` (one documen
 import). Project data and options (PROJ, REVS, KEYPLAN_2, TABLES, LEADER_ORTH, WRAP_UNITS) are set by the job's
 own engine or content module. Steel helpers: drafter/steel.py. Rules: docs/general/DRAWING_PRODUCTION.md.
 
-Structure (see jobs/standard_set_R2/MODEL_SPACE_SHEETS.md, R2 section):
+Structure (reference: docs/general/DRAWING_ENGINE.md):
   * every typical detail is N.T.S. and drawn at REAL size (1 unit = 1 mm) with the typical members of
     members.py, annotated for one dummy scale 1:25 (SC): text 2.0 mm = 50 units;
   * each sheet is arranged in MODEL space at real size: sheet i occupies (i * SHEET_DX * SC, 0) ..
@@ -19,7 +19,7 @@ Structure (see jobs/standard_set_R2/MODEL_SPACE_SHEETS.md, R2 section):
 
 Rule    : normal drawing rule (2.0 / 2.8 text, 2 mm arrows, standard pens) - detail sheets.
 Used by : jobs/standard_set_R2 (td_columns.py, td_beams.py, td_slabs.py), jobs/steel_roof_truss (srt_engine.py).
-Guides  : docs/general/ (annotation guide, symbols, drawing production), MODEL_SPACE_SHEETS.md (R2)
+Guides  : docs/general/ (DRAWING_ENGINE.md, annotation guide, symbols, drawing production)
 """
 import math
 import sys
