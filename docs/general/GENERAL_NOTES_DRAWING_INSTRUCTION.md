@@ -1,6 +1,6 @@
 # General-Notes Drawing Instruction (A3)
 
-This file explains how to draw the general-notes sheet of a structural set, e.g. `…-ST-1001` for structural concrete.
+This file explains how to draw the general-notes sheet of a structural set, whatever the material, e.g. `…-ST-1001`. The layout rules (sizes, anatomy, wording, tables, engine) apply to every set; the worked example is the concrete notes. §4.3 lists what a **concrete** notes sheet must carry; for steel, see `docs/steel/STEEL_DETAILING_INSTRUCTION.md` S1 and S9 (the SRT-ST-1001 sheet is the example).
 
 **Current sheets: Rev B**, `STR-ST-1001-D-B … 1003-D-B`, *General Notes (1 – 3) – Structural Concrete*.
 - Generator: `jobs/standard_set/gn_notes.py` (model-space sheets from blocks).
@@ -12,7 +12,7 @@ This file explains how to draw the general-notes sheet of a structural set, e.g.
 **Read with:**
 - `DRAWING_STANDARD_EIT-011006-19.md`, whose §19 office conventions are the "general drawing rule" below;
 - `ANNOTATION_ALIGNMENT_GUIDE.md`;
-- `GENERAL_NOTES_STRUCTURAL_CONCRETE.md`, the source of the note wording;
+- `docs/concrete/GENERAL_NOTES_STRUCTURAL_CONCRETE.md`, the source of the concrete note wording;
 - `SPEC_RC_DESIGN_EIT-011008-21.md` and `SPEC_CONCRETE_EIT-011014-19.md`, the clause digests behind the citations.
 
 ---

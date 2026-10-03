@@ -18,11 +18,13 @@ The reference job is `jobs/steel_roof_truss`.
 
 ## Before you start
 
-1. Read `STEEL_DETAILING_INSTRUCTION.md`. Its rules S1-S11 (with S9A fly bracing) say what the drawings must
-   contain; cite a rule as "S6.2" in reviews. Then read `ANNOTATION_ALIGNMENT_GUIDE.md` §2.1, §2.4.2 and §9, which
+0. Read `AGENTS.md`, `docs/general/` (drawing standard, annotation guide, symbols, production) and
+   `docs/steel/README.md`, which describes the steel presentation approach.
+1. Read `docs/steel/STEEL_DETAILING_INSTRUCTION.md`. Its rules S1-S11 (with S9A fly bracing) say what the drawings must
+   contain; cite a rule as "S6.2" in reviews. Then read `docs/general/ANNOTATION_ALIGNMENT_GUIDE.md` §2.1, §2.4.2 and §9, which
    say where things go: terminators, units, orthogonal leaders, tags, weld symbols, cutting planes, node dimensions,
    detail callouts and labels on the member.
-2. Look up a source in `SOURCES_STEEL_DETAILING.md`: AISC *Detailing for Steel Construction*, DG21 and DG24 extracts,
+2. Look up a source in `docs/steel/reference/SOURCES_STEEL_DETAILING.md`: AISC *Detailing for Steel Construction*, DG21 and DG24 extracts,
    with PDF page refs, and Part E, the office standard sheet Beca SE-1505 (fly bracing). The other office standard
    steel sheets (SE-1501 to SE-1504: HD bolts, end plates, cleats, bracing) are under
    `G:\My Drive\##Workset_Autocad\400 Standard Details\400 Standard Details\20 - STEELWORK\`; review the matching
@@ -71,7 +73,8 @@ The reference job is `jobs/steel_roof_truss`.
 - Concrete is hatched AR-CONC and grout AR-SAND.
 - Welds are 45° hatch only, with the boundary on Defpoints, drawn as seen: bands plus profiles.
 
-The memory file `steel-drafting-preferences.md` holds the reasons. Ask before changing any of these.
+The rules and their reasons are written in `docs/steel/STEEL_DETAILING_INSTRUCTION.md` S4 and
+`docs/general/ANNOTATION_ALIGNMENT_GUIDE.md` §2.1, §2.4.2 and §9. Ask before changing any of these.
 
 ## Environment pitfalls
 

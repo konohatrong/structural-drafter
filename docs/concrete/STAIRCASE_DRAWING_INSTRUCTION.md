@@ -10,7 +10,8 @@
   - the generator code and a pre-issue checklist.
 - **Reference job:** stair ST-1, `STR-ST-5101-D-A` (`jobs/stair_demo/`).
 - **Read with:**
-  - `DRAWING_STANDARD_EIT-011006-19.md`, where §19 office conventions govern;
+  - `docs/general/DRAWING_STANDARD_EIT-011006-19.md`, where §19 office conventions govern, and
+    `docs/concrete/RC_DRAWING_RULES_EIT-011006-19.md` for bar graphics;
   - `ANNOTATION_ALIGNMENT_GUIDE.md`;
   - the NRW `NRW-ST_Linetype_and_Lineweight_Guide.md` for the CAD set-up (layers, pens, CTB).
 
@@ -119,7 +120,7 @@ The system decides the main-bar direction, which face is in tension, and where t
 - **Span for moments:** the horizontal projection, with the load per horizontal m² (§3). Span for the thickness check: the inclined length, which is conservative.
 - **Mark every support:** show and tag each supporting beam or wall on the section (`B1 200x400 – SEE BEAM SCHEDULE`). A stair must never "float".
 - **Landings in type B:** a landing is part of the span and needs top and bottom mats [STD FIG 6.12–6.13].
-- **Transverse main bars (types D/E):** the section across the flight becomes the main reinforcement view. The plan shows the bar direction with the EIT one-way arrow [STD §12.2-6].
+- **Transverse main bars (types D/E):** the section across the flight becomes the main reinforcement view. The plan shows the bar direction with the EIT one-way arrow [STD §12.2-6, in `RC_DRAWING_RULES_EIT-011006-19.md`].
 
 ---
 
@@ -361,7 +362,7 @@ A kink is where the inclined flight meets a horizontal slab (landing or floor). 
   - Hook legs vertical.
 - **Bars cut in section:**
   - Filled dots, true size, min. 1.1 mm plotted.
-  - **At 1:20**, a distribution dot at its true position would merge with the 0.50 main-bar line. Draw it `r + pen/2 + 0.4 mm` clear of the main bar instead, i.e. schematic position [§19.4].
+  - **At 1:20**, a distribution dot at its true position would merge with the 0.50 main-bar line. Draw it `r + pen/2 + 0.4 mm` clear of the main bar instead, i.e. schematic position [RC §19.4].
   - At 1:10 true positions are fine.
 - **Cross-section at 1:10:**
   - main bars as dots;

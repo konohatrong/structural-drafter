@@ -61,7 +61,7 @@ and connection, and the drawing scripts take every size, length, gap and eccentr
 | SRT-ST-5003 | Chord flange splice and flange plate 1:5; loose diagonal 1:10 |
 | SRT-ST-5004 | Fly bracing (after Beca SE-1505): section 1 at a braced node 1:20, with dashed callouts to the lug end (2) and purlin end (3) at 1:5 and the purlin named on its own band; TABLE 6 fly bracing schedule; notes. TABLE 4 (site connections and field bolts) is on 1001 |
 
-Drawing rules: `STEEL_DETAILING_INSTRUCTION.md` (repo root); sources: `SOURCES_STEEL_DETAILING.md`.
+Drawing rules: `docs/steel/STEEL_DETAILING_INSTRUCTION.md`; sources: `docs/steel/reference/SOURCES_STEEL_DETAILING.md`; general rules: `docs/general/`.
 
 ## 4. Build and plot
 

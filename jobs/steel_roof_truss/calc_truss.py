@@ -15,7 +15,7 @@ AISC Design Guide 24 (2010): effective lengths 8.4, unbalanced K + X / Y joints 
 fillet zones heel / side / toe by the local dihedral angle) developing the branch wall (DG24 2.1, DG21 12);
 load combinations ASCE 7-16 2.3. Units N, mm, MPa unless stated (kN, kN.m, kPa in the report).
 References in the comments: DG24 = AISC Design Guide 24, DG21 = AISC Design Guide 21, DSC = AISC Detailing for
-Steel Construction (3rd ed.); summarised in SOURCES_STEEL_DETAILING.md at the repo root.
+Steel Construction (3rd ed.); summarised in docs/steel/reference/SOURCES_STEEL_DETAILING.md.
 """
 import math
 

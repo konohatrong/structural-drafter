@@ -11,9 +11,9 @@
 | # | Document | Location | What it covers |
 |---|---|---|---|
 | 1 | **This README** | `902 Structural Drafter\jobs\nooker_rw\README.md` (copy: `Drawings\NRW-ST_Handover_README.md`) | Design basis, geometry, reinforcement, sheet contents, how to build, plot and revise, open items |
-| 2 | `DRAWING_STANDARD_EIT-011006-19.md` | repo root | EIT 011006-19 drafting standard in full, plus the project deviations in §19 |
+| 2 | `DRAWING_STANDARD_EIT-011006-19.md` + `RC_DRAWING_RULES_EIT-011006-19.md` | `docs/general/`, `docs/concrete/` | EIT 011006-19 drafting standard (general rules + the RC chapters), plus the office conventions in §19 |
 | 3 | `NRW-ST_Linetype_and_Lineweight_Guide.md` | `Drawings\` | CAD setup: units, linetypes, layers, pens, text and dimension styles, hatches, CTB, plotting, reinforcement drawing conventions |
-| 4 | `ANNOTATION_ALIGNMENT_GUIDE.md` | repo root (copy in `Drawings\`) | Where and how notes, leaders, terminators and titles are placed, and the annotation engine |
+| 4 | `ANNOTATION_ALIGNMENT_GUIDE.md` | `docs/general/` (copy in `Drawings\`) | Where and how notes, leaders, terminators and titles are placed, and the annotation engine |
 
 | File | Location | Role |
 |---|---|---|

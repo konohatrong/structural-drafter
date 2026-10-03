@@ -52,11 +52,11 @@ This file explains how to draw the office typical-detail sheets. **Current set R
 
   The block library (one DWG per detail, plus the title block) is in `jobs/standard_set_R2/library/`. The general notes Rev B are built in `jobs/standard_set/` (`python build.py gn`).
 - **Review tools:** `crop_det.py <set> DET-xxxx-n` crops one detail out of the plotted PDF; `render_block.py` renders a block without AutoCAD.
-- **Sources:** `SOURCES_COLUMN_DETAILING.md`, `SOURCES_BEAM_DETAILING.md`, `SOURCES_SLAB_DETAILING.md` (repo root).
+- **Sources:** `SOURCES_COLUMN_DETAILING.md`, `SOURCES_BEAM_DETAILING.md`, `SOURCES_SLAB_DETAILING.md` (`docs/concrete/reference/`).
 - **Cross-check:** `REVIEW_ACI_MNL66.md` (ACI Detailing Manual MNL-66(20); material in `references/aci_mnl66/`).
 
 **Read with:**
-- `DRAWING_STANDARD_EIT-011006-19.md` (§19 office rules);
+- `docs/general/DRAWING_STANDARD_EIT-011006-19.md` (§19 office rules) and `docs/concrete/RC_DRAWING_RULES_EIT-011006-19.md` (bar graphics, §19.4 / §19.7);
 - `ANNOTATION_ALIGNMENT_GUIDE.md`;
 - `GENERAL_NOTES_STRUCTURAL_CONCRETE.md` (sheets `1001 – 1003`, Rev B: laps in TABLE 6 and cover in TABLE 7, both on 1002; tie sizes in TABLE 5);
 - `SPEC_RC_DESIGN_EIT-011008-21.md`.

@@ -1,9 +1,10 @@
 # Steel detailing instruction (structural steel, hollow sections first)
 
 Rules for every steel drawing set produced here, first applied to the steel roof truss `jobs/steel_roof_truss`
-(SRT-ST). Sources and page references: `SOURCES_STEEL_DETAILING.md`. The EIT drafting standard
-(`DRAWING_STANDARD_EIT-011006-19.md`) and the annotation rules (`ANNOTATION_ALIGNMENT_GUIDE.md`) still govern title
-blocks, pens, text and dimensions. Abbreviations:
+(SRT-ST). The steel presentation approach is summarised in `docs/steel/README.md`. Sources and page references:
+`docs/steel/reference/SOURCES_STEEL_DETAILING.md`. The general rules in `docs/general/` still govern title blocks,
+pens, text, dimensions, annotation and symbols (`DRAWING_STANDARD_EIT-011006-19.md`, `ANNOTATION_ALIGNMENT_GUIDE.md`,
+`SYMBOLS.md`). Abbreviations:
 - DSC = AISC *Detailing for Steel Construction*.
 - DG21 / DG24 = AISC Design Guides 21 / 24.
 - D1.1 = AWS D1.1:2015.

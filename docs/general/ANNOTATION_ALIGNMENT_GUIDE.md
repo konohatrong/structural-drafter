@@ -8,15 +8,18 @@
   The rules are about how annotation is placed and read, so they do not depend on what is drawn. A rule that concerns
   one kind of object only (a reinforcing bar, a bolt, a weld) says so. §0 shows which parts apply to which structure.
 - **Companions:**
-  - `DRAWING_STANDARD_EIT-011006-19.md` covers *what* to draw: lines, pens, symbols, EIT rules.
+  - `DRAWING_STANDARD_EIT-011006-19.md` covers *what* to draw: lines, pens, marks, callouts, EIT rules.
+  - `SYMBOLS.md` catalogues every symbol: its form, layer, helper and rule.
+  - `DRAWING_PRODUCTION.md` covers how a set is built, checked and plotted.
   - `NRW-ST_Linetype_and_Lineweight_Guide.md` covers CAD setup.
   - This guide covers *where and how* annotation is placed, so every sheet reads as calm, aligned columns of notes.
 - **Content rules per structure type** say what a note, mark or table must contain; this guide says only where it
   goes:
+  - concrete: `docs/concrete/README.md` (approach), `RC_DRAWING_RULES_EIT-011006-19.md` (bar graphics);
   - RC typical details: `TYPICAL_DETAILS_INSTRUCTION.md`;
   - staircases: `STAIRCASE_DRAWING_INSTRUCTION.md`;
   - general notes: `GENERAL_NOTES_DRAWING_INSTRUCTION.md`;
-  - steel: `STEEL_DETAILING_INSTRUCTION.md`.
+  - steel: `docs/steel/README.md` (approach), `STEEL_DETAILING_INSTRUCTION.md`.
 - **Reference style:** "Life of an Architect" section details. Notes sit in tidy columns beside the detail, with leaders that leave the object at a standard angle and land on a short horizontal shelf.
 - **Implementation:** the rules are coded in an *annotation engine*, so they are applied automatically. This document is also the manual rule set for anyone drafting by hand.
   - `jobs/nooker_rw/build_rw.py` is the original engine (NRW-ST).
@@ -174,6 +177,8 @@ be one of the bare kinds above.
   not move.
 
 ### 2.5 Symbols drawn with the notes
+
+The full catalogue, with layers and helpers, is `SYMBOLS.md`. The symbols below are the ones that sit among the notes.
 
 | Symbol | Drawing |
 |---|---|
