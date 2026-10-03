@@ -13,3 +13,6 @@
 *.pdf binary
 *.png binary
 *.ctb binary
+
+# Issued standard drawings are an exact record: every file is stored byte for byte (MANIFEST.json checksums)
+standard_drawings/issued/** -text
