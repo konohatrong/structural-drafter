@@ -10,7 +10,9 @@ Use a job to:
 - **see a rule applied**: the docs cite a job's sheet as a worked example ("1/5004", "Section A on 5001");
 - **understand why a rule exists**: the job's README or development notes record the review comment behind it.
 
-Generated output (`out/`, `library/`) is not in the repository. Rebuild it with the commands in
+The office standard sets built here (general notes, typical details) are published to `standard_drawings/`:
+`developing/` for review copies, `issued/` for official revisions. Other generated output (`out/`, `library/`) is
+not in the repository. Rebuild it with the commands in
 `docs/general/DRAWING_PRODUCTION.md` §5.
 
 ## 1. Catalogue

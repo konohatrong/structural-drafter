@@ -1,0 +1,6 @@
+# Issued revisions are the official record and are kept in git (standard_drawings/README.md).
+# Re-include the drawing files the root .gitignore excludes everywhere else.
+!*.pdf
+!*.dwg
+!*.dxf
+!library/

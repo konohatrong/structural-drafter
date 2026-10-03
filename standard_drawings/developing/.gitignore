@@ -1,0 +1,4 @@
+# Developing copies are local only (standard_drawings/README.md): ignore everything but this file and the README
+*
+!.gitignore
+!README.md

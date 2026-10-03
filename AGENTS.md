@@ -8,6 +8,7 @@ to the Thai drafting standard EIT 011006-19 and the office conventions. It has t
 | **Rules, guides, instructions** | `docs/` | What a drawing must show and how it is presented: `general/` for every structure type, `concrete/` and `steel/` for each material. Index: `docs/README.md` |
 | **Toolkit** | `drafter/` | The drafting engine (`td_engine.py`), pens (`pens.py`), steel helpers (`steel.py`), font metrics, plotting |
 | **Worked examples** | `jobs/` | Complete sets built with the rules, and the record of how the rules were developed. Catalogue: `jobs/README.md` |
+| **Standard drawings** | `standard_drawings/` | The office standard sets (general notes, typical details) as plotted output: `developing/` review copies (local) and `issued/` official revisions (in git), with the issue register. Rules: `standard_drawings/README.md` |
 
 ## 1. Reading order for any drawing task
 
@@ -50,6 +51,7 @@ Fix the disagreement in the documents, not only in one drawing.
 | Tables | Guide §6; `DRAWING_PRODUCTION.md` §2 (register, "TABLE n - NAME") |
 | General-notes sheet | `GENERAL_NOTES_DRAWING_INSTRUCTION.md` §0, plus the material content file |
 | A `!!` build warning | `DRAWING_PRODUCTION.md` §3 |
+| Hand a standard set for review, or issue it | `standard_drawings/README.md` |
 
 **Before issue**, run every checklist that applies:
 - every set: EIT §17 (sheet) and guide §8 (annotation);
@@ -113,6 +115,9 @@ The rules come from the user's reviews of real sets. When the user corrects a dr
   redesign. Propose with reasons, then ask. Open decisions are listed in each job README.
 - **Status of jobs** (`jobs/README.md` §4): an **issued** job changes only by a new revision; a **frozen** or
   **superseded** job is not changed.
+- **Official issue of a standard drawing is the engineer's decision.** Publish review copies to
+  `standard_drawings/developing/` freely; run `publish.py <set> --issue` only when the user asks for the issue.
+  Never edit, replace or delete anything in `standard_drawings/issued/`.
 - **Shared code is in `drafter/`.** `td_engine.py` (the engine), `pens.py` and `steel.py` are imported by every
   current set, so a change there is a change to all of them. Job folders hold only the job's own data, views and
   sheets.

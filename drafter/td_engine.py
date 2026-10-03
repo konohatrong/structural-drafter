@@ -1374,6 +1374,7 @@ def tb_define():
 KEYPLAN_2 = "(TYPICAL DETAILS)"      # set by the content module (general notes: "(GENERAL NOTES)")
 REVS = [("A", "ISSUED FOR REVIEW", PROJ["date"])]
 REVS_BY_SHEET = {}                   # series -> own revision rows (a sheet added at a later revision)
+STATUS = ("FOR REVIEW", "NOT FOR CONSTRUCTION")   # title-block status stamp (2 lines); set by the project for an issue
 
 
 def tb_values(series, title_lines, scale_txt, sheet_i):
@@ -1381,7 +1382,7 @@ def tb_values(series, title_lines, scale_txt, sheet_i):
          "DATE": PROJ["date"], "OFFICE": PROJ["office"], "OFFICE_ADDR": PROJ["office2"],
          "PROJECT": PROJ["project"], "LOCATION": PROJ["location"], "OWNER": PROJ["owner"],
          "KEYPLAN_1": "NOT APPLICABLE", "KEYPLAN_2": KEYPLAN_2,
-         "STATUS_1": "FOR REVIEW", "STATUS_2": "NOT FOR CONSTRUCTION"}
+         "STATUS_1": STATUS[0], "STATUS_2": STATUS[1]}
     for k, tl in enumerate(title_lines):
         v[f"TITLE_{k + 1}"] = tl
     for k, (r, d, dt) in enumerate(REVS_BY_SHEET.get(series, REVS)):
