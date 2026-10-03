@@ -9,7 +9,7 @@ import sys
 from pathlib import Path
 
 import ezdxf
-import fitz
+import pymupdf as fitz
 from ezdxf import bbox
 
 HERE = Path(__file__).resolve().parent

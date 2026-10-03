@@ -25,7 +25,7 @@ HB = BEAM_H                    # beam depth 600
 HC = STOREY_D                  # clear storey height drawn (N.T.S.)
 BST = 200                      # beam stub drawn each side
 GAP = 50                       # drawn offset of lapped bars (schematic)
-LAPD = 600                     # drawn lap length (N.T.S.; real value TABLE 6)
+LAPD = LAP_D                   # drawn lap length (members.py)
 LO = LO_D                      # drawn lo
 
 
@@ -727,7 +727,7 @@ TIE_SPACING = [[f"DB{d}"] + [(str(_dn(min(16 * d, 48 * t))) if t >= _tie_min(d) 
                + [str(_dn(min(6 * d, 150)))] for d in SPACING_DB]
 CALL_UP = [["C1", "400 × 400", "8-DB20", "C", "RB9 @ 300", "ORDINARY"],
            ["C2", "500 × 500", "12-DB25", "E", "DB10 @ 200 (lo) / @ 400", "INTERMEDIATE"],
-           ["C3", "600 × 600", "16-DB25", "G", "DB10 @ 125 (lo) / @ 150", "SPECIAL"]]
+           ["C3", "600 × 600", "16-DB25", "G", "DB12 @ 125 (lo) / @ 150", "SPECIAL"]]   # Ash: 4 legs DB12 = 452 >= 0.3 s bc (Ag/Ach - 1) fc/fyt = 389
 TIE_NOTES = [
     ("1.", f"THE COLUMN SCHEDULE CALLS UP A TIE TYPE BY ITS LETTER ({TAB('CALL')}). OTHER BAR COUNTS: THE SAME RULE - PERIMETER TIE, "
            "CROSSTIES ON ALTERNATE INTERMEDIATE BARS - SO THAT EVERY CORNER AND ALTERNATE BAR IS HELD AND NO BAR IS "
@@ -827,11 +827,13 @@ def sheet_1101():
     x = FX0 + 1
     names = [("ORD", "COLUMN - ORDINARY MOMENT FRAME"), ("IMF", "COLUMN - INTERMEDIATE MOMENT FRAME"),
              ("SMF", "COLUMN - SPECIAL MOMENT FRAME")]
+    hmax = 0
     for i, (k, nm) in enumerate(names):
         px, pw, ph = viewport(ps, k, 25, x, top)
+        hmax = max(hmax, ph)
         view_title(ps, None, top - ph - 6, nm, "N.T.S.", (str(i + 1), "1101"))
         x = px + pw + 3
-    ytab = top - ph - 22
+    ytab = top - hmax - 22                             # below the tallest of the three elevations
     yb = tbl(ps, FX0 + 3, ytab, [30, 90, 95, 99],
              ["ITEM", "ORDINARY (1)", "INTERMEDIATE (2)", "SPECIAL (3)"], TIE_TABLE, "LCCC",
              title=TABT("TIES"))
@@ -893,7 +895,7 @@ def sheet_1103():
                note="SECTION SIZES ILLUSTRATIVE; THE TYPE IS SET BY THE BARS PER FACE")
     xr = px + pw + 6                                               # right-hand column
     if TBX - xr - 3 < 80:
-        print(f"  !! 1103 right-hand column only {TBX - xr - 3:.0f} mm wide (tie types view grew)")
+        warn(f"1103 right-hand column only {TBX - xr - 3:.0f} mm wide (tie types view grew)")
     px2, pw2, ph2 = viewport(ps, "CH", 25, xr, top)
     view_title(ps, None, top - ph2 - 6, "CIRCULAR HOOP", "N.T.S.", ("2", "1103"))
     wr = TBX - xr - 3
@@ -908,7 +910,7 @@ def sheet_1103():
     px, pw, ph4 = viewport(ps, "MS", 25, px + pw + 4, top2)
     view_title(ps, None, top2 - ph4 - 6, "MECHANICAL SPLICES", "N.T.S.", ("4", "1103"))
     if px + pw > xr - 3:
-        print(f"  !! 1103 second row runs into the right-hand column: {px + pw:.0f} > {xr - 3:.0f}")
+        warn(f"1103 second row runs into the right-hand column: {px + pw:.0f} > {xr - 3:.0f}")
 
 
 def build():

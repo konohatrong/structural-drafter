@@ -1,12 +1,25 @@
 # Typical Details Instruction — Columns, Beams and Slabs (A3)
 
-This file explains how to draw the office typical-detail sheets. **Columns (1101–1103), beams (1111–1115) and slabs (1121–1127) are done; walls, footings and stairs will follow.** It covers:
+This file explains how to draw the office typical-detail sheets. **Current set R2: columns (1101–1104), beams (1111–1116) and slabs (1121–1128); walls, footings and stairs will follow.** The frozen R1 set had columns 1101–1103, beams 1111–1115 and slabs 1121–1127. It covers:
 - which sources govern;
 - what each detail must show;
 - the drawing and annotation rules;
 - how the generator builds the sheets.
 
-**Reference sheets:**
+**R2 sheets** (titles as generated, `SHEETS` in `jobs/standard_set_R2/td_*.py`):
+
+| Columns | Beams | Slabs |
+|---|---|---|
+| 1101 Ties and splice zones | 1111 Stirrups and splice zones | 1121 Slabs on beams |
+| 1102 Size change, joints, footing | 1112 Bar cut-off and cantilever | 1122 Flat slab at the column |
+| 1103 Tie types and splices | 1113 Sections, supports, openings | 1123 Punching shear reinforcement |
+| 1104 Column ends, special cases | 1114 Level changes, beam ends | 1124 Openings |
+| | 1115 Beam schedule | 1125 Steps, edges, cantilever |
+| | 1116 Stirrup types, table, notes | 1126 Slab on ground |
+| | | 1127 Slab-on-ground joints |
+| | | 1128 Slab table, fill under slabs |
+
+**R1 reference sheets (frozen; the content of each detail is still described per sheet below, and the R2 changes in the R2 notes of §4):**
 
 | Sheet | Title | Content |
 |---|---|---|
@@ -26,19 +39,18 @@ This file explains how to draw the office typical-detail sheets. **Columns (1101
 | `STR-ST-1126-D-A` | Typical slab details (6): steps and edges | Slab step H < t and H > t (1:10); upstand fin / curb, small and large (1:10); bar-end key |
 | `STR-ST-1127-D-A` | Typical slab details (7): slab on ground | Slab at a ground beam; thickened free edge; contraction, construction, expansion / isolation joints; joint layout; notes |
 
-- **Generator (working):** `jobs/standard_set/`:
-  - `td_engine.py` is the shared engine;
-  - `gn_notes.py`, `td_columns.py`, `td_beams.py` and `td_slabs.py` hold the content;
-  - `build.py <set|all>` and `plot.py <set|all>` are the drivers.
-  - Sheets are laid out in model space from blocks (see `jobs/standard_set/MODEL_SPACE_SHEETS.md`).
-  - `jobs/typical_details/` is the frozen paper-space reference (`build_td.py` / `plot_td.py`).
-- **Output:** `jobs/standard_set/out/`, one DXF / DWG / PDF per set:
-  - `STR-ST-1001_General_Notes_Concrete_A3_RevB.*`;
-  - `STR-ST-1101_Typical_Column_Details_A3_RevA.*`;
-  - `STR-ST-1111_Typical_Beam_Details_A3_RevA.*`;
-  - `STR-ST-1121_Typical_Slab_Details_A3_RevA.*`.
+- **Generator (working):** `jobs/standard_set_R2/`:
+  - `td_engine.py` is the shared engine, `pens.py` the pens by colour and `members.py` the typical member sizes;
+  - `td_columns.py`, `td_beams.py` and `td_slabs.py` hold the content;
+  - `build.py <set|all>` and `plot.py <set|all>` are the drivers. A build with any `!!` layout problem exits 1.
+  - Sheets are laid out in model space from blocks at real size (see `jobs/standard_set_R2/MODEL_SPACE_SHEETS.md`).
+  - `jobs/standard_set/` holds the frozen R1 set and the general notes Rev B (`gn_notes.py`); `jobs/typical_details/` is the superseded paper-space version.
+- **Output:** `jobs/standard_set_R2/out/`, one DXF / DWG / PDF per set:
+  - `STR-ST-1101_Typical_Column_Details_A3_R2.*`;
+  - `STR-ST-1111_Typical_Beam_Details_A3_R2.*`;
+  - `STR-ST-1121_Typical_Slab_Details_A3_R2.*`.
 
-  The block library (one DWG per detail, plus the title block) is in `jobs/standard_set/library/`.
+  The block library (one DWG per detail, plus the title block) is in `jobs/standard_set_R2/library/`. The general notes Rev B are built in `jobs/standard_set/` (`python build.py gn`).
 - **Review tools:** `crop_det.py <set> DET-xxxx-n` crops one detail out of the plotted PDF; `render_block.py` renders a block without AutoCAD.
 - **Sources:** `SOURCES_COLUMN_DETAILING.md`, `SOURCES_BEAM_DETAILING.md`, `SOURCES_SLAB_DETAILING.md` (repo root).
 - **Cross-check:** `REVIEW_ACI_MNL66.md` (ACI Detailing Manual MNL-66(20); material in `references/aci_mnl66/`).
@@ -65,6 +77,7 @@ This file explains how to draw the office typical-detail sheets. **Columns (1101
 | Text | Arial Narrow 2.0; headers and view titles 2.8 bold |
 | Dimensions | 2 mm filled arrows, grey extension lines |
 | Leaders | 45° / 60° legs with a 3 mm shelf; tips on edges; bar marks in bubbles |
+| Units | Every measured value in a note or leader carries its unit; table headers carry it for the cells; dimension figures stay bare (`ANNOTATION_ALIGNMENT_GUIDE.md` §2.4.2). The R2 sets keep their issued line breaks until revised (`WRAP_UNITS` stays off) |
 | Pens | Standard: bars 0.50, ties and secondary bars 0.35, cut concrete 0.35, seen 0.25, annotation 0.18, grey hatch 0.13 |
 | View titles | EIT style: underlined bold 2.8, scale below, bubble with detail number / sheet. Title width is **measured** (`text_w`) so the bubble never overlaps |
 
@@ -246,7 +259,7 @@ Each note ends with its clause reference.
 
 ---
 
-## 4C. Slab sheets 1121 – 1127
+## 4C. Slab sheets 1121 – 1127 (R2: 1121 – 1128)
 
 Sources in `SOURCES_SLAB_DETAILING.md` (A: DPT, B: EIT 011008, C: TATA).
 
@@ -254,6 +267,7 @@ Sources in `SOURCES_SLAB_DETAILING.md` (A: DPT, B: EIT 011008, C: TATA).
 |---|---|
 | **EIT 011008-21** | Cover 20/30 interior, 40/50 exposed, 75 on earth (7.7); main-bar spacing 3h / 450 one-way (7.6.5, 10.5.4), **2h two-way** (13.3.2); min. and S&T steel 0.0025 / 0.0020 / 0.0018 on b·h, S&T ≤ 5h / 400 (7.12); min. thickness Table 9.1 (ℓ/20, 24, 28, 10), Table 9.3 and Eq. 9-11 / 9-12 (9.5.3); bottom bars ≥ 150 into supports and top bars hooked at discontinuous edges (13.3.3 – 13.3.5); corner bars L/5 (13.3.6); drop panel ≥ h/4, ≥ L/6 (13.2.5); **Fig 13.3.8** extensions and integrity bars (13.3.8); openings by strip zone (13.4) and the 10h punching rule (11.11.6); punching stirrups and stud rails (11.11.3, 11.11.5) |
 | **DPT 1301/1302-61** | Flat slab in an intermediate moment frame (5.2.12): column-strip placement, c2 + 3h, ¼ top continuous, ⅓ / ½ bottom continuous, Vu/φVc ≤ 0.4; SDC D non-SFRS slab-column shear reinforcement 4h unless the drift limit is met (5.2.12.1.4, 2.11.5 → ACI 18.14); integrity Asm (5.2.12.2) |
+| **DPT road-works standards (มยผ. 2101 – 2225 - 57)** | Subgrade, fill and backfill under slabs on ground (Table 20, 1128): fill classes 2101 4.1 – 4.3, clearing 2112, embankment construction 2114 (layers ≤ 20 cm compacted, 95 % standard for soil / modified for soil aggregate and sand, top 15 cm of the existing ground, soft ground, ponds), field density 2204. Review: `REVIEW_BECA_SLAB.md` §6 |
 | **TATA handbook** | Slabs on beams: top bars Sn/4 (edge) and Sn/3 (interior), bent-up option Sn/7 / Sn/4; short bars outermost; chairs DB12 @ 1.0 – 1.5 m; openings < 600 / ≥ 600 (diagonals, trimmers 800 past corners); slab steps (p.181); upstand fins and curbs (p.181 – 182); flat-slab capitals; slab on ground (mesh 30 – 50 below the top, isolation gap 20 – 25, thickened edge, joints ≤ 30t, plain RB dowels @ 300 (RB19 × 400 for t ≤ 150, RB25 × 450 for t ≤ 200; deformed bars lock the joint, ACI SOG-100), saw cut 3 × t/4) |
 
 **Decisions:**
@@ -273,6 +287,14 @@ Sources in `SOURCES_SLAB_DETAILING.md` (A: DPT, B: EIT 011008, C: TATA).
   - dowels are **plain** RB19 × 400 (t ≤ 150) or RB25 × 450 (t ≤ 200), half greased @ 300; deformed bars lock the joint;
   - contraction-joint mesh stops 50 each side by default;
   - the expansion joint is separate from the isolation joint (filler and sealant only, no dowels).
+- **Slab on ground, R2 (after the Beca review, 2026-09-30; `REVIEW_BECA_SLAB.md`):**
+  - two sheets: 1126 (isolation joint at a ground beam, thickened edge, joint layout with marks, joint / dowel table by t = 150 / 175 / 200, notes) and 1127 (sawn joint SJ / SJD on baskets, construction joint, construction joint at an existing slab with drilled epoxy dowels, expansion joint, seal details A / B / C). The slab table moved to 1128 (the flat-slab notes were later deleted at the user's review; 1128 also holds the slab on compacted fill and Table 20);
+  - base: 0.2 polyethylene sheet on compacted sand (1126/1, 2), or 50 lean concrete instead of the sheet (1126/4, user 2026-09-30). The sand is hatched on `S-HATCH-SAND` (full 0.18 pen) and the sheet is offset square to the soffit;
+  - sections at a dummy 1:10, seal details at 1:2 (N.T.S.); FIRST / SECOND POUR header; dowels dimensioned EQ | EQ; a 0.2 polyethylene sheet on the sand bed in every section;
+  - seals: A = polyurethane on a Ø8 backer rod in a 6 × 20 reservoir, ≥ 28 days (foot / pneumatic tyres); B = semi-rigid epoxy / polyurea full depth, flush, ≥ 60 days (hard wheels); C = 20 filler with a ≈ 30 cap strip, Ø25 rod, sealant 20 × 10, 3 below the surface.
+- **Openings, R2:** a MINIMUM TRIMMING BARS table by slab thickness (Beca SE-1219 layout) on 1124; note 2's replaced-area rule governs where it gives more. Table values are office proposals, to be confirmed.
+- **R2 review (2026-09-30):** the flat-slab strip diagrams (R1 1122) were deleted at the user's request and the later sheets renumbered 1122 – 1128; the corner-panel plan shows the columns; the joint-layout diamonds clear the column corners; the sand bed is hatched up to the soffit.
+- **Slab sheet layout, R2:** same as the column and beam sheets (views in rows, each titled under itself). A Beca panel grid was tried and rejected by the user on 2026-09-30.
 - **Slab steps:**
   - **H < t:** separate bars, each anchored Ld (TATA p.181).
   - **H > t:** TATA p.181, mirrored (corrected 2026-09-29 after the user flagged a "mess rebar arrangement"). The lower-slab soffit runs t past the step face, then a 45° haunch rises to the upper soffit.
@@ -288,6 +310,27 @@ Sources in `SOURCES_SLAB_DETAILING.md` (A: DPT, B: EIT 011008, C: TATA).
   - Diagonals DB12 × 1200 (ACI SLAB-202; TATA's 700 / 1000 is shorter than Ld each side).
   - Cut top bars end in a standard hook down.
   - Openings not on the drawings need the engineer's approval.
+
+---
+
+## 4C-1. Table numbering (R2, 2026-09-30)
+
+Every table carries "TABLE n - NAME". The general notes hold Tables 1 – 10; the typical details continue from 11 (register: `TABLES` in `td_engine.py`). Notes and leaders cite "TABLE n" only; a drawing number is never part of a table reference.
+
+| No. | Name | Sheet |
+|---|---|---|
+| 11 | COLUMN TIES AND SPLICES BY FRAME TYPE | 1101 |
+| 12 | MAXIMUM TIE SPACING (mm) | 1103 |
+| 13 | COLUMN SCHEDULE CALL-UP (EXAMPLE) | 1103 |
+| 14 | BEAM SCHEDULE (EXAMPLE) | 1115 |
+| 15 | BEAM REINFORCEMENT BY FRAME TYPE | 1116 |
+| 16 | PUNCHING SHEAR REINFORCEMENT RULES | 1123 |
+| 17 | MINIMUM TRIMMING BARS AT SLAB OPENINGS | 1124 |
+| 18 | SLAB-ON-GROUND JOINTS AND DOWELS | 1126 |
+| 19 | SLAB THICKNESS AND REINFORCEMENT | 1128 |
+| 20 | SUBGRADE, FILL AND BACKFILL UNDER SLABS ON GROUND | 1128 |
+
+Cited from the general notes: Table 4 (hooks and bends), 6 (lap and anchorage length), 7 (minimum clear cover).
 
 ---
 

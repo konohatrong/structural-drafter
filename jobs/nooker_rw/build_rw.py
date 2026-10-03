@@ -9,7 +9,7 @@ Pens              : 0.50 bars, 0.35 cut concrete, 0.25 seen/hidden, 0.18 dims/le
 Annotation        : engine below (leader / note_cfg / capture) - see ANNOTATION_ALIGNMENT_GUIDE.md.
 Handover          : jobs/nooker_rw/README.md (design, geometry, sheets, build, plot, revise).
 
-usage: python build_rw.py <out_dir>      -> <out_dir>/NRW-ST_Retaining_Wall_A3_RevA.dxf
+usage: python build_rw.py <out_dir>      -> <out_dir>/NRW-ST_Retaining_Wall_A3_RevB.dxf
 """
 import math
 import sys
@@ -21,7 +21,7 @@ from ezdxf.path import make_path
 from ezdxf.enums import TextEntityAlignment as TA, MTextEntityAlignment as MA
 
 OUT = Path(sys.argv[1]) if len(sys.argv) > 1 else Path(".")
-DXF = OUT / "NRW-ST_Retaining_Wall_A3_RevA.dxf"
+DXF = OUT / "NRW-ST_Retaining_Wall_A3_RevB.dxf"
 
 # --------------------------------------------------------------------------- project data
 PROJ = dict(
@@ -31,8 +31,8 @@ PROJ = dict(
     location="[ PLOT / TITLE DEED NO., TAMBON, AMPHOE, PROVINCE ]",
     office="[ DESIGN OFFICE NAME ]",
     office2="[ ADDRESS / TEL. / E-MAIL ]",
-    date="28/09/2026",
-    stage="D", rev="A",
+    date="03/10/2026",
+    stage="D", rev="B",
 )
 SHEETS = [  # (layout name = series, title lines, scale text)
     ("1001", ["GENERAL NOTES,", "DESIGN CRITERIA & LEGEND"], "N.T.S."),
@@ -65,8 +65,10 @@ doc.header["$CELTSCALE"] = 1.0
 doc.header["$TEXTSTYLE"] = "AN"
 doc.header["$PLINEGEN"] = 1        # dash pattern runs continuously along polylines
 
-doc.styles.add("AN", font="ARIALN.TTF")
-doc.styles.add("ANB", font="ARIALNB.TTF")
+# family name as well: AutoCAD resolves a TrueType font through the Windows font registry, where the file name
+# differs between installs (ARIALN.TTF / ARIALN_0.TTF); without it, it substitutes an SHX font
+doc.styles.add("AN", font="ARIALN.TTF").set_extended_font_data(family="Arial Narrow")
+doc.styles.add("ANB", font="ARIALNB.TTF").set_extended_font_data(family="Arial Narrow", bold=True)
 
 # EIT linetypes, dash lengths in plotted mm. Own names (EIT_*) so an acadiso.lin reload can never
 # overwrite them. Hidden periods kept <= 4.5 mm so short hidden edges still read as dashed.
@@ -236,36 +238,8 @@ def arrowhead(sp, tip, frm, size, layer="S-ANNO"):
 #    at a uniform pitch, as close as possible to their target height, avoiding reserved y-bands.
 #  * ROW mode (sides "T"/"B"): notes share one knee y above / below the view, ordered by target x.
 #  * One straight leader segment + 3 mm horizontal shelf. Crossing leaders are swapped.
-from fontTools.pens.boundsPen import BoundsPen as _BP
-from fontTools.ttLib import TTFont as _TTF
-
-_FONTS = {}
-for _k, _f in (("AN", "ARIALN.TTF"), ("ANB", "ARIALNB.TTF")):
-    _t = _TTF("C:/Windows/Fonts/" + _f)
-    _gs = _t.getGlyphSet()
-    _bp = _BP(_gs)
-    _gs[_t.getBestCmap()[ord("H")]].draw(_bp)
-    _FONTS[_k] = (_t.getBestCmap(), _t["hmtx"], _bp.bounds[3])
-
-
-def text_w(s, h, style="AN"):
-    """plotted width of a single-line string at text height h (AutoCAD TTF height = cap height)"""
-    cmap, hm, cap = _FONTS[style]
-    return sum(hm[cmap.get(ord(c), cmap[ord("M")])][0] for c in s) / cap * h
-
-
-def wrap(s, h, width):
-    out, cur = [], ""
-    for w in s.split():
-        t = (cur + " " + w).strip()
-        if cur and text_w(t, h) > width:
-            out.append(cur)
-            cur = w
-        else:
-            cur = t
-    if cur:
-        out.append(cur)
-    return out
+sys.path.insert(0, str(Path(__file__).resolve().parents[2]))    # repository root: shared drafter package
+from drafter.fonts import text_w, wrap                           # noqa: E402  widths from the Arial Narrow TTFs
 
 
 TXT_H = 2.0            # note text height, paper mm
@@ -1250,12 +1224,12 @@ def corner_plan(ox, oy):
     zbreak(sp, P(-250, LB), P(B + 250, LB), S)
     line(sp, P(-500, 0), P(LA + 300, 0), "S-PROP")
     line(sp, P(0, -500), P(0, LB + 300), "S-PROP")
-    # corner L-bars: legs 750 (DB12, soil face) / 650 (DB10, exposed face); laps 600 / 500 with the
+    # corner L-bars: legs 950 (DB12, soil face) / 800 (DB10, exposed face); laps 800 / 650 (psi_t = 1.3) with the
     # straight bars, which are drawn offset one bar diameter for clarity
-    bar(sp, [P(YHB + 744, YHB), P(YHB, YHB), P(YHB, YHB + 744)], 12)                       # (9)
-    bar(sp, [P(YHF + 645, YHF), P(YHF, YHF), P(YHF, YHF + 645)], 10, "S-REBR-SEC")         # (10)
-    s2 = YHB + 744 - 600                                   # straight (2) start -> lap 600
-    s4 = YHF + 645 - 500                                   # straight (4) start -> lap 500
+    bar(sp, [P(YHB + 944, YHB), P(YHB, YHB), P(YHB, YHB + 944)], 12)                       # (9)
+    bar(sp, [P(YHF + 795, YHF), P(YHF, YHF), P(YHF, YHF + 795)], 10, "S-REBR-SEC")         # (10)
+    s2 = YHB + 944 - 800                                   # straight (2) start -> lap 800
+    s4 = YHF + 795 - 650                                   # straight (4) start -> lap 650
     line(sp, P(s2, YHB - 12), P(LA - 60, YHB - 12), "S-REBR")
     line(sp, P(YHB - 12, s2), P(YHB - 12, EJ0 - 50), "S-REBR")
     line(sp, P(s4, YHF + 11), P(LA - 60, YHF + 11), "S-REBR-SEC")
@@ -1276,8 +1250,8 @@ def corner_plan(ox, oy):
     dim(sp, P(TS, 0), P(B, 0), P(0, -350), S)
     dim(sp, P(0, 0), P(0, EJ0), P(-350, 0), S, angle=90)
     dim(sp, P(0, EJ0), P(0, EJ1), P(-350, 0), S, angle=90)
-    dim(sp, P(YHB - 6, YHB), P(YHB + 744, YHB), P(0, 560), S)
-    dim(sp, P(s2, YHB), P(YHB + 744, YHB), P(0, 470), S, override={"dimpost": "<> LAP"})
+    dim(sp, P(YHB - 6, YHB), P(YHB + 944, YHB), P(0, 560), S)
+    dim(sp, P(s2, YHB), P(YHB + 944, YHB), P(0, 470), S, override={"dimpost": "<> LAP"})
     # labels
     note_cfg(xR=P(1350, 0)[0], yminR=P(0, 1330)[1])
     k = P(1350, 0)
@@ -1285,8 +1259,8 @@ def corner_plan(ox, oy):
     leader(sp, P(650 - 212, 650 - 212), k, "SUBSOIL DRAIN CONTINUOUS - SWEPT BEND; RODDING EYES AT ENDS", S, "R", 36)
     leader(sp, P(VC, VC), k, "CORNER VERTICALS: 4 BARS OF SHAPE (1)", S, "R", 36, ring=12)
     leader(sp, P(1000, VB), k, "DB12@200 VERT. (TYP.)", S, "R", 36, mark=1, ring=12)
-    leader(sp, P(YHB + 500, YHB), k, "4-DB12 L-BARS 750 x 750 PER CORNER, SOIL FACE, AT LEVELS OF (2) - LAP 600", S, "R", 36, mark=9)
-    leader(sp, P(YHF + 450, YHF), k, "4-DB10 L-BARS 650 x 650 PER CORNER, EXPOSED FACE - LAP 500 WITH (4)", S, "R", 36, mark=10)
+    leader(sp, P(YHB + 500, YHB), k, "4-DB12 L-BARS 950 x 950 PER CORNER, SOIL FACE, AT LEVELS OF (2) - LAP 800", S, "R", 36, mark=9)
+    leader(sp, P(YHF + 450, YHF), k, "4-DB10 L-BARS 800 x 800 PER CORNER, EXPOSED FACE - LAP 650 WITH (4)", S, "R", 36, mark=10)
     text(sp, "STRAIGHT BARS AND VERTICAL-BAR DOTS DRAWN OFFSET FOR CLARITY", P(250, -620), 2.0 * S)
     text(sp, "LEG A", P(1500, -150), 2.8 * S, align=TA.TOP_CENTER, style="ANB")
     text(sp, "LEG B", P(-150, 1900), 2.8 * S, align=TA.BOTTOM_CENTER, rot=90, style="ANB")
@@ -1351,8 +1325,8 @@ def wall_end_plan(ox, oy):
     line(sp, P(-400, 0), P(LE + 250, 0), "S-PROP")
     xe = C_EXP + 6
     Ru0 = (YHB - YHF) / 2.0                                   # U end drawn as a true semicircle
-    u = sp.add_lwpolyline([(P(xe + 600, YHB)[0], P(0, YHB)[1], 0), (P(xe + Ru0, YHB)[0], P(0, YHB)[1], 1.0),
-                           (P(xe + Ru0, YHF)[0], P(0, YHF)[1], 0), (P(xe + 600, YHF)[0], P(0, YHF)[1], 0)],
+    u = sp.add_lwpolyline([(P(xe + 900, YHB)[0], P(0, YHB)[1], 0), (P(xe + Ru0, YHB)[0], P(0, YHB)[1], 1.0),
+                           (P(xe + Ru0, YHF)[0], P(0, YHF)[1], 0), (P(xe + 900, YHF)[0], P(0, YHF)[1], 0)],
                           format="xyb", dxfattribs=A("S-REBR"))                           # (11)
     u.dxf.flags = u.dxf.flags | 128
     line(sp, P(xe + 100, YHB - 12), P(LE - 60, YHB - 12), "S-REBR")
@@ -1366,11 +1340,11 @@ def wall_end_plan(ox, oy):
     EV = [(cxu - rv * math.cos(math.radians(a_)), cyu + rv * math.sin(math.radians(a_))) for a_ in (60, -60)]
     for q in EV:
         dot(sp, P(*q), r)
-    dim(sp, P(xe, 0), P(xe + 600, 0), P(0, -300), S)
+    dim(sp, P(xe, 0), P(xe + 900, 0), P(0, -300), S)       # U leg = 100 (straight bars stop short of the bend) + lap 800
     note_cfg(xL=P(-250, 0)[0])
     k = P(-250, 0)
     leader(sp, P(0, 600), k, "FOOTING & KEY END FLUSH WITH STEM END (HIDDEN)", S, "L", 36)
-    leader(sp, P(300, YHB), k, "4-DB12 U-BARS PER END (HORIZ.) - LAP 600 WITH (2)/(4)", S, "L", 36, mark=11)
+    leader(sp, P(300, YHB), k, "4-DB12 U-BARS PER END (HORIZ.) - LAP 800 WITH (2)/(4)", S, "L", 36, mark=11)
     leader(sp, P(*EV[0]), k, "2 END VERTICALS OF SHAPE (1), INSIDE U-BEND, TIED", S, "L", 36, ring=12)
     leader(sp, P(8, 8), k, "20x20 CHAMFER", S, "L", 36)
     text(sp, "P.L.", P(LE + 270, 0), 2.0 * S, align=TA.MIDDLE_LEFT)
@@ -1537,7 +1511,8 @@ def title_block(ps, series, title_lines, scale_txt, sheet_i):
         line(ps, (cx, y_r0), (cx, y_rt), "S-TTLB-THIN")
     for cx, lab in zip(cols[:-1], ["REV", "DESCRIPTION", "DATE", "SIGN"]):
         text(ps, lab, (cx + 1, y_hdr + rh / 2), 2.0, align=TA.MIDDLE_LEFT)
-    revs = [("A", "ISSUED FOR APPROVAL", PROJ["date"])]
+    revs = [("A", "ISSUED FOR APPROVAL", "28/09/2026"),
+            ("B", "HORIZ. BAR LAPS", PROJ["date"])]
     for k, (r, d, dt) in enumerate(revs):
         yy = y_hdr - rh / 2 - k * rh
         text(ps, r, (cols[0] + 1, yy), 2.0, align=TA.MIDDLE_LEFT)
@@ -1670,7 +1645,7 @@ GEN2 = notes([
     hdr("5.  REINFORCEMENT & COVER"),
     "5.1  CLEAR COVER: 40 STEM FACES; 50 TOP OF HEEL AND ON LEAN CONCRETE; 75 CAST AGAINST EARTH (FOOTING ENDS, SHEAR KEY).",
     "5.2  AT THE BOUNDARY, WHERE FORMWORK CANNOT BE STRIPPED, USE PERMANENT FIBRE-CEMENT FORMWORK SO THAT 40 COVER APPLIES; OTHERWISE PROVIDE 75.",
-    "5.3  TENSION LAPS (CLASS B, ψt = 1.3): DB10 = 500, DB12 = 600, STAGGERED 50%. NO LAPS IN (1).",
+    "5.3  TENSION LAPS OF HORIZONTAL BARS (CLASS B 1.3 ℓd x ψt 1.3, > 300 FRESH CONCRETE BELOW): DB10 = 650, DB12 = 800, STAGGERED 50%. NO LAPS IN (1).",
     "5.4  BENDS COLD ON A MANDREL OF 6 db (ACI 318-19 TABLE 25.3.1); NO HEATING OR RE-BENDING. 90° HOOK EXTENSION ≥ 12 db.",
     "5.5  CONCRETE SPACERS OF THE SAME GRADE ≤ 1.0 m EACH WAY (NO TIMBER, BRICK OR PLASTIC ON THE SOIL FACE); 1.25 mm ANNEALED TIE WIRE AT EVERY OUTER INTERSECTION, ALTERNATE INSIDE. CAGE SELF-SUPPORTING BEFORE FORMS ARE CLOSED.",
     "5.6  HORIZONTAL AND LONGITUDINAL BARS STOP 50 CLEAR EACH SIDE OF E.J. AND C.J.; ONLY DOWELS CROSS JOINTS.",
@@ -1946,10 +1921,10 @@ def bbs_rows():
         ("8", 12, "-", st, 0, "2 NOS", 2, "SHEAR KEY LONG."),
     ]
     extra = [
-        ("9", 12, "L", [("A", 750), ("B", 750)], 1, "PER CORNER", len(ZSTEMH), "CORNER L-BAR, SOIL FACE, LAP 600"),
-        ("10", 10, "L", [("A", 650), ("B", 650)], 1, "PER CORNER", len(ZSTEMH), "CORNER L-BAR, EXPOSED FACE, LAP 500"),
+        ("9", 12, "L", [("A", 950), ("B", 950)], 1, "PER CORNER", len(ZSTEMH), "CORNER L-BAR, SOIL FACE, LAP 800"),
+        ("10", 10, "L", [("A", 800), ("B", 800)], 1, "PER CORNER", len(ZSTEMH), "CORNER L-BAR, EXPOSED FACE, LAP 650"),
         ("1", 12, "Z", d1, 2, "PER CORNER", 4, "CORNER VERTICALS, SHAPE (1)"),
-        ("11", 12, "U", [("A", 606), ("B", (YHB + 6) - (YHF - 6)), ("C", 606)], 2, "PER END", len(ZSTEMH), "FREE-END U-BAR, LAP 600"),
+        ("11", 12, "U", [("A", 906), ("B", (YHB + 6) - (YHF - 6)), ("C", 906)], 2, "PER END", len(ZSTEMH), "FREE-END U-BAR, LAP 800"),
         ("1", 12, "Z", d1, 2, "PER END", 2, "END VERTICALS, SHAPE (1)"),
         ("D", 16, "-", [("A", 600)], 0, "PER JOINT", 6, "RB16 SR24 SLIP DOWEL (2 STEM + 4 FTG)"),
     ]

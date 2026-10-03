@@ -30,5 +30,5 @@ WALL_T = 200                   # RC wall
 STOREY_D = 2400                # clear storey height drawn (floor top to beam soffit)
 SPAN_D = 3600                  # clear span drawn
 STUB_D = 350                   # member stub drawn beyond a support
-LAP_D = 800                    # lap length drawn (real value: 1002 TABLE 6)
+LAP_D = 600                    # lap length drawn (N.T.S.; real value: TABLE 6)
 LO_D = 500                     # lo drawn

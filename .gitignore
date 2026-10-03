@@ -32,3 +32,4 @@ desktop.ini
 Thumbs.db
 .vscode/
 .idea/
+.pytest_cache/

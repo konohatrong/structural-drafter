@@ -42,8 +42,10 @@ psi_c=fc/105+0.6   # ACI 318-19 Table 25.4.3.2
 for db in (10,12):
     ldh=max(fy*1.0*1.0*psi_c/(23*math.sqrt(fc))*db**1.5,8*db,150)
     ld=max(fy*db/(2.1*math.sqrt(fc)),300)
-    print(f'DB{db}: ldh={ldh:.0f}  ld={ld:.0f}  lap classB=1.3ld={1.3*ld:.0f}')
+    print(f'DB{db}: ldh={ldh:.0f}  ld={ld:.0f}  lap classB=1.3ld={1.3*ld:.0f}  horiz. psi_t=1.3: {1.3*1.3*ld:.0f}')
 print('psi_r = 1.0 (bar spacing 200 >= 6 db). available for (1): T.O.F. -150 to outside of bend -326 = 176 mm')
+print('psi_t = 1.3 (ACI 318-19 Table 25.4.2.5): stem cast in one lift from T.O.F. -0.150, so horizontal bars at')
+print('  +0.325 / +0.525 have > 300 mm of fresh concrete below. Laps of (2)/(4)/(9)/(10)/(11): DB10 650, DB12 800')
 print('--- MIN STEEL ---')
 print('stem horiz ACI 11.6.1 (fy<420): 0.0025*200*1000 =',0.0025*200*1000,'mm2/m; provided DB12@200+DB10@200 =',565+393)
 print('stem vert 0.0015*200*1000 = 300; provided DB12@200+DB10@400 =',565+196)

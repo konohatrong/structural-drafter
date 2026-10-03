@@ -1,6 +1,6 @@
 # Standard set R2: typical details (started 2026-09-30)
 
-R2 is a separate version of the typical-detail sheets. R1 (`jobs/standard_set`) stays frozen. General notes are not part of R2; R2 still cites them (for example "1002 TABLE 6").
+R2 is a separate version of the typical-detail sheets. R1 (`jobs/standard_set`) stays frozen. General notes are not part of R2 (they are built in `jobs/standard_set`, `python build.py gn`); R2 cites their tables by number only, for example "TABLE 6".
 
 ## R2 rules (user decisions, 2026-09-30)
 
@@ -11,7 +11,7 @@ R2 is a separate version of the typical-detail sheets. R1 (`jobs/standard_set`) 
 | Members | **One catalogue for every view: `members.py`.** Column 400 × 400 (8-DB20), beam 300 × 600, secondary beam 250 × 450, slab 150, flat slab 200 + 50 drop, footing 1600 × 1600 × 600, cover 40 / 20, bars DB20 / RB9–DB10 / DB12. Only LENGTHS are shortened (break lines): storey 2400 (infill view 2000), span 3600, stubs, lap 600 drawn |
 | Model space | Real size (1 unit = 1 mm). Sheet i occupies x = i × 460 × 25; a no-plot sheet edge (`S-SHEET`) and drawing area (`S-TB-AREA`) mark it. Detail blocks `DET-*` are inserted at scale 1 and hold their own annotation (2.0 mm text = 50 units). View titles, tables, notes and keys are paper-size blocks inserted at 25 |
 | Paper space | One layout per sheet: the title block `TB-A3-NRW` (attributes) in paper space, one locked viewport at 1:25 |
-| Linetypes | AutoCAD **acadiso.lin**, loaded verbatim. **LTSCALE 3.75** (model), **PSLTSCALE 0**, MSLTSCALE 0 (set by plot.py and saved into the DWG). Plotted dash = pattern × 3.75 / 25 = 0.15 × the .lin value. Hidden = HIDDENX2 (1.9 / 0.95 plotted), fine hidden = HIDDEN (0.95 / 0.48), centre / cutting plane = CENTER (4.8 / 0.95 / 0.95 / 0.95), property = PHANTOM. Keep paper-space linetypes continuous: PSLTSCALE 0 applies LTSCALE there too |
+| Linetypes | AutoCAD **acadiso.lin** definitions, verbatim; the five used are kept in `td_engine.py` (`ACADISO`), so a build needs no AutoCAD profile. **LTSCALE 3.75** (model), **PSLTSCALE 0**, MSLTSCALE 0 (set by plot.py and saved into the DWG). Plotted dash = pattern × 3.75 / 25 = 0.15 × the .lin value. Hidden = HIDDENX2 (1.9 / 0.95 plotted), fine hidden = HIDDEN (0.95 / 0.48), centre / cutting plane = CENTER (4.8 / 0.95 / 0.95 / 0.95), property = PHANTOM. Keep paper-space linetypes continuous: PSLTSCALE 0 applies LTSCALE there too |
 | Pens | **By colour**: `PEN` in `td_engine.py` maps each ACI colour to one lineweight; `plot.py` builds `NRW-EIT-R2.ctb` from it. Layer lineweights are generated from the same table (screen only), never set by hand. 1 red 0.50 main bars; 30 orange 0.35 ties / stirrups; 4 cyan 0.35 cut concrete, title; 5 blue 0.25 seen concrete; 6 magenta 0.25 cutting plane, symbols; 3 green 0.18 leaders, centre lines; 2 yellow 0.18 dimensions; 7 white 0.18 text; 10 0.70 frame; greys 8 (0.18), 252 (0.25 hidden), 9 (0.13 hatch) screened 50 % |
 | Tables | **Every table has a number and a name, "TABLE n - NAME"**, in one sequence for the standard set: general notes 1 – 10, typical details 11 – 20 in sheet order (11 column ties and splices, 12 max. tie spacing, 13 column call-up, 14 beam schedule, 15 beam reinforcement by frame type, 16 punching shear, 17 trimming bars at openings, 18 slab-on-ground joints and dowels, 19 slab thickness and reinforcement, 20 subgrade, fill and backfill under slabs on ground). Text cites a table by number only, "TABLE 18"; never "TABLE (1126)", "1002 TABLE 6" or "TABLE ABOVE" (user, 2026-09-30). The register is `TABLES` in `td_engine.py`: `TABT(key)` gives the title, `TAB(key)` the citation, and `tbl()` warns about a table without a number. A new table gets the next free number; renumbering means editing only `TABLES` |
 | Leader form | **Chosen per target, mixed freely within a detail** (user, 2026-09-30). The target is a vertical line (bar, face, edge), a corner, a bar dot or ring, or an area: the note is placed at the target's height and gets **one horizontal segment**, no inclined leg and no angle at the arrow. The target is a horizontal line only (a slab face, a bar running along the view): the leader cannot run along it, so the note rises `RISE` = 3 mm and gets the **inclined leg** (45° / 60°) + horizontal run. When packing leaves a note within 2 mm of its target height, the arrow slides along a vertical target or inside an area to make the leader exactly horizontal (`_target_kind()`, `_rise()`, `_snap_tip()` in `td_engine.py`) |
@@ -94,6 +94,8 @@ The Beca **panel-grid sheet layout was tried and rejected** by the user ("our st
 ---
 
 ## R1 guide (inherited, still valid for the block / capture mechanics)
+
+> The text below is the R1 guide, kept as written. Paths and scripts it names are in `jobs/standard_set` (for example `compare_pdf.py`), and its "1002 TABLE 6" citations are R1 style: R2 cites "TABLE 6".
 
 # Standard set: model-space sheets built from blocks
 
@@ -222,6 +224,17 @@ python compare_pdf.py out/STR-ST-1111_Typical_Beam_Details_A3_RevA.pdf ../typica
   - `S-DET`: detail inserts;
   - `S-SHEET`: paper edge, no plot;
   - `S-TB-AREA`: drawing area, no plot.
+
+**Opt-in options (added 2026-10-03 for the steel set SRT; off by default, so the R2 sheets are unchanged):**
+- `LEADER_ORTH = True`: straight or orthogonal L leaders, routed so none crosses another leader, a note or a dimension
+  (ANNOTATION_ALIGNMENT_GUIDE §9.1). `ORTH_RISE` = 5 mm puts the note off a horizontal edge on the free side;
+  `ORTH_LEG_MIN` = 3 mm is the shortest vertical leg an L may have.
+- `leader(..., bolt=hole Ø)`: the tip is the bolt centre and the leader starts on an open circle of `BOLT_RING_K` =
+  1.25 × the hole (§2.1).
+- `WRAP_UNITS = True`: notes wrap with `drafter.fonts.wrap(..., keep_units=True)`, so a number never leaves its unit
+  on the next line (§2.4.2).
+- `check_dims()` ignores weld hatch (`S-WELD`) and hatch boundaries (`Defpoints`), and treats collinear dimension
+  lines as one chain rather than a crossing.
 
 **Review and checks:**
 - `check_dims()` runs in `capture()` for every view and flags dirty dimensioning (ANNOTATION_ALIGNMENT_GUIDE §2.4.1).

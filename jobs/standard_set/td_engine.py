@@ -11,7 +11,7 @@ Structure (see MODEL_SPACE_SHEETS.md):
   * one thin layout per sheet: a single locked 1:1 viewport onto its model-space sheet (plotting, sheet sets).
 
 Rule    : normal drawing rule (2.0 / 2.8 text, 2 mm arrows, standard pens) - detail sheets.
-Content : gn_notes.py (1001), td_columns.py (1101/1102), td_beams.py (1111 - 1115), td_slabs.py (1121 - 1127).
+Content : gn_notes.py (1001 - 1003), td_columns.py (1101 - 1103), td_beams.py (1111 - 1115), td_slabs.py (1121 - 1127).
 Driver  : build.py / plot.py.   Guides: MODEL_SPACE_SHEETS.md, TYPICAL_DETAILS_INSTRUCTION.md
 """
 import math
@@ -59,8 +59,10 @@ doc.header["$CELTSCALE"] = 1.0
 doc.header["$TEXTSTYLE"] = "AN"
 doc.header["$PLINEGEN"] = 1        # dash pattern runs continuously along polylines
 
-doc.styles.add("AN", font="ARIALN.TTF")
-doc.styles.add("ANB", font="ARIALNB.TTF")
+# family name as well: AutoCAD resolves a TrueType font through the Windows font registry, where the file name
+# differs between installs (ARIALN.TTF / ARIALN_0.TTF); without it, it substitutes an SHX font
+doc.styles.add("AN", font="ARIALN.TTF").set_extended_font_data(family="Arial Narrow")
+doc.styles.add("ANB", font="ARIALNB.TTF").set_extended_font_data(family="Arial Narrow", bold=True)
 
 # EIT linetypes, dash lengths in plotted (sheet) mm = DRAWING_STANDARD_EIT-011006-19.md 4.4 (ratios measured
 # from EIT Table 2.3, grid long dash 12 mm). Own names (EIT_*) so an acadiso.lin reload can never overwrite them.
@@ -240,36 +242,8 @@ def arrowhead(sp, tip, frm, size, layer="S-ANNO"):
 #    at a uniform pitch, as close as possible to their target height, avoiding reserved y-bands.
 #  * ROW mode (sides "T"/"B"): notes share one knee y above / below the view, ordered by target x.
 #  * One straight leader segment + 3 mm horizontal shelf. Crossing leaders are swapped.
-from fontTools.pens.boundsPen import BoundsPen as _BP
-from fontTools.ttLib import TTFont as _TTF
-
-_FONTS = {}
-for _k, _f in (("AN", "ARIALN.TTF"), ("ANB", "ARIALNB.TTF")):
-    _t = _TTF("C:/Windows/Fonts/" + _f)
-    _gs = _t.getGlyphSet()
-    _bp = _BP(_gs)
-    _gs[_t.getBestCmap()[ord("H")]].draw(_bp)
-    _FONTS[_k] = (_t.getBestCmap(), _t["hmtx"], _bp.bounds[3])
-
-
-def text_w(s, h, style="AN"):
-    """plotted width of a single-line string at text height h (AutoCAD TTF height = cap height)"""
-    cmap, hm, cap = _FONTS[style]
-    return sum(hm[cmap.get(ord(c), cmap[ord("M")])][0] for c in s) / cap * h
-
-
-def wrap(s, h, width):
-    out, cur = [], ""
-    for w in s.split():
-        t = (cur + " " + w).strip()
-        if cur and text_w(t, h) > width:
-            out.append(cur)
-            cur = w
-        else:
-            cur = t
-    if cur:
-        out.append(cur)
-    return out
+sys.path.insert(0, str(Path(__file__).resolve().parents[2]))    # repository root: shared drafter package
+from drafter.fonts import text_w, wrap                           # noqa: E402  widths from the Arial Narrow TTFs
 
 
 TXT_H = 2.0            # note text height, paper mm

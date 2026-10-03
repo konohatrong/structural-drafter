@@ -9,13 +9,13 @@ R2 structure (see MODEL_SPACE_SHEETS.md, R2 section):
     + (W, H) * SC. Detail blocks are inserted at scale 1; view titles, tables, notes and keys are paper-size
     blocks inserted at SC;
   * one layout per sheet: the title block TB-A3-NRW in PAPER space and one locked viewport at 1:25;
-  * linetypes from acadiso.lin, LTSCALE = 3.75 (model), PSLTSCALE = 0, MSLTSCALE = 0 (user, 2026-09-30):
+  * linetypes from acadiso.lin (the five used are kept in ACADISO), LTSCALE = 3.75 (model), PSLTSCALE = 0, MSLTSCALE = 0 (user, 2026-09-30):
     plotted dash = pattern x 3.75 / 25 = 0.15 x the .lin value;
   * pens by COLOUR (PEN): the plot style NRW-EIT-R2.ctb maps each ACI colour to one lineweight; layer
     lineweights are generated from the same table only so the screen matches the plot.
 
 Rule    : normal drawing rule (2.0 / 2.8 text, 2 mm arrows, standard pens) - detail sheets.
-Content : td_columns.py (1101 - 1104), td_beams.py (1111 - 1116), td_slabs.py (1121 - 1129).
+Content : td_columns.py (1101 - 1104), td_beams.py (1111 - 1116), td_slabs.py (1121 - 1128).
 Driver  : build.py / plot.py.   Guides: MODEL_SPACE_SHEETS.md, TYPICAL_DETAILS_INSTRUCTION.md
 """
 import math
@@ -26,6 +26,8 @@ import ezdxf
 from ezdxf import bbox
 from ezdxf.path import make_path
 from ezdxf.enums import TextEntityAlignment as TA, MTextEntityAlignment as MA
+
+from pens import PEN, LTS          # pens by colour, LTSCALE: no side effects, so plot.py can read them too
 
 
 # --------------------------------------------------------------------------- project data
@@ -41,6 +43,7 @@ PROJ = dict(
 )
 SHEETS = []            # filled by the content module: (series, title lines, scale text)
 EXT = {}               # model extents per view key, filled by the content module (capture)
+WARNINGS = []          # layout problems found while building: build.py exits non-zero when there are any
 AN_B = r"\fArial Narrow|b1|i0|c0|p34;"   # MTEXT inline bold Arial Narrow
 
 
@@ -53,12 +56,17 @@ def hdr(s):
     return "{" + AN_B + r"\H2.8;" + s + "}"
 
 
+def warn(msg):
+    """report a layout problem: printed as '!! msg' and collected in WARNINGS so the build fails"""
+    WARNINGS.append(msg)
+    print(f"  !! {msg}")
+
+
 # --------------------------------------------------------------------------- document setup
 doc = ezdxf.new("R2018", setup=False, units=4)
 doc.header["$MEASUREMENT"] = 1
 SC = 25.0                          # dummy arranging scale: every typical detail is N.T.S., placed at 1:25
-LTS = 3.75                         # LTSCALE (model space) for 1:25 with acadiso.lin (user, 2026-09-30)
-doc.header["$LTSCALE"] = LTS
+doc.header["$LTSCALE"] = LTS                       # LTSCALE: pens.py
 doc.header["$PSLTSCALE"] = 0
 # MSLTSCALE 0 is set by plot.py (not a DXF header variable) and saved into the DWG
 doc.header["$LWDISPLAY"] = 1
@@ -66,16 +74,30 @@ doc.header["$CELTSCALE"] = 1.0
 doc.header["$TEXTSTYLE"] = "AN"
 doc.header["$PLINEGEN"] = 1        # dash pattern runs continuously along polylines
 
-doc.styles.add("AN", font="ARIALN.TTF")
-doc.styles.add("ANB", font="ARIALNB.TTF")
+# family name as well: AutoCAD resolves a TrueType font through the Windows font registry, where the file name
+# differs between installs (ARIALN.TTF / ARIALN_0.TTF); without it, it substitutes an SHX font
+doc.styles.add("AN", font="ARIALN.TTF").set_extended_font_data(family="Arial Narrow")
+doc.styles.add("ANB", font="ARIALNB.TTF").set_extended_font_data(family="Arial Narrow", bold=True)
 
-# Linetypes: AutoCAD's own acadiso.lin, loaded verbatim (user, 2026-09-30). Plotted = pattern x LTS / SC.
-ACADISO = Path(r"C:\Users\konoh\AppData\Roaming\Autodesk\AutoCAD 2024\R24.3\enu\Support\acadiso.lin")
+# Linetypes: AutoCAD's own acadiso.lin definitions, verbatim (user, 2026-09-30), kept here so a build needs no
+# AutoCAD profile. Same in the 2024 and 2026 acadiso.lin, in file order. Plotted = pattern x LTS / SC.
+ACADISO = """\
+*CENTER,Center ____ _ ____ _ ____ _ ____ _ ____ _ ____
+A, 31.75, -6.35, 6.35, -6.35
+*DASHED,Dashed __ __ __ __ __ __ __ __ __ __ __ __ __ _
+A, 12.7, -6.35
+*HIDDEN,Hidden __ __ __ __ __ __ __ __ __ __ __ __ __ __
+A, 6.35, -3.175
+*HIDDENX2,Hidden (2x) ____ ____ ____ ____ ____ ____ ____
+A, 12.7, -6.35
+*PHANTOM,Phantom ______  __  __  ______  __  __  ______
+A, 31.75, -6.35, 6.35, -6.35, 6.35, -6.35
+"""
 LT_USED = ("HIDDEN", "HIDDENX2", "CENTER", "PHANTOM", "DASHED")
 
 
-def _load_lin(path, names):
-    txt = path.read_text(encoding="latin-1").splitlines()
+def _load_lin(lin, names):
+    txt = lin.splitlines()
     for k, ln in enumerate(txt):
         if ln.startswith("*"):
             name, desc = (ln[1:].split(",", 1) + [""])[:2]
@@ -86,22 +108,6 @@ def _load_lin(path, names):
 
 _load_lin(ACADISO, LT_USED)
 HID, HID_FINE, CEN, PHAN = "HIDDENX2", "HIDDEN", "CENTER", "PHANTOM"   # plotted 1.9/0.95, 0.95/0.48, 4.8/1/1/1
-
-# Pens by colour: ACI -> (lineweight 1/100 mm, screen %). One colour = one pen; NRW-EIT-R2.ctb is built from it.
-PEN = {
-    1: (50, 100),     # red: main bars, dowels
-    30: (35, 100),    # orange: stirrups, ties, secondary bars
-    4: (35, 100),     # cyan: concrete CUT, title text, title-block lines
-    5: (25, 100),     # blue: concrete SEEN, construction joint, soil, drain
-    6: (25, 100),     # magenta: cutting plane, property line, joints, symbols
-    3: (18, 100),     # green: leaders, centre lines, geotextile, surcharge
-    2: (18, 100),     # yellow: dimensions
-    7: (18, 100),     # white: text, lean concrete, detail inserts
-    10: (70, 100),    # sheet frame
-    8: (18, 50),      # grey: breaks, arris, zone grid, thin title lines, notional lines, dim extension lines
-    252: (25, 50),    # grey: hidden concrete, excavation, hidden drain
-    9: (13, 50),      # grey: hatch, viewport, sheet edge
-}
 
 # name, ACI colour, linetype, plot. The lineweight is the colour's pen (PEN) - never set per layer by hand.
 GREY = 8
@@ -268,36 +274,14 @@ def arrowhead(sp, tip, frm, size, layer="S-ANNO"):
 #    at a uniform pitch, as close as possible to their target height, avoiding reserved y-bands.
 #  * ROW mode (sides "T"/"B"): notes share one knee y above / below the view, ordered by target x.
 #  * One straight leader segment + 3 mm horizontal shelf. Crossing leaders are swapped.
-from fontTools.pens.boundsPen import BoundsPen as _BP
-from fontTools.ttLib import TTFont as _TTF
+sys.path.insert(0, str(Path(__file__).resolve().parents[2]))    # repository root: shared drafter package
+from drafter.fonts import text_w, wrap as _wrap                  # noqa: E402  widths from the Arial Narrow TTFs
 
-_FONTS = {}
-for _k, _f in (("AN", "ARIALN.TTF"), ("ANB", "ARIALNB.TTF")):
-    _t = _TTF("C:/Windows/Fonts/" + _f)
-    _gs = _t.getGlyphSet()
-    _bp = _BP(_gs)
-    _gs[_t.getBestCmap()[ord("H")]].draw(_bp)
-    _FONTS[_k] = (_t.getBestCmap(), _t["hmtx"], _bp.bounds[3])
-
-
-def text_w(s, h, style="AN"):
-    """plotted width of a single-line string at text height h (AutoCAD TTF height = cap height)"""
-    cmap, hm, cap = _FONTS[style]
-    return sum(hm[cmap.get(ord(c), cmap[ord("M")])][0] for c in s) / cap * h
+WRAP_UNITS = False     # True: a number and its unit stay on one line (a project opts in; the R2 sets keep their wrap)
 
 
 def wrap(s, h, width):
-    out, cur = [], ""
-    for w in s.split():
-        t = (cur + " " + w).strip()
-        if cur and text_w(t, h) > width:
-            out.append(cur)
-            cur = w
-        else:
-            cur = t
-    if cur:
-        out.append(cur)
-    return out
+    return _wrap(s, h, width, keep_units=WRAP_UNITS)
 
 
 TXT_H = 2.0            # note text height, paper mm
@@ -309,6 +293,9 @@ NGAP = 1.6             # clear gap between stacked notes, paper mm
 ARROW = 2.0            # filled leader arrowhead length, paper mm
 RING_K = 2.0           # open-circle terminator: Ø = 2 x drawn bar diameter (bars cut in section)
 RISE = 3.0             # rise of a note above a HORIZONTAL target (a leader cannot run along the line it points at)
+ORTH_RISE = 5.0        # orthogonal mode: a note sits this far off a HORIZONTAL target, on the free side, so its L has
+ORTH_LEG_MIN = 3.0     # a real vertical leg; an L whose leg would be shorter than this is not used (user 2026-10-03)
+BOLT_RING_K = 1.25     # open circle on a bolt / hole seen end-on: diameter 1.25 x the HOLE size, centred
 # Leader form by target (user 2026-09-30): a vertical line, a point / bar dot or an area is reached by ONE horizontal
 # segment (note at the target height, no leg, no angle at the arrow); a horizontal line gets the inclined leg. The two
 # forms mix freely within a detail.
@@ -326,6 +313,9 @@ EDGE_GAP = 0.05        # arrow tip stops this far outside a filled object's edge
 
 _NOTES = None
 _CFG = {}
+LEADER_ORTH = False    # True: route leaders as single straight segments (0 / 90 / 180 / 270 deg) or two-segment
+                       # orthogonal L-shapes where they fit, inclined legs only as the fallback, and pick for each
+                       # note the shape that crosses no other leader, dimension or note text (a project opts in)
 _BOXES = []          # true note text boxes (ezdxf under-measures multi-line MTEXT)
 
 
@@ -335,11 +325,15 @@ def note_cfg(**kw):
     _CFG.update(kw)
 
 
-def leader(sp, tip, knee, s, S, side="R", width=48, layer="S-ANNO", dot_tip=False, mark=None, ring=0, fixed=False):
+def leader(sp, tip, knee, s, S, side="R", width=48, layer="S-ANNO", dot_tip=False, mark=None, ring=0, fixed=False,
+           bolt=0):
     """ring=db: bar cut in section -> open circle of 2 x the drawn bar diameter round the bar dot.
+    bolt=dh: a bolt or hole seen end-on, tip at its centre, dh = HOLE diameter -> open circle of BOLT_RING_K x dh
+    (model size, user rule 2026-10-03).
     fixed=True: drawn at the given knee (not packed), but after the view is collected so the edge rule applies."""
     n = dict(sp=sp, tip=tip, knee=knee, s=s, S=S, side=side, width=width, layer=layer,
-             dot=dot_tip and not ring, mark=mark, ring=ring, fixed=fixed or _CFG.get("free", False))
+             dot=dot_tip and not (ring or bolt), mark=mark, ring=ring or (1 if bolt else 0),
+             ring_r=BOLT_RING_K * bolt / 2 if bolt else None, fixed=fixed or _CFG.get("free", False))
     if _NOTES is None:
         n["lines"] = wrap(s, TXT_H, width - (2 * BUB_R + TGAP if mark else 0))
         _draw_note(n, knee)
@@ -427,7 +421,15 @@ def _target_kind(n):
 
 
 def _rise(n):
-    return RISE if _target_kind(n) == "H" else 0.0
+    if _target_kind(n) != "H":
+        return 0.0
+    if not LEADER_ORTH:
+        return RISE
+    # orthogonal mode: away from the object - the side with fewer drawing lines just beyond the edge
+    S = n["S"]
+    tx, ty = n["tip"]
+    near = lambda sg: sum(1 for x0, x1, y in _HSEGS if x0 <= tx <= x1 and 0.1 * S < sg * (y - ty) <= 4.0 * S)
+    return ORTH_RISE if near(1) <= near(-1) else -ORTH_RISE
 
 
 def _snap_tip(n, knee):
@@ -451,6 +453,8 @@ def _snap_tip(n, knee):
 
 
 def _path_of(n, knee):
+    if n.get("path") and n["path"][-1] == knee:
+        return n["path"]
     if n.get("straight"):
         return [n["tip"], knee]
     row = n["side"] in ("T", "B")
@@ -471,7 +475,7 @@ def _draw_note(n, knee):
     path = _path_of(n, knee)
     tip = n["tip"]
     if n["ring"]:                                     # open circle, leader starts on its edge
-        rr = RING_K * rdot(n["ring"], S)
+        rr = n.get("ring_r") or RING_K * rdot(n["ring"], S)
         sp.add_circle(tip, rr, dxfattribs=A(n["layer"]))
         dx, dy = path[1][0] - tip[0], path[1][1] - tip[1]
         L = math.hypot(dx, dy) or 1.0
@@ -482,7 +486,7 @@ def _draw_note(n, knee):
     pts = [tip] + path[1:] + [(ex, ky)]
     for (x0, y0, x1, y1) in _DIMSEGS:                 # a leader crossing a dimension reads as part of it
         if any(_cross(p, q, (x0, y0), (x1, y1)) for p, q in zip(pts[:-1], pts[1:])):
-            print(f"  !! leader crosses a dimension: '{n['s'][:40]}'")
+            warn(f"leader crosses a dimension: '{n['s'][:40]}'")
             break
     if n["dot"]:
         dot(sp, tip, 0.35 * S, n["layer"])
@@ -630,15 +634,15 @@ def check_dims(view, new):
         return
     geo = []                                          # drawing segments (lines, polylines; not hatch fill)
     for e in new:
-        if e.dxftype() in ("LINE", "LWPOLYLINE") and e.dxf.layer not in ("S-HATCH",):
+        if e.dxftype() in ("LINE", "LWPOLYLINE") and e.dxf.layer not in ("S-HATCH", "S-WELD", "Defpoints"):
             pts = [(v.x, v.y) for v in make_path(e).flattening(1.0)]
             geo += [(a, b, e.dxf.layer) for a, b in zip(pts[:-1], pts[1:])]
     seen = set()
 
-    def warn(msg):
+    def once(msg):
         if msg not in seen:
             seen.add(msg)
-            print(f"  !! {view}: {msg}")
+            warn(f"{view}: {msg}")
     for i, A in enumerate(dims):
         for j, B in enumerate(dims):
             if i == j:
@@ -653,29 +657,37 @@ def check_dims(view, new):
                         t = ((ea[0] - da[0]) * ux + (ea[1] - da[1]) * uy) if abs(ux) < 0.5 else \
                             ((ea[0] - da[0]) * ux + (ea[1] - da[1]) * uy)
                         if tip < t < L - tip:
-                            warn(f"extension line of '{A['name']}' crosses dimension line '{B['name']}'")
+                            once(f"extension line of '{A['name']}' crosses dimension line '{B['name']}'")
             if i < j:
                 for pa, pb in A["dl"]:
                     for qa, qb in B["dl"]:
+                        par = abs((pb[0] - pa[0]) * (qb[1] - qa[1]) - (pb[1] - pa[1]) * (qb[0] - qa[0]))
+                        if par < 1e-6 * math.hypot(pb[0] - pa[0], pb[1] - pa[1]) * math.hypot(qb[0] - qa[0],
+                                                                                           qb[1] - qa[1]):
+                            continue                       # collinear chain (inclined): round-off, not a cross
                         if _cross(pa, pb, qa, qb):
-                            warn(f"dimension lines '{A['name']}' and '{B['name']}' cross")
+                            once(f"dimension lines '{A['name']}' and '{B['name']}' cross")
             if B["box"]:
                 for sa, sb in A["ext"] + A["dl"]:
                     if _seg_hits_box(sa, sb, B["box"][0]):
-                        warn(f"dimension '{A['name']}' runs through the text '{B['name']}'")
+                        once(f"dimension '{A['name']}' runs through the text '{B['name']}'")
     for B in dims:
         if B["box"]:
             for a, b, lay in geo:
                 if _seg_hits_box(a, b, B["box"][0]):
-                    warn(f"{lay} line runs through the dimension text '{B['name']}'")
+                    once(f"{lay} line runs through the dimension text '{B['name']}'")
 
 
 def _layout_notes():
     by = {}
+    routed = []
     for n in _NOTES:
         if n["fixed"]:
             n["lines"] = wrap(n["s"], TXT_H, n["width"] - (2 * BUB_R + TGAP if n["mark"] else 0))
-            _draw_note(n, n["knee"])
+            if LEADER_ORTH:
+                routed.append((n, n["knee"]))
+            else:
+                _draw_note(n, n["knee"])
             continue
         by.setdefault(n["side"], []).append(n)
     for side, ns in by.items():
@@ -747,8 +759,31 @@ def _layout_notes():
             lens = [(SHELF + TGAP + (2 * BUB_R + TGAP if n["mark"] else 0) + 3.0) * S
                     + max(text_w(l, TXT_H) for l in n["lines"]) * S for n in ns]
 
+            def place_tiers(order):
+                """orthogonal mode: every note keeps its knee right above / below its target (one vertical
+                leader). From the right, a note goes to the first tier (nearest the view first) where its text
+                fits; a leader then passes only LEFT of the texts of the tiers it crosses, never through them"""
+                sg_ = 1 if side == "T" else -1
+                pitch = (max(len(n["lines"]) for n in ns) * PITCH + NGAP + 1.0) * S
+                xmax = _CFG.get("xmax" + side)
+                tiers, res = [], {}
+                for k in sorted(range(len(ns)), key=lambda k: -ns[k]["tip"][0]):
+                    x0 = ns[k]["tip"][0]
+                    if xmax is not None:
+                        x0 = min(x0, xmax - lens[k])
+                    t = 0
+                    while t < len(tiers) and any(x0 < b and x0 + lens[k] > a for a, b in tiers[t]):
+                        t += 1
+                    if t == len(tiers):
+                        tiers.append([])
+                    tiers[t].append((x0, x0 + lens[k]))
+                    res[k] = (x0, ky + sg_ * t * pitch)
+                return res
+
             def place(order):
-                des = [ns[k]["tip"][0] + abs(ky - ns[k]["tip"][1]) * 0.577 for k in order]   # 60 deg leg
+                if LEADER_ORTH:
+                    return place_tiers(order)
+                des = [ns[k]["tip"][0] + abs(ky - ns[k]["tip"][1]) * 0.577 for k in order]      # 60 deg leg
                 st = _pack([lens[k] for k in order], des)
                 xmax = _CFG.get("xmax" + side)
                 if xmax is not None and st:                 # keep the row inside the view width
@@ -767,7 +802,7 @@ def _layout_notes():
             swapped = False
             for a in range(len(order) - 1):
                 i, j = order[a], order[a + 1]
-                pi, pj = _path_of(ns[i], pos[i]), _path_of(ns[j], pos[j])
+                pi, pj = (_preview(ns[i], pos[i]), _preview(ns[j], pos[j])) if LEADER_ORTH else                     (_path_of(ns[i], pos[i]), _path_of(ns[j], pos[j]))
                 if any(_cross(pi[a1], pi[a1 + 1], pj[b1], pj[b1 + 1])
                        for a1 in range(len(pi) - 1) for b1 in range(len(pj) - 1)):
                     order[a], order[a + 1] = j, i
@@ -775,8 +810,131 @@ def _layout_notes():
                     swapped = True
             if not swapped:
                 break
-        for k, n in enumerate(ns):
-            _draw_note(n, pos[k])
+        if LEADER_ORTH:
+            routed += [(n, pos[k]) for k, n in enumerate(ns)]
+        else:
+            for k, n in enumerate(ns):
+                _draw_note(n, pos[k])
+    if LEADER_ORTH:
+        _route(routed)
+        for n, knee in routed:
+            _draw_note(n, knee)
+
+
+def _preview(n, knee):
+    """the shape the orthogonal router will prefer (no side effects): straight when aligned, else the L"""
+    S, t = n["S"], n["tip"]
+    tol = 0.05 * S
+    if abs(t[1] - knee[1]) < tol or abs(t[0] - knee[0]) < tol:
+        return [t, knee]
+    sgn = -1 if n["side"] == "L" else 1
+    if n["side"] in ("T", "B") or (knee[0] - t[0]) * sgn > 1.0 * S:
+        return [t, (t[0], knee[1]), knee]
+    return _path_of(n, knee)
+
+
+def _note_box(n, knee):
+    """text box of a note placed at knee (as _draw_note will draw it)"""
+    S, side = n["S"], n["side"]
+    sgn = -1 if side == "L" else 1
+    kx, ky = knee
+    tx = kx + sgn * (SHELF + TGAP) * S + (sgn * (2 * BUB_R + TGAP) * S if n["mark"] else 0.0)
+    wmax = (max(text_w(l, TXT_H) for l in n["lines"]) * 1.04 + 0.5) * S
+    h = TXT_H * S
+    hbox = (len(n["lines"]) - 1) * PITCH * S + h
+    y0, y1 = (ky - h / 2, ky - h / 2 + hbox) if side == "T" else (ky + h / 2 - hbox, ky + h / 2)
+    x0, x1 = (tx - wmax, tx) if side == "L" else (tx, tx + wmax)
+    return (x0, y0, x1, y1)
+
+
+def _seg_box(a, b, box, pad=0.0):
+    """segment a-b passes through the inside of box (Liang-Barsky clip)"""
+    x0, y0, x1, y1 = box[0] - pad, box[1] - pad, box[2] + pad, box[3] + pad
+    dx, dy = b[0] - a[0], b[1] - a[1]
+    t0, t1 = 0.0, 1.0
+    for pq, qq in ((-dx, a[0] - x0), (dx, x1 - a[0]), (-dy, a[1] - y0), (dy, y1 - a[1])):
+        if abs(pq) < 1e-12:
+            if qq < 0:
+                return False
+            continue
+        r = qq / pq
+        if pq < 0:
+            t0 = max(t0, r)
+        else:
+            t1 = min(t1, r)
+        if t0 > t1:
+            return False
+    return t1 - t0 > 1e-6
+
+
+def _along(a, b, S):
+    """a leader segment that would run along a drawing line (it would read as part of the drawing)"""
+    tol = 0.6 * S
+    if abs(a[0] - b[0]) < 1e-6:                                  # vertical
+        lo, hi = sorted((a[1], b[1]))
+        return any(abs(x - a[0]) < tol and min(hi, y1) - max(lo, y0) > 0.5 * S for x, y0, y1 in _VSEGS)
+    if abs(a[1] - b[1]) < 1e-6:                                  # horizontal
+        lo, hi = sorted((a[0], b[0]))
+        return any(abs(y - a[1]) < tol and min(hi, x1) - max(lo, x0) > 0.5 * S for x0, x1, y in _HSEGS)
+    return False
+
+
+def _shapes(n, knee):
+    """candidate leader paths, best first: one straight segment (0 / 180 / 90 / 270 deg), the orthogonal
+    L-shape (vertical leg + horizontal run), the standard inclined leg, the direct line"""
+    S, side = n["S"], n["side"]
+    _snap_tip(n, knee)
+    t = n["tip"]
+    kx, ky = knee
+    tol = 0.05 * S
+    out = []
+    if abs(t[1] - ky) < tol or abs(t[0] - kx) < tol:
+        out.append([t, knee])
+    if side in ("L", "R"):
+        sgn = -1 if side == "L" else 1
+        if (kx - t[0]) * sgn > 1.0 * S and abs(t[1] - ky) >= ORTH_LEG_MIN * S:   # a real second segment
+            out.append([t, (t[0], ky), knee])
+    elif abs(t[0] - kx) >= ORTH_LEG_MIN * S and abs(t[1] - ky) >= tol:
+        out.append([t, (t[0], ky), knee])                        # vertical to the row, short run to the shelf
+    n.pop("path", None)
+    n.pop("straight", None)
+    legacy = _path_of(n, knee)
+    if legacy not in out:
+        out.append(legacy)
+    if [t, knee] not in out:
+        out.append([t, knee])
+    return [pth for pth in out if not any(_along(a, b, S) for a, b in zip(pth[:-1], pth[1:]))] or out
+
+
+def _route(items):
+    """give every note the first path shape that crosses no leader already routed, no dimension and no other
+    note's text; otherwise the one with the fewest conflicts (reported)"""
+    boxes = [_note_box(n, k) for n, k in items]
+    order = sorted(range(len(items)), key=lambda i: abs(items[i][0]["tip"][1] - items[i][1][1])
+                   + abs(items[i][0]["tip"][0] - items[i][1][0]))           # shortest leaders first
+    done = []
+    for i in order:
+        n, knee = items[i]
+        S = n["S"]
+        sgn = -1 if n["side"] == "L" else 1
+        best, bc = None, None
+        for pth in _shapes(n, knee):
+            full = pth + [(knee[0] + sgn * SHELF * S, knee[1])]
+            segs = list(zip(full[:-1], full[1:]))
+            c_lead = sum(1 for a, b in segs for q in done if _cross(a, b, q[0], q[1]))
+            c_dim = sum(1 for a, b in segs for d in _DIMSEGS if _cross(a, b, (d[0], d[1]), (d[2], d[3])))
+            c_box = sum(1 for a, b in segs for j, bx in enumerate(boxes) if j != i and _seg_box(a, b, bx, 0.3 * S))
+            c_box += sum(1 for a, b in segs[:-1] if _seg_box(a, b, boxes[i], 0.3 * S))     # own text: not crossed
+            c = (c_lead + c_dim + c_box, len(pth))
+            if bc is None or c < bc:
+                best, bc = pth, c
+            if c[0] == 0:
+                break
+        n["path"] = best
+        full = best + [(knee[0] + sgn * SHELF * S, knee[1])]
+        done += list(zip(full[:-1], full[1:]))
+        if bc[0]:
+            warn(f"leader crosses another leader or a note: '{n['s'][:40]}'")
 
 
 # --------------------------------------------------------------------------- reinforcement drawing
@@ -952,7 +1110,7 @@ def capture(fn, *args):
             pts = [(v.x, v.y) for v in make_path(e).flattening(1.0)]
             for (x0, y0), (x1, y1) in zip(pts[:-1], pts[1:]):
                 _BARS.append((x0, y0, x1, y1, hw))
-        if e.dxf.layer in ("S-HATCH", "S-VPORT"):
+        if e.dxf.layer in ("S-HATCH", "S-VPORT", "S-WELD", "Defpoints"):
             continue
         if e.dxftype() == "LINE":
             (x0, y0), (x1, y1) = (e.dxf.start.x, e.dxf.start.y), (e.dxf.end.x, e.dxf.end.y)
@@ -1244,7 +1402,7 @@ def _view_title(ps, x, y, name, scale_txt, bubble, triangles=False, note=None, n
         for k, ln in enumerate(nl):
             text(ps, ln, (x, y - r - 1.6 - k * LPN), 2.0, align=TA.TOP_LEFT)
         if y - r - 1.6 - 2.0 - (len(nl) - 1) * LPN < FY0 + 1:
-            print(f"  !! view-title note too low: '{note[:40]}'")
+            warn(f"view-title note too low: '{note[:40]}'")
     cx, cy = x + w + r + 1.0, y
     ps.add_circle((cx, cy), r, dxfattribs=A("S-SYMB"))
     line(ps, (cx - r, cy), (cx + r, cy), "S-SYMB")
@@ -1288,7 +1446,7 @@ def viewport(ps, key, scale, px, py_top, center_w=None):
     _LASTDET[:] = [ins, key, scale]
     _LASTVP[:] = [px, py_top - ph, pw, ph]
     if px < FX0 - 0.1 or px + pw > TBX + 0.1 or py_top - ph < FY0 - 0.1 or py_top > FY1 + 0.1:
-        print(f"  !! detail {key} outside drawing area: x {px:.0f}-{px + pw:.0f}, y {py_top - ph:.0f}-{py_top:.0f}")
+        warn(f"detail {key} outside drawing area: x {px:.0f}-{px + pw:.0f}, y {py_top - ph:.0f}-{py_top:.0f}")
     print(f"  det {key:5s} 1:{scale:<4} {pw:6.1f} x {ph:6.1f}  at x={px:.0f} y_top={py_top:.0f}")
     return px, pw, ph
 
@@ -1305,7 +1463,7 @@ def _close_sheet():
     for e in msp:
         if e.dxf.handle not in _SH["before"]:
             if e.dxftype() == "DIMENSION":
-                print(f"  !! paper-level DIMENSION on sheet {i + 1}: put it inside a block")
+                warn(f"paper-level DIMENSION on sheet {i + 1}: put it inside a block")
             e.transform(m)
     x0 = i * SHEET_DX * SC
     pline(msp, [(x0, 0), (x0 + W * SC, 0), (x0 + W * SC, H * SC), (x0, H * SC)], "S-SHEET", close=True)
@@ -1351,7 +1509,7 @@ def finish():
     doc.set_modelspace_vport(height=H * SC * 1.3, center=(((n - 1) * SHEET_DX + W) / 2 * SC, H / 2 * SC))
     left = [b.name for b in doc.blocks if b.name.startswith("DET-TMP")]
     if left:
-        print("  !! detail blocks never placed on a sheet:", ", ".join(left))
+        warn("detail blocks never placed on a sheet: " + ", ".join(left))
 
 
 def index_csv(path):
@@ -1519,14 +1677,14 @@ def tbl(ps, x, y_top, widths, heads, rows, align, title=None, rh=5.2):
     """grid table, text 2.0; every cell centred on its row (MIDDLE alignment); align L / C per column.
     title = TABT(key): every table carries its number and name"""
     if not (title and title.startswith("TABLE ")):
-        print(f"  !! table without a number and name: {title!r} - register it in TABLES, pass title=TABT(key)")
+        warn(f"table without a number and name: {title!r} - register it in TABLES, pass title=TABT(key)")
     if title:
         text(ps, title, (x, y_top + 2.0), 2.8, "S-TITLE", style="ANB")
     xs = [x]
     for w in widths:
         xs.append(xs[-1] + w)
     if xs[-1] > TBX - 1.0:
-        print(f"  !! table '{title}' runs into the title strip: right edge {xs[-1]:.1f} > {TBX - 1.0:.1f}")
+        warn(f"table '{title}' runs into the title strip: right edge {xs[-1]:.1f} > {TBX - 1.0:.1f}")
     allrows = [heads] + rows
     cells = [[wrap_s(c, 2.0, w - 2.0, "ANB" if r == 0 or (i == 0) else "AN") for i, (c, w) in enumerate(zip(row, widths))]
              for r, row in enumerate(allrows)]
@@ -1546,6 +1704,8 @@ def tbl(ps, x, y_top, widths, heads, rows, align, title=None, rh=5.2):
     line(ps, (xs[0], y), (xs[-1], y), "S-TTLB")
     for cx in xs:
         line(ps, (cx, y_top), (cx, y), "S-TTLB-THIN")
+    if y < FY0 + 1.0:
+        warn(f"table '{title}' runs below the frame: bottom y = {y:.1f}")
     return y
 
 
@@ -1706,7 +1866,7 @@ def notes_block(ps, x, y_top, width, title, items):
             y -= LPN
         y -= 1.0
     if y < FY0 + 1.0:
-        print(f"  !! notes block '{title}' runs below the frame: bottom y = {y:.1f}")
+        warn(f"notes block '{title}' runs below the frame: bottom y = {y:.1f}")
     return y
 
 

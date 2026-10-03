@@ -335,6 +335,7 @@
 | Element | Condition | ≤ DB16 | ≥ DB20 |
 |---|---|---|---|
 | Footings, pile caps | Cast against earth (bottom, sides) | 75 | 75 |
+| Footings, caps, slabs on ground | Cast on lean concrete or a membrane (bottom) | 40 | 50 |
 | Footings, pile caps | Formed faces in contact with earth | 40 | 50 |
 | Ground beams, suspended ground slabs | In contact with earth | 40 | 50 |
 | Columns, beams | Interior (to ties / stirrups) | 40 | 40 |
@@ -346,6 +347,7 @@
 | Shells, folded plates | Interior | 15 | 20 |
 
 - **Bar size** means the size of the bar the cover is measured to.
+- **On lean concrete or a membrane** (office rule): the concrete is not cast against earth, so the "exposed to earth" cover of 7.7.1(ข) applies, 40 / 50. Used by the slab-on-ground details (R2 1126) and the retaining wall (50 on lean concrete).
 - **Bundled bars:** cover = equivalent diameter ≤ 50; 75 when cast against earth [7.7.3].
 - **Embedded pipes and fittings:** 35 exposed, 20 interior [6.3.10].
 - **Precast (plant-controlled):** per EIT 011008 7.7.2.

@@ -1,4 +1,5 @@
-import fitz, sys
+import sys
+import pymupdf as fitz
 d = fitz.open('out/STR-ST-1001_General_Notes_Concrete_A3_RevA.pdf'); p = d[0]
 p.get_pixmap(dpi=110).save('out/_p.png')
 k = 72 / 25.4

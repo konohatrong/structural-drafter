@@ -9,7 +9,7 @@ TOL px in the other file (sub-pixel shifts pass, missing or moved items do not).
 import sys
 from pathlib import Path
 
-import fitz
+import pymupdf as fitz
 import numpy as np
 
 new, ref = Path(sys.argv[1]), Path(sys.argv[2])

@@ -276,6 +276,7 @@ LAP_DB = [10, 12, 16, 20, 25, 28, 32]
 # cover by structural element - EIT 011008-21 7.7.1 (cast in place): (element, condition, <= DB16, >= DB20)
 COVER_ELEM = [
     ("FOOTINGS, PILE CAPS", "CAST AGAINST EARTH (BOTTOM, SIDES)", "75", "75"),
+    ("FOOTINGS, CAPS, SLABS ON GROUND", "CAST ON LEAN CONCRETE OR A MEMBRANE (BOTTOM)", "40", "50"),   # office rule: as exposed to earth
     ("FOOTINGS, PILE CAPS", "FORMED FACES IN CONTACT WITH EARTH", "40", "50"),
     ("GROUND BEAMS, SUSPENDED GROUND SLABS", "IN CONTACT WITH EARTH", "40", "50"),
     ("COLUMNS, BEAMS", "INTERIOR (TO TIES / STIRRUPS)", "40", "40"),

@@ -2,8 +2,8 @@
 Standard set (model-space sheets built from blocks) - build one set to DXF.
 
 usage: python build.py <set>        set = gn | columns | beams | slabs | all
-    gn      -> out/STR-ST-1001_General_Notes_Concrete_A3_RevB.dxf    (1001, 1002)
-    columns -> out/STR-ST-1101_Typical_Column_Details_A3_RevA.dxf    (1101, 1102)
+    gn      -> out/STR-ST-1001_General_Notes_Concrete_A3_RevB.dxf    (1001 - 1003)
+    columns -> out/STR-ST-1101_Typical_Column_Details_A3_RevA.dxf    (1101 - 1103)
     beams   -> out/STR-ST-1111_Typical_Beam_Details_A3_RevA.dxf      (1111 - 1115)
     slabs   -> out/STR-ST-1121_Typical_Slab_Details_A3_RevA.dxf      (1121 - 1127)
 Also writes library/INDEX_<set>.csv (every block: detail, title block, view title, table, notes, key).

@@ -389,6 +389,8 @@ A kink is where the inclined flight meets a horizontal slab (landing or floor). 
 - **Terminators:**
   - 2 mm filled arrow with its tip on the **edge** of a bar drawn along its length;
   - open ring Ø = 2 × dot on a bar cut in section.
+- **Units:** every measured value in a note carries its unit ("COVER 20 mm"); dimension figures stay bare
+  (`ANNOTATION_ALIGNMENT_GUIDE.md` §2.4.2, user rule 2026-10-03).
 - **Where the notes go on a stair section** — the flight fills a diagonal band, so use the two empty triangles:
 
 | Zone | Use for | Engine setting (ST-1) |

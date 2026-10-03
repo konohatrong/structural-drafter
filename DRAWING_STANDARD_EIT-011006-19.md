@@ -928,7 +928,10 @@ These conventions were agreed with the engineer during NRW-ST Rev A and apply to
 - Notes sit in aligned columns or rows; leaders have a **45° / 60° leg + horizontal run + 3 mm shelf**, with no shallow random angles and no crossings.
 - **Terminators:**
   - 2.0 mm filled arrow on edges and on bars drawn along their length, with the tip on the object's **edge**, never inside black;
-  - **open circle Ø = 2 × bar dot** on bars cut in section.
+  - **open circle Ø = 2 × bar dot** on bars cut in section;
+  - steel: open circle Ø = 1.25 × the hole on a bolt or hole seen end-on, and the arrow on the plate edge on a plate.
+- **Units on every bare number** in notes, leaders, titles and keys ("GROUT 30 mm"); dimension figures, designations and table cells stay bare, and table headers carry the unit (guide §2.4.2, user rule 2026-10-03).
+- Steel sets use orthogonal leaders (straight, or an L with a vertical leg ≥ 3 mm), dashed detail callouts and labels written on the member (guide §9).
 - View titles are left-aligned to their view, 6 mm below the lowest annotation.
 
 ### 19.6 Earthwork graphics
@@ -937,7 +940,7 @@ These conventions were agreed with the engineer during NRW-ST Rev A and apply to
 - **Soil and fill:** undisturbed soil gets an `EARTH` band; selected fill gets an `AR-SAND` stipple; drainage stone gets `GRAVEL`.
 - **Concrete:** RC sections are **not** hatched.
 
-### 19.5 Bar ends and lap splices (office rule, user 2026-09-30)
+### 19.7 Bar ends and lap splices (office rule, user 2026-09-30)
 - **Bar ends are plain**: no slash / tick at the end of a straight bar on any drawing. A plain end means the bar stops; a bar drawn to a break line continues; hooks are drawn as bent.
 - **Lap splices are drawn cranked**: the lapped bar runs offset alongside the other bar over the lap, passes the other bar's end slightly, then cranks back to its own line (1:3). Two parallel offset bars without a crank are not used for splices.
 - Every sheet with elevations carries the bar-end key (plain end, hook, break, cranked lap).

@@ -1,6 +1,6 @@
 # Nooker Retaining Wall: Handover & Reproduction Guide
 
-**Drawing set:** NRW-ST, 7 sheets, A3, stage **D** (draft final), revision **A**, "ISSUED FOR APPROVAL", dated 28/09/2026.
+**Drawing set:** NRW-ST, 7 sheets, A3, stage **D** (draft final), revision **B** (laps of the horizontal bars, 03/10/2026); revision **A** "ISSUED FOR APPROVAL", dated 28/09/2026.
 **Status:** for client and local-authority approval. **Not for construction.**
 **Purpose of this document:** anyone who picks up this job can understand the design, regenerate the drawings exactly as issued, and make the next revision in the same style.
 
@@ -80,7 +80,7 @@ Values are per metre run.
 | Stem at footing, hs = 0.75 m | Mu = 3.47 ≤ φMn = 29.5 kN·m/m; Vu = 10.7 ≤ φVc = 96.2 kN/m | – |
 | Heel cantilever (w = 29.5 kPa, L = 1.0 m, no upward bearing) | Mu = 25.1 ≤ φMn = 37.4 kN·m/m; Vu = 40.4 ≤ φVc = 121.2 kN/m | – |
 | Hook of (1) into footing, ldh (ψr = 1.0, spacing ≥ 6db) | required 150, available **176** (T.O.F. to outside of bend) | – |
-| Class B laps (1.3 ld) | DB10 493 → **500**; DB12 591 → **600** | – |
+| Class B laps (1.3 ld), horizontal bars × ψt 1.3 (> 300 fresh concrete below, stem cast in one lift) | DB10 641 → **650**; DB12 769 → **800** | – |
 | Minimum steel | stem horiz. 958 ≥ 500; vert. 761 ≥ 300; footing 1130 ≥ 500 mm²/m | – |
 
 ---
@@ -126,7 +126,7 @@ At the boundary, where forms can't be stripped, permanent fibre-cement formwork 
 
 ---
 
-## 4. Reinforcement (Rev A)
+## 4. Reinforcement (Rev B)
 
 | Mark | Bar | Description | Shape (out-to-out) | Planes / spacing |
 |---|---|---|---|---|
@@ -138,9 +138,9 @@ At the boundary, where forms can't be stripped, permanent fibre-cement formwork 
 | (6) | 6+6-DB12 | Footing longitudinal T & B inside (5), x = 102, 300, 500, 700, 900, 1100 | straight 5900 | – |
 | (7) | DB12@200 | Shear key U-bar, legs up to −0.250 into the footing cage | U: A375 B100 C375 | 50 + 200n |
 | (8) | 2-DB12 | Shear key longitudinal, in the U bottom | straight 5900 | – |
-| (9) | 4-DB12 per corner | Corner L-bar, soil face, at the levels of (2), lap 600 | L: 750 × 750 | – |
-| (10) | 4-DB10 per corner | Corner L-bar, exposed face, lap 500 with (4) | L: 650 × 650 | – |
-| (11) | 4-DB12 per free end | Free-end U-bar (horizontal), lap 600 with (2)/(4) | U: A605 B100 C605 | – |
+| (9) | 4-DB12 per corner | Corner L-bar, soil face, at the levels of (2), lap 800 | L: 950 × 950 | – |
+| (10) | 4-DB10 per corner | Corner L-bar, exposed face, lap 650 with (4) | L: 800 × 800 | – |
+| (11) | 4-DB12 per free end | Free-end U-bar (horizontal), lap 800 with (2)/(4) | U: A905 B100 C905 | – |
 | (D) | RB16 SR24 | Slip dowel L = 600: 6 per joint (2 stem + 4 footing) | straight 600 | @300 |
 
 **Bar centreline coordinates (section, mm):**
@@ -210,24 +210,24 @@ Sheet number format **`NRW-ST-<series>-D-A`** (EIT 011006-19 Ch. 4: project, dis
 | Item | Version / note |
 |---|---|
 | Python | 3.11 with **ezdxf 1.4.x**, **PyMuPDF (fitz)**, **fontTools** (`pip install ezdxf pymupdf fonttools`) |
-| AutoCAD | **2024**. `accoreconsole.exe` is used for plotting. Needs `DWG To PDF.pc3` and `monochrome.ctb` (standard). |
+| AutoCAD | **2024 or later** (the newest installed; `ACCORECONSOLE` overrides). `accoreconsole.exe` is used for plotting. Needs `DWG To PDF.pc3` and `monochrome.ctb` (standard). |
 | Fonts | `C:\Windows\Fonts\ARIALN.TTF`, `ARIALNB.TTF` (Arial Narrow). The engine measures text with them. |
 | Shell | **PowerShell** (or Python subprocess). `accoreconsole` does **not** run scripts when launched from Git Bash. |
 
 ### 6.2 Build and plot
 
 ```powershell
-cd "C:\990 - Developing software\902 Structural Drafter\jobs\nooker_rw"
+cd jobs\nooker_rw                # from the repository root
 $o = "C:\temp\rwout"            # any empty output folder
-python build_rw.py $o           # -> $o\NRW-ST_Retaining_Wall_A3_RevA.dxf (prints viewport sizes; "!!" = view overflows sheet)
-python plot_rw.py  $o           # -> NRW-EIT.ctb, $o\...RevA.dwg, $o\...RevA.pdf (7 pages)
+python build_rw.py $o           # -> $o\NRW-ST_Retaining_Wall_A3_RevB.dxf (prints viewport sizes; "!!" = view overflows sheet)
+python plot_rw.py  $o           # -> NRW-EIT.ctb, $o\...RevB.dwg, $o\...RevB.pdf (7 pages)
 python calc_rw.py               # design check printout
 ```
 
-Then copy `…RevA.pdf/.dwg/.dxf` and `NRW-EIT.ctb` into the job `Drawings\` folder.
+Then copy `…RevB.pdf/.dwg/.dxf` and `NRW-EIT.ctb` into the job `Drawings\` folder.
 
 **`plot_rw.py` does the following, in order:**
-1. Writes `NRW-EIT.ctb`: AutoCAD's `monochrome.ctb` with ACI 8 screened 50 %. It saves it next to the output and into `%APPDATA%\Autodesk\AutoCAD 2024\*\*\Plotters\Plot Styles`.
+1. Writes `NRW-EIT.ctb`: AutoCAD's `monochrome.ctb` with ACI 8 screened 50 %. It saves it next to the output and into the Plot Styles folder of every installed AutoCAD version (`%APPDATA%\Autodesk\AutoCAD 20xx\*\*\Plotters\Plot Styles`).
 2. Writes `_plot.scr` with **exact CRLF** line endings.
 3. For each layout (`1001, 3001, 5001, 5002, 5003, 5004, 5005`): `-PLOT` with DWG To PDF.pc3, ISO full bleed A3, landscape, layout area, 1:1, `NRW-EIT.ctb`, object lineweights, and the page setup saved.
 4. Turns the plot stamp off, then runs `SAVEAS 2018` to the DWG and `QUIT`.
@@ -276,7 +276,7 @@ Project data is in the `PROJ` dict at the top of `build_rw.py`. Change it there,
    - `rev` = `"B"` (internal changes before resubmission: `B1`, `B2`; tender issue: `00`; after tender: `01`, `02`);
    - `stage` = `"T"` for tender or `"F"` for construction.
 2. **Add a row to `revs`** in `title_block()` with the description and date. Keep the earlier rows.
-3. **Output file names:** the file base name in both scripts contains `RevA`. Update `DXF` in `build_rw.py` and `BASE` in `plot_rw.py`.
+3. **Output file names:** the file base name in both scripts contains the revision (`RevB`). Update `DXF` in `build_rw.py` and `BASE` in `plot_rw.py`.
 4. **Geometry:** change it through the constants in §3 / §4. Bar positions, the bar schedule and the bar-plane view derive from them.
    - After changing a bar, check the schedule on 5005 and the key on 5001.
    - If design values change, re-run `calc_rw.py` and update sheet 1001 note 3 (the `rows` in `sheet_1001`).
@@ -302,7 +302,11 @@ Project data is in the `PROJ` dict at the top of `build_rw.py`. Change it there,
 
 ---
 
-## 10. Change history (Rev A development, 28/09/2026)
+## 10. Change history
+
+**Rev B (03/10/2026).** Laps of the stem horizontal bars recomputed with the top-bar factor ψt = 1.3 (ACI 318-19 Table 25.4.2.5): the stem is cast in one lift from T.O.F. −0.150, so the bars at +0.325 and +0.525 have more than 300 mm of fresh concrete below. Laps DB10 500 → 650, DB12 600 → 800; corner L-bars (9) 950 × 950, (10) 800 × 800; free-end U-bars (11) legs 905 (the straight bars stop 100 short of the bend, so the Rev A leg of 605 gave only about 500 of overlap). Note 5.3, the corner and wall-end plans and the bar schedule updated.
+
+**Rev A development (28/09/2026):**
 
 1. **Base drawing:** review of RW.pdf, redesign, and the first set (6 sheets, EIT format, Arial Narrow 2.0 / 2.8).
 2. **Linetype guide review:** EIT A2 pens used unreduced; cut 0.35 / seen 0.25; ACI 8 grey via `NRW-EIT.ctb`; PLINEGEN; `EIT_*` linetypes.

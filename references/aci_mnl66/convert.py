@@ -3,17 +3,24 @@ Convert the ACI MNL-66(20) supplemental DWGs for review: DXF (text / geometry) a
 fit to A3 landscape, monochrome) via AutoCAD Core Console, then PNG pages.
 
 usage (from PowerShell):  python convert.py [substring filter]
+The supplemental DWGs (copyrighted, not in the repository) are read from the folder in the environment
+variable MNL66_SRC; the default is the author's copy on G:.
 """
+import os
 import subprocess
 import sys
 from pathlib import Path
 
-import fitz
+import pymupdf as fitz
 
-SRC = Path(r"G:\My Drive\##Workset_Autocad\supplemental Autocad files to ACI Detailing Manual Manual MNL-66(20) 2020"
-           r"\supplemental Autocad files to ACI Detailing Manual Manual MNL-66(20) 2020")
+SRC = Path(os.environ.get("MNL66_SRC",
+           r"G:\My Drive\##Workset_Autocad\supplemental Autocad files to ACI Detailing Manual Manual MNL-66(20) 2020"
+           r"\supplemental Autocad files to ACI Detailing Manual Manual MNL-66(20) 2020"))
 HERE = Path(__file__).resolve().parent
-ACC = r"C:\Program Files\Autodesk\AutoCAD 2024\accoreconsole.exe"
+sys.path.insert(0, str(HERE.parents[1]))           # repository root: shared drafter package
+from drafter.acad import ACC                       # noqa: E402  newest AutoCAD, or ACCORECONSOLE
+if not SRC.exists():
+    sys.exit(f"!! MNL-66 supplemental files not found: {SRC} - set MNL66_SRC")
 flt = sys.argv[1] if len(sys.argv) > 1 else ""
 q = lambda p: '"' + str(p) + '"'
 

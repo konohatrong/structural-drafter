@@ -1,7 +1,8 @@
 """
 Typical beam details - STR-ST-1111 (stirrups and splice zones by frame type), STR-ST-1112 (bar cut-off,
 cantilever, anchorage), STR-ST-1113 (sections, supports, openings), STR-ST-1114 (level changes,
-beam ends), STR-ST-1115 (beam schedule, keyed placing diagram - ACI MNL-66 BM-1).
+beam ends), STR-ST-1115 (beam schedule, keyed placing diagram - ACI MNL-66 BM-1), STR-ST-1116 (stirrup
+types, table, notes).
 Sources : EIT 011008-21 ch. 7, 8, 10, 11, 12; DPT 1301/1302-61 cl. 5.2.6 - 5.2.8, 5.2.10; TATA RC detailing
           handbook (beam chapter + typical sheets). See SOURCES_BEAM_DETAILING.md.
 """
@@ -28,7 +29,7 @@ YS = CVR + DS_ / 2             # 44.5 stirrup centreline from the face
 XT_C = CVR + DS_ / 2           # column tie centreline from the column face
 LN = SPAN_D                    # clear span (drawn, N.T.S.)
 H2 = 2 * HB                    # 2h end zone
-LAPD = 600                     # drawn lap (N.T.S.; real value TABLE 6)
+LAPD = LAP_D                   # drawn lap length (members.py)
 GAP = 45                       # drawn offset of lapped / additional bars
 CUP = 150                      # column drawn above / below the beam (a stub only indicates the column)
 STUB = 300                     # beam drawn beyond the interior column
@@ -899,7 +900,7 @@ BEAM_NOTES = [
            "ALTERNATE BAR HELD BY A HOOP CORNER OR CROSSTIE, NO BAR > 150 mm CLEAR FROM A HELD BAR. INTERMEDIATE AND "
            "SPECIAL FRAMES: DEFORMED HOOPS AND CROSSTIES, DB10 MIN. SPECIAL-FRAME HOOPS: THE STRICTER OF DPT 5.2.8.3.2 "
            "(d/4, 8 db, 24 dt, 300) AND ACI 318-11 21.5.3.2 (d/4, 6 db, 150). [EIT 011008 7.11, 7.10.5.3; DPT 5.2.8.3.3]"),
-    ("6.", f"LAPS: CLASS B PER {TAB('LAPS')}, ADJACENT LAPS STAGGERED ≥ 0.3 LAP; NO LAPS FOR BARS > DB36. "
+    ("6.", f"LAPS: CLASS B PER {TAB('LAPS')}, ADJACENT LAPS STAGGERED ≥ 1.0 m; NO LAPS FOR BARS > DB36. "
            "COUPLERS ≥ 1.25 fy. [EIT 011008 12.13, 12.14]"),
     ("7.", "BAR ENDS ON THE ELEVATIONS: A PLAIN END (NO MARK) MEANS THE BAR STOPS THERE (END OF AN "
            "ADDITIONAL OR LAPPED BAR); NO MARK AT A BREAK LINE MEANS THE BAR CONTINUES. KEY ON 1112."),
@@ -923,7 +924,7 @@ SEC_NOTES = [
            "(HOOKED) AT BOTH ENDS. [EIT 011008 11.5]"),
     ("7.", "SIDE-FACE BARS WHERE h > 600 mm: DB12 BOTH FACES OVER THE FULL WEB DEPTH (THE TENSION FACE CHANGES "
            "ALONG A CONTINUOUS BEAM), @ ≤ 250 mm, THE FIRST ≤ 150 mm BELOW THE SLAB; LAPPED AND ANCHORED 40 db INTO "
-           "SUPPORTS. [EIT 011008 10.6.7, 10.6.4]"),
+           "SUPPORTS. [TATA; EIT 011008 10.6.4]"),
 ]
 
 
@@ -1081,7 +1082,7 @@ def sheet_1115():
     top = FY1 - 3
     px, pw, ph1 = viewport(ps, "PD", 25, FX0 + 1, top)
     if px + pw > TBX - 1:
-        print(f"  !! 1115 placing diagram runs into the title strip: {px + pw:.0f} > {TBX - 1:.0f}")
+        warn(f"1115 placing diagram runs into the title strip: {px + pw:.0f} > {TBX - 1:.0f}")
     view_title(ps, None, top - ph1 - 6, "BEAM BARS PLACING DIAGRAM", "N.T.S.", ("1", "1115"),
                note=f"LETTERS = COLUMNS OF {TAB('BSCHED')}; SPANS SCHEMATIC")
     ytab = top - ph1 - 24                                          # schedule under the diagram, full width

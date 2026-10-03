@@ -1,6 +1,7 @@
 """
-Typical slab details - STR-ST-1121 (slabs on beams), 1122 (flat slabs), 1123 (openings, steps, edges),
-1123 (slab on ground). R2: 1121 - 1128, panel grid after Beca SE-12xx (REVIEW_BECA_SLAB.md).
+Typical slab details R2 - STR-ST-1121 (slabs on beams), 1122 (flat slab at the column), 1123 (punching shear),
+1124 (openings), 1125 (steps, edges, cantilever), 1126 (slab on ground), 1127 (slab-on-ground joints),
+1128 (slab table, fill under slabs). Slab on ground after the Beca SE-12xx review (REVIEW_BECA_SLAB.md).
 Sources : EIT 011008-21 ch. 7, 9, 10, 11.11, 13 (Fig 13.3.8); DPT 1301/1302-61 cl. 5.2.12, 2.11.5, 2.9;
           TATA RC detailing handbook ch. 3 + appendix sheets. See SOURCES_SLAB_DETAILING.md.
 Rules   : dimensions on one side of a view, notes on the other (no leader crosses a dimension); bar-end key on
@@ -1123,7 +1124,8 @@ SLAB_NOTES = [
            "PS = PRECAST, GS = ON GROUND; ARROWS SHOW THE SPAN DIRECTION."),
     ("2.", f"COVER: 20 mm (≤ DB16) / 30 mm (≥ DB20) INTERIOR; 40 / 50 mm EXPOSED TO WEATHER; 75 mm CAST AGAINST EARTH ({TAB('COVER')})."),
     ("3.", f"LAPS PER {TAB('LAPS')}: TOP BARS LAPPED NEAR MIDSPAN, BOTTOM BARS OVER THE SUPPORTS. WELDED MESH LAP "
-           "≥ ONE MESH SPACING + 25 mm AND ≥ 300 mm."),
+           "(PLAIN WIRE): OUTERMOST CROSS WIRES OVERLAP ≥ ONE CROSS-WIRE SPACING + 50 mm, ≥ 1.5 ℓd AND ≥ 300 mm. "
+           "[EIT 011008 12.18]"),
     ("4.", "BOTTOM MAT ON MORTAR SPACERS; TOP MAT ON DB12 CHAIRS @ 1.0 – 1.5 m EACH WAY."),
     ("5.", "PIPES IN SLABS: OUTSIDE DIA. ≤ h/3, ≥ 3 DIA. APART, BETWEEN THE TOP AND BOTTOM MATS. [EIT 011008 6.3]"),
     ("6.", "A 90° TOP-BAR HOOK NEEDS ≈ 16 db BETWEEN THE COVERS; WHERE IT DOES NOT FIT, USE A 180° HOOK OR EDGE "
@@ -1163,7 +1165,8 @@ OPENING_NOTES = [
 SOG_NOTES = [
     ("1.", f"SLAB ON GROUND (GS) ON A LEVELLED, COMPACTED SUBGRADE OR FILL ({TAB('FILL')}, 1128/1) WITH 50 – 100 mm "
            "COMPACTED SAND; SLAB THICKNESS 150 – 300 mm "
-           "UNLESS SHOWN. COVER 75 mm WHERE CAST AGAINST EARTH (LEAN CONCRETE OR MEMBRANE BELOW: 40 mm)."),
+           "UNLESS SHOWN. COVER 75 mm WHERE CAST AGAINST EARTH; ON LEAN CONCRETE OR A MEMBRANE 40 mm (≤ DB16) / 50 mm (≥ DB20) "
+           f"({TAB('COVER')})."),
     ("2.", "JOINTS ON PLAN BY MARK (1127): SJ SAWN, SJD SAWN WITH DOWELS, CJ CONSTRUCTION, EJ EXPANSION, IJ "
            f"ISOLATION. SJ SPACING ≤ 30 t ({TAB('SOG')}); PANELS AS SQUARE AS POSSIBLE (≤ 1.5 : 1); RE-ENTRANT CORNERS: "
            "2 DIAGONAL BARS."),
