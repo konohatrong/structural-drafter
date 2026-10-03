@@ -23,7 +23,7 @@ not in the repository. Rebuild it with the commands in
 | `standard_set_R2` (STR-ST 11xx) | **Concrete**: typical details, columns 1101 – 1104, beams 1111 – 1116, slabs 1121 – 1128 | **Issued** F-A (ISSUED FOR USE, 03/10/2026); changes only by revision | N.T.S. typical details from one member catalogue, model-space blocks, pens by colour, numbered tables, focus rule, clean dimensioning, leader form per target | `standard_set_R2/MODEL_SPACE_SHEETS.md` (R2 rules and history) |
 | `nooker_rw` (NRW-ST, 7 sheets) | **Concrete**: cantilever retaining wall with joints, corners and bar schedule | **Issued** (Rev B); change only by revision | A complete project set with its design calc (`calc_rw.py`); the origin of the annotation engine and the office conventions | `nooker_rw/README.md` |
 | `standard_set` (STR-ST 1001 – 1003, R1 11xx) | **Concrete**: general notes; typical details R1 | General notes **issued** F-A (ISSUED FOR USE, 03/10/2026); R1 details **frozen** | The first model-space set from blocks; general notes flowing over sheets at the normal text size | `standard_set/MODEL_SPACE_SHEETS.md` |
-| `general_notes` (STR-ST-1001 Rev A) | **Concrete** general notes, one sheet | Superseded by the Rev B notes in `standard_set` | The Rev A notes sheet (× 0.625 sizes, one sheet, balanced band), replaced by Rev B (normal sizes, flowing sheets) | `docs/general/GENERAL_NOTES_DRAWING_INSTRUCTION.md` |
+| `general_notes` (STR-ST-1001 Rev A) | **Concrete** general notes, one sheet | Superseded by the notes in `standard_set` (issued F-A) | The Rev A notes sheet (× 0.625 sizes, one sheet, balanced band), replaced by Rev B (normal sizes, flowing sheets) | `docs/general/GENERAL_NOTES_DRAWING_INSTRUCTION.md` |
 | `stair_demo` (ST-1, 1 sheet) | **Concrete** stair | Demonstration | Stair views, flight bar shapes, fixed leaders in the empty triangles | `docs/concrete/STAIRCASE_DRAWING_INSTRUCTION.md` |
 | `typical_details` | **Concrete** typical details, first version | **Superseded**, kept unchanged | Paper-space viewports, the first `stirrup` / `crosstie` helpers | – |
 
@@ -59,6 +59,8 @@ not in the repository. Rebuild it with the commands in
 ## 4. Status words
 
 - **Current**: the set being developed; changes are normal.
+- **Issued** standard sets (general notes, typical details): changed only by a new revision issued through
+  `standard_drawings/publish.py --issue`; the issued folders are never edited.
 - **Issued**: sent out under a revision. Change it only by a new revision (revision row, drawing numbers, change
   history), and regenerate exactly as issued otherwise.
 - **Frozen**: kept as a reference; do not change it.

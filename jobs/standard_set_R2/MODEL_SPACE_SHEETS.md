@@ -99,4 +99,4 @@ The Beca **panel-grid sheet layout was tried and rejected** by the user ("our st
   in `docs/general/DRAWING_ENGINE.md` (moved out of this file on 2026-10-03; this file used to carry a copy of the R1
   guide).
 - The R1 guide itself, with the R1 build / plot / compare results and the general notes at the normal text size
-  (Rev B), is `jobs/standard_set/MODEL_SPACE_SHEETS.md`.
+  (review print B, issued F-A), is `jobs/standard_set/MODEL_SPACE_SHEETS.md`.

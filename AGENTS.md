@@ -115,6 +115,8 @@ The rules come from the user's reviews of real sets. When the user corrects a dr
   redesign. Propose with reasons, then ask. Open decisions are listed in each job README.
 - **Status of jobs** (`jobs/README.md` §4): an **issued** job changes only by a new revision; a **frozen** or
   **superseded** job is not changed.
+- **The standard sets are issued** (general notes and typical details, F-A "ISSUED FOR USE", 03/10/2026). Any change
+  to them is a new revision, with its revision row, issued through `standard_drawings/publish.py --issue`.
 - **Official issue of a standard drawing is the engineer's decision.** Publish review copies to
   `standard_drawings/developing/` freely; run `publish.py <set> --issue` only when the user asks for the issue.
   Never edit, replace or delete anything in `standard_drawings/issued/`.

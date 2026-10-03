@@ -84,7 +84,7 @@ python plot.py slabs       # -> out\*.pdf, out\*.dwg, library\DET-*.dwg (one DWG
 |---|---|---|
 | `jobs/standard_set_R2` | `python build.py <set>` | `python plot.py <set>` (`columns \| beams \| slabs \| all`) |
 | `jobs/steel_roof_truss` | `python build.py` (design: `calc_truss.py`) | `python plot.py` |
-| `jobs/standard_set` (R1, general notes Rev B) | `python build.py gn` | `python plot.py gn` (`gn \| columns \| beams \| slabs \| all`) |
+| `jobs/standard_set` (general notes, issued F-A; R1 details frozen) | `python build.py gn` | `python plot.py gn` (`gn \| columns \| beams \| slabs \| all`) |
 | `jobs/general_notes` | `python build_gn.py out` | `python plot_gn.py out` |
 | `jobs/stair_demo` | `python build_stair.py out` | `python plot_stair.py out` |
 | `jobs/nooker_rw` | `python build_rw.py <out>` | `python plot_rw.py <out>` (design checks: `calc_rw.py`) |

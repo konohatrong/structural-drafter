@@ -44,13 +44,13 @@ This file explains how to draw the office typical-detail sheets. **Current set R
   - `td_columns.py`, `td_beams.py` and `td_slabs.py` hold the content;
   - `build.py <set|all>` and `plot.py <set|all>` are the drivers. A build with any `!!` layout problem exits 1.
   - Sheets are laid out in model space from blocks at real size (engine: `docs/general/DRAWING_ENGINE.md`; R2 rules and history: `jobs/standard_set_R2/MODEL_SPACE_SHEETS.md`).
-  - `jobs/standard_set/` holds the frozen R1 set and the general notes Rev B (`gn_notes.py`); `jobs/typical_details/` is the superseded paper-space version.
+  - `jobs/standard_set/` holds the frozen R1 set and the general notes, issued F-A (`gn_notes.py`); `jobs/typical_details/` is the superseded paper-space version.
 - **Output:** `jobs/standard_set_R2/out/`, one DXF / DWG / PDF per set:
   - `STR-ST-1101_Typical_Column_Details_A3_R2.*`;
   - `STR-ST-1111_Typical_Beam_Details_A3_R2.*`;
   - `STR-ST-1121_Typical_Slab_Details_A3_R2.*`.
 
-  The block library (one DWG per detail, plus the title block) is in `jobs/standard_set_R2/library/`. The general notes Rev B are built in `jobs/standard_set/` (`python build.py gn`).
+  The block library (one DWG per detail, plus the title block) is in `jobs/standard_set_R2/library/`. The general notes are built in `jobs/standard_set/` (`python build.py gn`).
 - **Review tools:** `crop_det.py <set> DET-xxxx-n` crops one detail out of the plotted PDF; `render_block.py` renders a block without AutoCAD.
 - **Sources:** `SOURCES_COLUMN_DETAILING.md`, `SOURCES_BEAM_DETAILING.md`, `SOURCES_SLAB_DETAILING.md` (`docs/concrete/reference/`).
 - **Cross-check:** `REVIEW_ACI_MNL66.md` (ACI Detailing Manual MNL-66(20); material in `references/aci_mnl66/`).
@@ -58,7 +58,7 @@ This file explains how to draw the office typical-detail sheets. **Current set R
 **Read with:**
 - `docs/general/DRAWING_STANDARD_EIT-011006-19.md` (§19 office rules) and `docs/concrete/RC_DRAWING_RULES_EIT-011006-19.md` (bar graphics, §19.4 / §19.7);
 - `ANNOTATION_ALIGNMENT_GUIDE.md`;
-- `GENERAL_NOTES_STRUCTURAL_CONCRETE.md` (sheets `1001 – 1003`, Rev B: laps in TABLE 6 and cover in TABLE 7, both on 1002; tie sizes in TABLE 5);
+- `GENERAL_NOTES_STRUCTURAL_CONCRETE.md` (sheets `1001 – 1003`, issued F-A: laps in TABLE 6 and cover in TABLE 7, both on 1002; tie sizes in TABLE 5);
 - `SPEC_RC_DESIGN_EIT-011008-21.md`.
 
 ---

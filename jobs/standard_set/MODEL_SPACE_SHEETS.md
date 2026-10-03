@@ -4,7 +4,7 @@ This folder builds the office standard sheets with a new structure. They plot th
 
 | Set | Sheets | Content module |
 |---|---|---|
-| `gn` | STR-ST-1001 – 1003 general notes (Rev B) | `gn_notes.py` |
+| `gn` | STR-ST-1001 – 1003 general notes (review print B; issued F-A on 03/10/2026, see §6) | `gn_notes.py` |
 | `columns` | 1101 – 1103 | `td_columns.py` |
 | `beams` | 1111 – 1115 | `td_beams.py` |
 | `slabs` | 1121 – 1127 | `td_slabs.py` |

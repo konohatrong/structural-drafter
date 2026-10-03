@@ -14,7 +14,8 @@ RC sets follow the pipeline in `docs/general/DRAWING_PRODUCTION.md`:
 5. `plot.py`.
 
 Reference jobs:
-- `jobs/standard_set_R2`: typical details, current;
+- `jobs/standard_set_R2`: typical details, **issued** F-A (with the general notes in `jobs/standard_set`). A change is a
+  new revision: set it in `issue.py` / `gn_notes.py` and issue through `standard_drawings/publish.py --issue`;
 - `jobs/nooker_rw`: a complete project set with its calc. It is **issued**, so change it only by a revision;
 - `jobs/stair_demo`: a stair.
 

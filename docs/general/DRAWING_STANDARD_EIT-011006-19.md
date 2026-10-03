@@ -595,7 +595,7 @@ These conventions were agreed with the engineer during NRW-ST Rev A and apply to
 | Zone grid | 8 × 6 (numbers 1–8 horizontal, letters A–F vertical), both sides | §2.3 |
 | Font | **Arial Narrow**: 2.0 mm body, **2.8 mm** bold headers and titles | §2.6 (2.5 / 3.5 series adapted) |
 | Drawing number | `<PROJ>-ST-<series>-<stage>-<rev>`, e.g. `NRW-ST-5001-D-A` | Ch. 4 |
-| **General-notes sheets** | **Rev B (current, 2026-09-29): the normal sizes (K = 1)**, the notes flowing over as many sheets as they need. Rev A used × 0.625 (text 1.25 / 1.75, pitch 2.08). See `GENERAL_NOTES_DRAWING_INSTRUCTION.md` §0 | – |
+| **General-notes sheets** | **Current (issued F-A, 03/10/2026; developed as review print B, 2026-09-29): the normal sizes (K = 1)**, the notes flowing over as many sheets as they need. Rev A used × 0.625 (text 1.25 / 1.75, pitch 2.08). See `GENERAL_NOTES_DRAWING_INSTRUCTION.md` §0 | – |
 
 ### 19.2 Pens and lines (supersede §4.3 / §16 for A3 originals)
 

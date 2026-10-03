@@ -58,7 +58,7 @@ An official issue is a decision of the engineer (the user), never of an agent on
    The script builds and plots the set with AutoCAD, checks that the build is clean, the DWG and every library DWG
    exist and every sheet carries the same revision, then writes `issued/<set>/<stage>-<rev>/` and appends a row to
    `REGISTER.md`. It refuses if that revision was issued before.
-5. **Commit and push** `standard_drawings/` ("Issue STR-ST-1101 D-B").
+5. **Commit and push** `standard_drawings/` ("Issue STR-ST-1101 F-B").
 
 ## 3. Rules
 

@@ -6,10 +6,12 @@
 - Full clause digest: [SPEC_CONCRETE_EIT-011014-19.md](SPEC_CONCRETE_EIT-011014-19.md).
 - EIT 011008-21 replaces EIT 1008-38. Where the two EIT standards differ, the stricter value is used; the drawing tags show both, e.g. `[EIT 011008 7.7.1; EIT 011014 2.5.1.5]`.
 - **The A3 sheets are the master text.**
-  - Rev B, current: `jobs/standard_set/gn_notes.py`, sheets `STR-ST-1001 – 1003`, 2.0 mm text, numbered tables.
-  - Rev A, frozen: `jobs/general_notes/rev_A/`.
+  - Current, issued F-A "ISSUED FOR USE" 03/10/2026: `jobs/standard_set/gn_notes.py`, sheets `STR-ST-1001 – 1003-F-A`, 2.0 mm text, numbered
+    tables (`standard_drawings/issued/`). A change is a new revision (`standard_drawings/README.md`).
+  - First review print A, frozen: `jobs/general_notes/rev_A/`.
 
-  This file explains the choices behind them. The Rev B additions are in **§R**.
+  This file explains the choices behind them. "Rev B" below means review print B, the text that was issued; its
+  additions are in **§R**.
 
 **How to use:**
 1. Fill in the **project parameters** (§0). Every `⟨…⟩` in the notes refers to them.
@@ -578,7 +580,7 @@ c0 = corrosion risk (T2.23): slabs and walls 50, other members 65 (precast 40 / 
 
 ## 15. Sheet text (for the general-notes sheet `…-ST-1001`)
 
-> **The full A3 sheets are generated:** Rev B from `jobs/standard_set/gn_notes.py`, sheets 1001 – 1003 at 2.0 mm text; Rev A (frozen) from `jobs/general_notes/build_gn.py`, one sheet at 1.25 mm. Drawing rules are in `GENERAL_NOTES_DRAWING_INSTRUCTION.md` (§0 for Rev B). The condensed text below is only for adding a short concrete-notes block to another sheet.
+> **The full A3 sheets are generated:** the issued sheets (F-A) from `jobs/standard_set/gn_notes.py`, 1001 – 1003 at 2.0 mm text; review print A (frozen) from `jobs/general_notes/build_gn.py`, one sheet at 1.25 mm. Drawing rules are in `GENERAL_NOTES_DRAWING_INSTRUCTION.md` (§0 for the current method). The condensed text below is only for adding a short concrete-notes block to another sheet.
 
 This is the condensed upper-case version for an A3 sheet at 2.0 mm (≈ 2 columns at 100 mm width).
 - Paste each block into the sheet generator's `notes([...])` lists, using `hdr()` for headers.
