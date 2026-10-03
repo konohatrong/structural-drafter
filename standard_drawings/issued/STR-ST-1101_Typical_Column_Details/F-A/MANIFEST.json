@@ -1,0 +1,177 @@
+{
+  "set": "columns",
+  "title": "TYPICAL COLUMN DETAILS",
+  "stage_rev": "F-A",
+  "kind": "issued",
+  "date": "2026-10-03",
+  "commit": "e59c639c9cdab53ccc15fab654fd1f51493b02f4",
+  "generator_clean": true,
+  "plotted_with": "AutoCAD Core Console",
+  "revision_description": "ISSUED FOR USE",
+  "sheets": [
+    {
+      "layout": "1101",
+      "dwg_no": "STR-ST-1101-F-A",
+      "title": "TYPICAL COLUMN DETAILS (1) TIES AND SPLICE ZONES",
+      "status": "ISSUED FOR USE",
+      "revisions": [
+        [
+          "A",
+          "ISSUED FOR USE",
+          "03/10/2026"
+        ]
+      ]
+    },
+    {
+      "layout": "1102",
+      "dwg_no": "STR-ST-1102-F-A",
+      "title": "TYPICAL COLUMN DETAILS (2) SIZE CHANGE, JOINTS, FOOTING",
+      "status": "ISSUED FOR USE",
+      "revisions": [
+        [
+          "A",
+          "ISSUED FOR USE",
+          "03/10/2026"
+        ]
+      ]
+    },
+    {
+      "layout": "1103",
+      "dwg_no": "STR-ST-1103-F-A",
+      "title": "TYPICAL COLUMN DETAILS (3) TIE TYPES AND SPLICES",
+      "status": "ISSUED FOR USE",
+      "revisions": [
+        [
+          "A",
+          "ISSUED FOR USE",
+          "03/10/2026"
+        ]
+      ]
+    },
+    {
+      "layout": "1104",
+      "dwg_no": "STR-ST-1104-F-A",
+      "title": "TYPICAL COLUMN DETAILS (4) COLUMN ENDS, SPECIAL CASES",
+      "status": "ISSUED FOR USE",
+      "revisions": [
+        [
+          "A",
+          "ISSUED FOR USE",
+          "03/10/2026"
+        ]
+      ]
+    }
+  ],
+  "files": [
+    {
+      "path": "STR-ST-1101_Typical_Column_Details_A3_R2.pdf",
+      "bytes": 379361,
+      "sha256": "0204477959a531509b240d857edc1a61a944919abb488cf5a20ec90c45fd1c3d"
+    },
+    {
+      "path": "STR-ST-1101_Typical_Column_Details_A3_R2.dwg",
+      "bytes": 129077,
+      "sha256": "144986d69a1575110c0a75704af0672e9bcf12d207a353bb4beda761efb8cbbf"
+    },
+    {
+      "path": "library/TB-A3-NRW.dwg",
+      "bytes": 23525,
+      "sha256": "d807859f5ec0ae459701f39b63873bf9265a0c421ebec153b3a0f6c593d815ca"
+    },
+    {
+      "path": "library/DET-1101-1.dwg",
+      "bytes": 22213,
+      "sha256": "697b7b1cea7f78aa2c8722c3651ff18ba68d6cfd34f8bcb70b0813eb212782c2"
+    },
+    {
+      "path": "library/DET-1101-2.dwg",
+      "bytes": 23365,
+      "sha256": "516be5fe943601d2c4b18744f2fa4774f0f0283f3a778f596df3adb49a643c43"
+    },
+    {
+      "path": "library/DET-1101-3.dwg",
+      "bytes": 23269,
+      "sha256": "c199dda1bf5e6e8be10f618782d65e7bec1bee2efd4d6d670a327160ebc560fb"
+    },
+    {
+      "path": "library/DET-1102-1.dwg",
+      "bytes": 20903,
+      "sha256": "bb23ebeb8ce8e9249ea1fe7489bde60c42b44941836c9ac0334d6d5c890a30d1"
+    },
+    {
+      "path": "library/DET-1102-2.dwg",
+      "bytes": 20999,
+      "sha256": "41eaffcbdb8f5fdf8c4e276e0c66ffaff6fef0282dbb1d6411926967803d85b7"
+    },
+    {
+      "path": "library/DET-1102-3.dwg",
+      "bytes": 20805,
+      "sha256": "c4a940a517dfb752505d5ac2503e4e4fbdeb696b2c9b309c4d018e618f335c84"
+    },
+    {
+      "path": "library/DET-1102-4.dwg",
+      "bytes": 20935,
+      "sha256": "647128d98e406be36bf3e21e75f8e1f67ef9298d185902efb21bbd01526d676a"
+    },
+    {
+      "path": "library/DET-1102-5.dwg",
+      "bytes": 19907,
+      "sha256": "f75c69d8a19eeead2e3edc0f985e6d574badd38a157f41c15555d36477de2b0f"
+    },
+    {
+      "path": "library/DET-1102-A.dwg",
+      "bytes": 21319,
+      "sha256": "127327b375268fb5038b6f9a34572e40145e9a15e8a190aa2384125b4cc975ff"
+    },
+    {
+      "path": "library/DET-1102-6.dwg",
+      "bytes": 20099,
+      "sha256": "fb7269741b314b127884a314763f1ca2f248f572214606a1ead075ec468da13f"
+    },
+    {
+      "path": "library/DET-1103-1.dwg",
+      "bytes": 26853,
+      "sha256": "e60830b846ed22c3e618bbb0ef87362482f9197afb02ead29d2031aa2fcf6d2a"
+    },
+    {
+      "path": "library/DET-1103-2.dwg",
+      "bytes": 19205,
+      "sha256": "6301ecf97fc32f88bcf1782150e1c2afe747cd516f45a035b12174f1e29a7d54"
+    },
+    {
+      "path": "library/DET-1103-3.dwg",
+      "bytes": 21511,
+      "sha256": "bd959a7f48a4b9e03b00c3b20ef303ceb742bf15b47adaf1d24a8ad33190c920"
+    },
+    {
+      "path": "library/DET-1103-4.dwg",
+      "bytes": 21925,
+      "sha256": "5d860d7ef0c7fb19fecb88662bbc475ddaa2c246baa3cabe1365e3d556289c86"
+    },
+    {
+      "path": "library/DET-1104-1.dwg",
+      "bytes": 19111,
+      "sha256": "3e426643ae8bf1c41c189854ba4d098d570f3d447e9e1103c175cbb3ce59ba05"
+    },
+    {
+      "path": "library/DET-1104-2.dwg",
+      "bytes": 19495,
+      "sha256": "f5d134f55632e5d647a7a6d6a9a3004b78c00d62f0bd39e09b838192ee1dc99e"
+    },
+    {
+      "path": "library/DET-1104-3.dwg",
+      "bytes": 22053,
+      "sha256": "8cac0b5d847ae91dcf2dbf5dbc6cba0a658781ac5c3f8ee8587503d480e232c8"
+    },
+    {
+      "path": "library/DET-1104-4.dwg",
+      "bytes": 20357,
+      "sha256": "20b07fae8875b9db9bf54785016c5acb6818a7f91de1d5226ff5f5cd750e0833"
+    },
+    {
+      "path": "library/INDEX_columns.csv",
+      "bytes": 2341,
+      "sha256": "ca12d4131a168ecd9ad8f7e3eaf9ec2944bdf090aefe2bd722466401f83980a4"
+    }
+  ]
+}

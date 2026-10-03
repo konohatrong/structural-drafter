@@ -1,0 +1,89 @@
+{
+  "set": "gn",
+  "title": "GENERAL NOTES - STRUCTURAL CONCRETE",
+  "stage_rev": "F-A",
+  "kind": "issued",
+  "date": "2026-10-03",
+  "commit": "e59c639c9cdab53ccc15fab654fd1f51493b02f4",
+  "generator_clean": true,
+  "plotted_with": "AutoCAD Core Console",
+  "revision_description": "ISSUED FOR USE",
+  "sheets": [
+    {
+      "layout": "1001",
+      "dwg_no": "STR-ST-1001-F-A",
+      "title": "GENERAL NOTES (1) STRUCTURAL CONCRETE",
+      "status": "ISSUED FOR USE",
+      "revisions": [
+        [
+          "A",
+          "ISSUED FOR USE",
+          "03/10/2026"
+        ]
+      ]
+    },
+    {
+      "layout": "1002",
+      "dwg_no": "STR-ST-1002-F-A",
+      "title": "GENERAL NOTES (2) STRUCTURAL CONCRETE",
+      "status": "ISSUED FOR USE",
+      "revisions": [
+        [
+          "A",
+          "ISSUED FOR USE",
+          "03/10/2026"
+        ]
+      ]
+    },
+    {
+      "layout": "1003",
+      "dwg_no": "STR-ST-1003-F-A",
+      "title": "GENERAL NOTES (3) STRUCTURAL CONCRETE",
+      "status": "ISSUED FOR USE",
+      "revisions": [
+        [
+          "A",
+          "ISSUED FOR USE",
+          "03/10/2026"
+        ]
+      ]
+    }
+  ],
+  "files": [
+    {
+      "path": "STR-ST-1001_General_Notes_Concrete_A3_RevA.pdf",
+      "bytes": 206403,
+      "sha256": "df3d482fe07b8cd13a36488e453426a73aa8e9d7f4e0577ca9765e2a69ff40ea"
+    },
+    {
+      "path": "STR-ST-1001_General_Notes_Concrete_A3_RevA.dwg",
+      "bytes": 102226,
+      "sha256": "d84e9b37ea3a3af021c8a866539107dff1cd22f46b22251e482ce17a22931ff5"
+    },
+    {
+      "path": "library/TB-A3-NRW.dwg",
+      "bytes": 22437,
+      "sha256": "74ec0279e27403da41c5c912358d4c06f555d06c4825ba65fdc65c8a40427fd9"
+    },
+    {
+      "path": "library/DET-1003-COVER.dwg",
+      "bytes": 20423,
+      "sha256": "40e1b67d92a88f6b50ccd355185b29d520b2cd1235328c03479738a09f7c63f2"
+    },
+    {
+      "path": "library/DET-1003-HOOKS.dwg",
+      "bytes": 17862,
+      "sha256": "7a8980630bb1f7a62360e5867c4d4cb50a10931da2fefc30344a5978b3e283d1"
+    },
+    {
+      "path": "library/DET-1003-LAPS.dwg",
+      "bytes": 19171,
+      "sha256": "053ce7b054b6f189597e4e79c253fbdfe3b54d0d2c6825f962d71ecb9126cb20"
+    },
+    {
+      "path": "library/INDEX_gn.csv",
+      "bytes": 422,
+      "sha256": "c4ca14c9a7ebdd405b83ab419904d0a66672c932837512afde1ad059c97c068b"
+    }
+  ]
+}

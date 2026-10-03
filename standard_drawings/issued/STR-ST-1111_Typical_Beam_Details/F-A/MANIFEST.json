@@ -1,0 +1,193 @@
+{
+  "set": "beams",
+  "title": "TYPICAL BEAM DETAILS",
+  "stage_rev": "F-A",
+  "kind": "issued",
+  "date": "2026-10-03",
+  "commit": "e59c639c9cdab53ccc15fab654fd1f51493b02f4",
+  "generator_clean": true,
+  "plotted_with": "AutoCAD Core Console",
+  "revision_description": "ISSUED FOR USE",
+  "sheets": [
+    {
+      "layout": "1111",
+      "dwg_no": "STR-ST-1111-F-A",
+      "title": "TYPICAL BEAM DETAILS (1) STIRRUPS AND SPLICE ZONES",
+      "status": "ISSUED FOR USE",
+      "revisions": [
+        [
+          "A",
+          "ISSUED FOR USE",
+          "03/10/2026"
+        ]
+      ]
+    },
+    {
+      "layout": "1112",
+      "dwg_no": "STR-ST-1112-F-A",
+      "title": "TYPICAL BEAM DETAILS (2) BAR CUT-OFF AND CANTILEVER",
+      "status": "ISSUED FOR USE",
+      "revisions": [
+        [
+          "A",
+          "ISSUED FOR USE",
+          "03/10/2026"
+        ]
+      ]
+    },
+    {
+      "layout": "1113",
+      "dwg_no": "STR-ST-1113-F-A",
+      "title": "TYPICAL BEAM DETAILS (3) SECTIONS, SUPPORTS, OPENINGS",
+      "status": "ISSUED FOR USE",
+      "revisions": [
+        [
+          "A",
+          "ISSUED FOR USE",
+          "03/10/2026"
+        ]
+      ]
+    },
+    {
+      "layout": "1114",
+      "dwg_no": "STR-ST-1114-F-A",
+      "title": "TYPICAL BEAM DETAILS (4) LEVEL CHANGES, BEAM ENDS",
+      "status": "ISSUED FOR USE",
+      "revisions": [
+        [
+          "A",
+          "ISSUED FOR USE",
+          "03/10/2026"
+        ]
+      ]
+    },
+    {
+      "layout": "1115",
+      "dwg_no": "STR-ST-1115-F-A",
+      "title": "TYPICAL BEAM DETAILS (5) BEAM SCHEDULE",
+      "status": "ISSUED FOR USE",
+      "revisions": [
+        [
+          "A",
+          "ISSUED FOR USE",
+          "03/10/2026"
+        ]
+      ]
+    },
+    {
+      "layout": "1116",
+      "dwg_no": "STR-ST-1116-F-A",
+      "title": "TYPICAL BEAM DETAILS (6) STIRRUP TYPES, TABLE, NOTES",
+      "status": "ISSUED FOR USE",
+      "revisions": [
+        [
+          "A",
+          "ISSUED FOR USE",
+          "03/10/2026"
+        ]
+      ]
+    }
+  ],
+  "files": [
+    {
+      "path": "STR-ST-1111_Typical_Beam_Details_A3_R2.pdf",
+      "bytes": 443076,
+      "sha256": "03c0133dcdacb84ec07915eab991ea36b9ad4f45b702a5bea9bf18917b01363e"
+    },
+    {
+      "path": "STR-ST-1111_Typical_Beam_Details_A3_R2.dwg",
+      "bytes": 144538,
+      "sha256": "335fa04c0846246e1c598ae948433e10669af554c9aa72df730d59e36271bccc"
+    },
+    {
+      "path": "library/TB-A3-NRW.dwg",
+      "bytes": 22213,
+      "sha256": "4f961b2cae11b917329edc999fcf3ab7275e2501afc3505962766f8b331a7aba"
+    },
+    {
+      "path": "library/DET-1111-1.dwg",
+      "bytes": 21542,
+      "sha256": "dafa8343a5c68d1f33cba6f29bd0e3a2bdf44ac99bb6b174e476703084f2783d"
+    },
+    {
+      "path": "library/DET-1111-2.dwg",
+      "bytes": 21895,
+      "sha256": "fb376bd859f0ded846ac9fa36bed73a4cf0d2c2d8af309d6c3bd8bf59cf49fa6"
+    },
+    {
+      "path": "library/DET-1111-3.dwg",
+      "bytes": 22278,
+      "sha256": "7a1a028becf0e38429706d9abc960a285361ce26da8314ef470bc4f118f370b0"
+    },
+    {
+      "path": "library/DET-1112-1.dwg",
+      "bytes": 23458,
+      "sha256": "a6565721c6e686c558b0c670b02cf668f70c560a7daa89878ee3aef0b4daa386"
+    },
+    {
+      "path": "library/DET-1112-2.dwg",
+      "bytes": 21605,
+      "sha256": "65889a08ce09d64b49fc386932df803d6b0932f3bf140639049870de391b719c"
+    },
+    {
+      "path": "library/DET-1113-1.dwg",
+      "bytes": 20295,
+      "sha256": "23aa0d5edac478e5d3e350732a179876daebd47807f7016d3743ef447c2cb64a"
+    },
+    {
+      "path": "library/DET-1113-2.dwg",
+      "bytes": 20231,
+      "sha256": "d5688e32573a28748bf09a0bcf0261a2791504418ff533d57309f017c6a70354"
+    },
+    {
+      "path": "library/DET-1113-A.dwg",
+      "bytes": 19879,
+      "sha256": "d15885e34a984d7f3a93fb23b40f3a6bc81f818830fbbca15a29d001fdffa067"
+    },
+    {
+      "path": "library/DET-1113-3.dwg",
+      "bytes": 21094,
+      "sha256": "a88a5cda6082c9c0764759094b23dcc57f7ef4e9ae02f0b69a848ba150c916c9"
+    },
+    {
+      "path": "library/DET-1113-4.dwg",
+      "bytes": 20453,
+      "sha256": "0e9c8f090caadaa5db3fd056bc215160b2852d4ab0f203caed4dd2710d3a796a"
+    },
+    {
+      "path": "library/DET-1114-1.dwg",
+      "bytes": 19333,
+      "sha256": "51b271113df367c886322c9db61149d86a80b79775be06afffe68d28344efd07"
+    },
+    {
+      "path": "library/DET-1114-2.dwg",
+      "bytes": 21255,
+      "sha256": "09daf99a00968fcbc791d66407d2c85e96ebde2f9e1d6f64047d424afc00b198"
+    },
+    {
+      "path": "library/DET-1114-3.dwg",
+      "bytes": 20741,
+      "sha256": "277ef065f26e22210a5f6e0969f8ef153fb4d3f3c9ebf07ca8f3fc6dbc6e4c95"
+    },
+    {
+      "path": "library/DET-1115-1.dwg",
+      "bytes": 24359,
+      "sha256": "73c1cbfe1770089de11e09e4c55ae0ccc369415817100cf5a4f1f27d1af96761"
+    },
+    {
+      "path": "library/DET-1115-2.dwg",
+      "bytes": 19685,
+      "sha256": "97961ff699d0551089ae9f7e9f65809da87fc2c880d396f94884ad89005a2499"
+    },
+    {
+      "path": "library/DET-1116-1.dwg",
+      "bytes": 19941,
+      "sha256": "0878b4fcd7e1e7784ffaec9b67083ebc8c95b62601f33b6085f2bee05afab101"
+    },
+    {
+      "path": "library/INDEX_beams.csv",
+      "bytes": 2225,
+      "sha256": "db29a17801e6b78b26617303b36508dbf99f685a925cbb9871983c787c870757"
+    }
+  ]
+}

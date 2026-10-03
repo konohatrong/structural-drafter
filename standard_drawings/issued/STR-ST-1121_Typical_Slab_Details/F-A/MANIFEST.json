@@ -1,0 +1,279 @@
+{
+  "set": "slabs",
+  "title": "TYPICAL SLAB DETAILS",
+  "stage_rev": "F-A",
+  "kind": "issued",
+  "date": "2026-10-03",
+  "commit": "e59c639c9cdab53ccc15fab654fd1f51493b02f4",
+  "generator_clean": true,
+  "plotted_with": "AutoCAD Core Console",
+  "revision_description": "ISSUED FOR USE",
+  "sheets": [
+    {
+      "layout": "1121",
+      "dwg_no": "STR-ST-1121-F-A",
+      "title": "TYPICAL SLAB DETAILS (1) SLABS ON BEAMS",
+      "status": "ISSUED FOR USE",
+      "revisions": [
+        [
+          "A",
+          "ISSUED FOR USE",
+          "03/10/2026"
+        ]
+      ]
+    },
+    {
+      "layout": "1122",
+      "dwg_no": "STR-ST-1122-F-A",
+      "title": "TYPICAL SLAB DETAILS (2) FLAT SLAB AT THE COLUMN",
+      "status": "ISSUED FOR USE",
+      "revisions": [
+        [
+          "A",
+          "ISSUED FOR USE",
+          "03/10/2026"
+        ]
+      ]
+    },
+    {
+      "layout": "1123",
+      "dwg_no": "STR-ST-1123-F-A",
+      "title": "TYPICAL SLAB DETAILS (3) PUNCHING SHEAR REINFORCEMENT",
+      "status": "ISSUED FOR USE",
+      "revisions": [
+        [
+          "A",
+          "ISSUED FOR USE",
+          "03/10/2026"
+        ]
+      ]
+    },
+    {
+      "layout": "1124",
+      "dwg_no": "STR-ST-1124-F-A",
+      "title": "TYPICAL SLAB DETAILS (4) OPENINGS",
+      "status": "ISSUED FOR USE",
+      "revisions": [
+        [
+          "A",
+          "ISSUED FOR USE",
+          "03/10/2026"
+        ]
+      ]
+    },
+    {
+      "layout": "1125",
+      "dwg_no": "STR-ST-1125-F-A",
+      "title": "TYPICAL SLAB DETAILS (5) STEPS, EDGES, CANTILEVER",
+      "status": "ISSUED FOR USE",
+      "revisions": [
+        [
+          "A",
+          "ISSUED FOR USE",
+          "03/10/2026"
+        ]
+      ]
+    },
+    {
+      "layout": "1126",
+      "dwg_no": "STR-ST-1126-F-A",
+      "title": "TYPICAL SLAB DETAILS (6) SLAB ON GROUND",
+      "status": "ISSUED FOR USE",
+      "revisions": [
+        [
+          "A",
+          "ISSUED FOR USE",
+          "03/10/2026"
+        ]
+      ]
+    },
+    {
+      "layout": "1127",
+      "dwg_no": "STR-ST-1127-F-A",
+      "title": "TYPICAL SLAB DETAILS (7) SLAB-ON-GROUND JOINTS",
+      "status": "ISSUED FOR USE",
+      "revisions": [
+        [
+          "A",
+          "ISSUED FOR USE",
+          "03/10/2026"
+        ]
+      ]
+    },
+    {
+      "layout": "1128",
+      "dwg_no": "STR-ST-1128-F-A",
+      "title": "TYPICAL SLAB DETAILS (8) SLAB TABLE, FILL UNDER SLABS",
+      "status": "ISSUED FOR USE",
+      "revisions": [
+        [
+          "A",
+          "ISSUED FOR USE",
+          "03/10/2026"
+        ]
+      ]
+    }
+  ],
+  "files": [
+    {
+      "path": "STR-ST-1121_Typical_Slab_Details_A3_R2.pdf",
+      "bytes": 956745,
+      "sha256": "ccea847443f3c9fb9a64a26c3005fc7a7d3b79028be519c3aadab6f73afd3bd7"
+    },
+    {
+      "path": "STR-ST-1121_Typical_Slab_Details_A3_R2.dwg",
+      "bytes": 185772,
+      "sha256": "c92ecbdc1af6d435a87f45b944fae6adc1ed47ea012397f29f76ee9ab1fda1d8"
+    },
+    {
+      "path": "library/TB-A3-NRW.dwg",
+      "bytes": 22181,
+      "sha256": "d92ab43da9fde0636cf9b0393612adc7951113240d3f1854b9a06089ae565a23"
+    },
+    {
+      "path": "library/DET-1121-1.dwg",
+      "bytes": 22821,
+      "sha256": "6813733ff2ea0678654c62102bb4cc27ff5a487050f2c138c9a4d2389b726f1c"
+    },
+    {
+      "path": "library/DET-1121-2.dwg",
+      "bytes": 21861,
+      "sha256": "bf9d3669a9fe85ca554c21b14762459a051a9fcb4c9e1801e9f3db9d632102a3"
+    },
+    {
+      "path": "library/DET-1122-1.dwg",
+      "bytes": 21605,
+      "sha256": "3a6860c35a29924e85da8cbb69db55714333e54f186ae014c627fad4b1b78179"
+    },
+    {
+      "path": "library/DET-1122-2.dwg",
+      "bytes": 21127,
+      "sha256": "e2c7b3cf142d6d3294b4be899eeadfcf47995f2cf5c7c36fc4e10cf6590331d6"
+    },
+    {
+      "path": "library/DET-1123-1.dwg",
+      "bytes": 18791,
+      "sha256": "9da0603ad974189b1e030e4e196834479d061134a394be69b244c995389c994e"
+    },
+    {
+      "path": "library/DET-1123-A.dwg",
+      "bytes": 19749,
+      "sha256": "523530f8d3700c0cb50ecc361822954e0f06db19f274baf70ac184b74ccba0d4"
+    },
+    {
+      "path": "library/DET-1123-2.dwg",
+      "bytes": 19047,
+      "sha256": "fee5eea77be99b072d1812cb7e0a78dc2e5e938941b92fb6be76181220803c3f"
+    },
+    {
+      "path": "library/DET-1123-B.dwg",
+      "bytes": 19589,
+      "sha256": "3c278264252fe9f8ceb498102ed6a1f5fe6a1986beeab03a8b5138579f2e185a"
+    },
+    {
+      "path": "library/DET-1124-1.dwg",
+      "bytes": 19106,
+      "sha256": "ff803f4d951ad4ea8abc323ddf6cc1373b61ec24980114b6f2e13e80bcce886b"
+    },
+    {
+      "path": "library/DET-1124-2.dwg",
+      "bytes": 19493,
+      "sha256": "6e416e0277014d30493cd983283cf1c135ba91b3e8e8f11d7e6c18eb1a7c98f9"
+    },
+    {
+      "path": "library/DET-1124-3.dwg",
+      "bytes": 18791,
+      "sha256": "1c8633536de745006e58868135c7658dcf3734034b06bc508b5ab4174976b3fa"
+    },
+    {
+      "path": "library/DET-1125-1.dwg",
+      "bytes": 20135,
+      "sha256": "438ee502752db89edda617c27bb41b74479d41344db549f82d8d53c53b42e8b4"
+    },
+    {
+      "path": "library/DET-1125-2.dwg",
+      "bytes": 20327,
+      "sha256": "74eba53c1980047e9230a67389f642326f9276c96ff1917670eedcd293c6d699"
+    },
+    {
+      "path": "library/DET-1125-5.dwg",
+      "bytes": 20647,
+      "sha256": "837f0ba8a7f6a1291fb3a0380da0b79ae6b76bd33ea71be8aa1dd59a64cee235"
+    },
+    {
+      "path": "library/DET-1125-3.dwg",
+      "bytes": 19655,
+      "sha256": "51bc946b1b096205e089bd9c22a8bf887fcebcb48c9bf866ca833f98f7b2767e"
+    },
+    {
+      "path": "library/DET-1125-4.dwg",
+      "bytes": 19719,
+      "sha256": "cc74c7300fcc70338b082874372322f5bcc723b6b35da6ce685c6ecf1a8f99b3"
+    },
+    {
+      "path": "library/DET-1126-1.dwg",
+      "bytes": 20519,
+      "sha256": "c2ab1041a4a1784c94bd76574ce1285b38e4f0459951027ad7094d643f44bfc2"
+    },
+    {
+      "path": "library/DET-1126-2.dwg",
+      "bytes": 20071,
+      "sha256": "2b1a663e817897791563f2ef1aaf2116f772a8451982b06152ee9823f7117dc5"
+    },
+    {
+      "path": "library/DET-1126-3.dwg",
+      "bytes": 19203,
+      "sha256": "a0262b4da5b5f8630952463417911f6b105245f71135f42541fbe564f177c8e6"
+    },
+    {
+      "path": "library/DET-1126-4.dwg",
+      "bytes": 20741,
+      "sha256": "6228c5e4864ebe4a095cce01f9b57f27a76b252d9e3a1d3b13b5c26b11699fc3"
+    },
+    {
+      "path": "library/DET-1127-1.dwg",
+      "bytes": 20775,
+      "sha256": "1434ddb25a65dd562eb2ba4ba701f29162d364feefc6acdb264aeb21aa45fa98"
+    },
+    {
+      "path": "library/DET-1127-2.dwg",
+      "bytes": 20839,
+      "sha256": "44b7011e232bddfcdf8254ba246a8bf40e9f0a0e2c7b88b395b81abe17d7b7c1"
+    },
+    {
+      "path": "library/DET-1127-3.dwg",
+      "bytes": 20967,
+      "sha256": "2a41fb08a66dcd8a9a82c56158e162716ba9b9403ab329306533072832b432d8"
+    },
+    {
+      "path": "library/DET-1127-4.dwg",
+      "bytes": 20839,
+      "sha256": "b595c204ed45bf5a32fdc920a4fbbe5a9075546bfd5bbb43ed11137556fb9691"
+    },
+    {
+      "path": "library/DET-1127-A.dwg",
+      "bytes": 20007,
+      "sha256": "8b37567e2ef7efd16f8f5375dabb7e38184063d620a10752826740277cdd0251"
+    },
+    {
+      "path": "library/DET-1127-B.dwg",
+      "bytes": 19589,
+      "sha256": "8aa1b071b72011f7e3ad505cb8bd0df76c4ecf6f5c0884a8a88f55f6d42ebf3f"
+    },
+    {
+      "path": "library/DET-1127-C.dwg",
+      "bytes": 20199,
+      "sha256": "f6eff7263238732d69e8921c4694ce62e2c2e7645620abf4c5778ce433dea774"
+    },
+    {
+      "path": "library/DET-1128-1.dwg",
+      "bytes": 23431,
+      "sha256": "219532879b579bfd316ee5680dbd72f0cf9690493bb0dbced1c4959ce8b228f3"
+    },
+    {
+      "path": "library/INDEX_slabs.csv",
+      "bytes": 3700,
+      "sha256": "0db91152ce600e7ec844ed3376e98694880a9d42ec104ea3cf4d1c5a453426bd"
+    }
+  ]
+}
