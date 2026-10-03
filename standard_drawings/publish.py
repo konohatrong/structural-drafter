@@ -37,7 +37,7 @@ sys.path.insert(0, str(ROOT))
 from drafter import acad                            # noqa: E402
 
 SETS = {
-    "gn": dict(job="jobs/standard_set", base="STR-ST-1001_General_Notes_Concrete_A3_RevB",
+    "gn": dict(job="jobs/standard_set", base="STR-ST-1001_General_Notes_Concrete_A3_RevA",
                folder="STR-ST-1001_General_Notes_Concrete", title="GENERAL NOTES - STRUCTURAL CONCRETE"),
     "columns": dict(job="jobs/standard_set_R2", base="STR-ST-1101_Typical_Column_Details_A3_R2",
                     folder="STR-ST-1101_Typical_Column_Details", title="TYPICAL COLUMN DETAILS"),

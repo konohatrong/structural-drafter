@@ -52,7 +52,7 @@ def test_standard_set_r2(set_, base, sheets):
 
 def test_general_notes_rev_b():
     run("standard_set", "build.py", "gn")
-    check_dxf(JOBS / "standard_set" / "out" / "STR-ST-1001_General_Notes_Concrete_A3_RevB.dxf", 3)
+    check_dxf(JOBS / "standard_set" / "out" / "STR-ST-1001_General_Notes_Concrete_A3_RevA.dxf", 3)
 
 
 @pytest.mark.parametrize("job, script, dxf, sheets", [

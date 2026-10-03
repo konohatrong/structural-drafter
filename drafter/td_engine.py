@@ -1377,6 +1377,18 @@ REVS_BY_SHEET = {}                   # series -> own revision rows (a sheet adde
 STATUS = ("FOR REVIEW", "NOT FOR CONSTRUCTION")   # title-block status stamp (2 lines); set by the project for an issue
 
 
+def _centre_status(tb):
+    """a one-line status stamp (STATUS[1] empty) is moved midway between the two status lines, so it sits centred
+    in its box; a two-line stamp is left as defined"""
+    if STATUS[1]:
+        return
+    at = {a.dxf.tag: a for a in tb.attribs}
+    if "STATUS_1" in at and "STATUS_2" in at:
+        y = [a.dxf.align_point.y if a.dxf.hasattr("align_point") else a.dxf.insert.y
+             for a in (at["STATUS_1"], at["STATUS_2"])]
+        at["STATUS_1"].translate(0, (y[1] - y[0]) / 2, 0)
+
+
 def tb_values(series, title_lines, scale_txt, sheet_i):
     v = {"DWG_NO": dwg_no(series), "SHEET": f"SHEET {sheet_i} OF {len(SHEETS)}  |  A3", "SCALE": scale_txt,
          "DATE": PROJ["date"], "OFFICE": PROJ["office"], "OFFICE_ADDR": PROJ["office2"],
@@ -1508,6 +1520,7 @@ def finish():
         vp.dxf.flags = vp.dxf.flags | 16384        # lock display (VSF_LOCK_ZOOM)
         tb = ps.add_blockref(TB_NAME, (0, 0), dxfattribs=A("S-TTLB"))
         tb.add_auto_attribs(TB_VALUES[i])
+        _centre_status(tb)
     n = len(SHEETS)
     doc.set_modelspace_vport(height=H * SC * 1.3, center=(((n - 1) * SHEET_DX + W) / 2 * SC, H / 2 * SC))
     left = [b.name for b in doc.blocks if b.name.startswith("DET-TMP")]

@@ -8,6 +8,7 @@ Rules   : dimensions on one side of a view, notes on the other (no leader crosse
           every sheet with bar ends / laps; views >= 8 m apart in model space.
 """
 from drafter.td_engine import *
+import issue                     # noqa: F401  title-block issue data (stage, revision, status)
 from members import *
 
 BASE = "STR-ST-1121_Typical_Slab_Details_A3_R2"

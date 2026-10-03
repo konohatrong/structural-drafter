@@ -1,6 +1,6 @@
 # Typical Details Instruction — Columns, Beams and Slabs (A3)
 
-This file explains how to draw the office typical-detail sheets. **Current set R2: columns (1101–1104), beams (1111–1116) and slabs (1121–1128); walls, footings and stairs will follow.** The frozen R1 set had columns 1101–1103, beams 1111–1115 and slabs 1121–1127. It covers:
+This file explains how to draw the office typical-detail sheets. **Current set R2: columns (1101–1104), beams (1111–1116) and slabs (1121–1128), issued F-A "ISSUED FOR USE" on 03/10/2026 (`standard_drawings/REGISTER.md`); walls, footings and stairs will follow.** The frozen R1 set had columns 1101–1103, beams 1111–1115 and slabs 1121–1127. It covers:
 - which sources govern;
 - what each detail must show;
 - the drawing and annotation rules;

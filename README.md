@@ -25,9 +25,9 @@ The repository is written for **AI agents and drafters alike**. An agent starts 
 | Set | Structure | Status | Folder |
 |---|---|---|---|
 | Steel roof truss T1, SRT-ST (6 sheets) | Steel: CHS Pratt truss, bearings, splices, fly bracing; design + drawings | For review | `jobs/steel_roof_truss` |
-| Typical details R2 (columns 1101 – 1104, beams 1111 – 1116, slabs 1121 – 1128) | Concrete | Current, for review | `jobs/standard_set_R2` |
+| Typical details R2 (columns 1101 – 1104, beams 1111 – 1116, slabs 1121 – 1128) | Concrete | **Issued** F-A, ISSUED FOR USE (`standard_drawings/`) | `jobs/standard_set_R2` |
 | Retaining wall, NRW-ST (7 sheets) | Concrete: design + drawings | Issued, Rev B | `jobs/nooker_rw` |
-| General notes, structural concrete (STR-ST-1001 – 1003, Rev B); typical details R1 | Concrete | Notes current; R1 frozen | `jobs/standard_set` |
+| General notes, structural concrete (STR-ST-1001 – 1003); typical details R1 | Concrete | Notes **issued** F-A, ISSUED FOR USE; R1 frozen | `jobs/standard_set` |
 | General notes Rev A; staircase ST-1; first typical details | Concrete | Superseded / demonstration | `jobs/general_notes`, `jobs/stair_demo`, `jobs/typical_details` |
 
 All sheets are A3. Title-block fields are placeholders, for example `[ PROJECT NAME ]`.
@@ -61,7 +61,8 @@ pitfalls are in [`docs/general/DRAWING_PRODUCTION.md`](docs/general/DRAWING_PROD
 
 ## Status
 
-- **Typical details R2:** issued **FOR REVIEW – NOT FOR CONSTRUCTION**. Office proposals still to confirm are
-  Tables 17, 18 and 20 (`jobs/standard_set_R2/REVIEW_BECA_SLAB.md`).
+- **General notes 1001 – 1003 and typical details 11xx:** issued F-A "ISSUED FOR USE", 03/10/2026 (`standard_drawings/REGISTER.md`).
+  The values of Tables 17, 18 and 20, listed as office proposals in `jobs/standard_set_R2/REVIEW_BECA_SLAB.md`,
+  are issued as they stand. A change is a new revision.
 - **SRT steel truss:** for review. Open items are in its README.
 - **Planned:** column and slab schedules, walls 113x, foundations 114x.

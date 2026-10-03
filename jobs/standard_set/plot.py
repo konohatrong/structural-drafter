@@ -23,7 +23,7 @@ HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE.parents[1]))           # repository root: shared drafter package
 from drafter import acad, plotting                 # noqa: E402
 
-SETS = {"gn": "STR-ST-1001_General_Notes_Concrete_A3_RevB",
+SETS = {"gn": "STR-ST-1001_General_Notes_Concrete_A3_RevA",
         "columns": "STR-ST-1101_Typical_Column_Details_A3_RevA",
         "beams": "STR-ST-1111_Typical_Beam_Details_A3_RevA",
         "slabs": "STR-ST-1121_Typical_Slab_Details_A3_RevA"}

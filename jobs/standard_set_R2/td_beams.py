@@ -7,6 +7,7 @@ Sources : EIT 011008-21 ch. 7, 8, 10, 11, 12; DPT 1301/1302-61 cl. 5.2.6 - 5.2.8
           handbook (beam chapter + typical sheets). See SOURCES_BEAM_DETAILING.md.
 """
 from drafter.td_engine import *
+import issue                     # noqa: F401  title-block issue data (stage, revision, status)
 from members import *
 
 BASE = "STR-ST-1111_Typical_Beam_Details_A3_R2"

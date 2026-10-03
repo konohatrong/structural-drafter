@@ -5,7 +5,7 @@
 > `docs/general/DRAWING_ENGINE.md`: model space and blocks, title block, linetypes and pens, functions, options,
 > checks, working in AutoCAD and pitfalls. The R1 guide it started from is `jobs/standard_set/MODEL_SPACE_SHEETS.md`.
 
-R2 is a separate version of the typical-detail sheets. R1 (`jobs/standard_set`) stays frozen. General notes are not part of R2 (they are built in `jobs/standard_set`, `python build.py gn`); R2 cites their tables by number only, for example "TABLE 6".
+**Issued F-A "ISSUED FOR USE" on 03/10/2026** (stage, revision and status in `issue.py`; `standard_drawings/REGISTER.md`). R2 is a separate version of the typical-detail sheets. R1 (`jobs/standard_set`) stays frozen. General notes are not part of R2 (they are built in `jobs/standard_set`, `python build.py gn`); R2 cites their tables by number only, for example "TABLE 6".
 
 ## R2 rules (user decisions, 2026-09-30)
 

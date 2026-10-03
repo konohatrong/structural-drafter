@@ -44,8 +44,9 @@ An official issue is a decision of the engineer (the user), never of an agent on
    - `PROJ["rev"]` (and `PROJ["stage"]` if the stage changes) and `PROJ["date"]`;
    - a row in `REVS` (or `REVS_BY_SHEET`) with the revision's description, e.g. `("B", "ISSUED FOR USE", "dd/mm/yyyy")`;
    - the status stamp `td_engine.STATUS`, e.g. `("STANDARD DETAIL", "ISSUED FOR USE")`. The default is
-     `("FOR REVIEW", "NOT FOR CONSTRUCTION")`. (The general notes run on the frozen R1 engine copy in
-     `jobs/standard_set`, whose stamp is fixed; change it there only as part of a revision of that set.)
+     `("FOR REVIEW", "NOT FOR CONSTRUCTION")`; a one-line stamp `("ISSUED FOR USE", "")` is centred in its box.
+     Where: R2 sets in `jobs/standard_set_R2/issue.py`; general notes at the top of `jobs/standard_set/gn_notes.py`
+     (they run on the R1 engine copy in `jobs/standard_set`, which has the same `STATUS` option).
 3. **Commit** the generator changes. An issue is refused while `drafter/` or the set's job folder has uncommitted
    changes, so every issue traces to one commit.
 4. **Issue:**
@@ -71,6 +72,6 @@ An official issue is a decision of the engineer (the user), never of an agent on
 
 ## 4. Current state
 
-Nothing has been issued through this folder yet. The sets were last sent out as "FOR REVIEW" outside it (general
-notes Rev B; typical details R2, `jobs/standard_set_R2`). Their first official issue is recorded in `REGISTER.md`
-when it is made.
+All four sets were issued **F-A "ISSUED FOR USE" on 03/10/2026** (user): `REGISTER.md`. Before that they were
+review prints only, never issued: general notes A (one sheet, 29/09) and B (normal text size), typical details
+"D-A ISSUED FOR REVIEW". The review rows were dropped from the title blocks at the issue.

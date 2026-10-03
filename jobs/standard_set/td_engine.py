@@ -1108,6 +1108,19 @@ def tb_define():
 KEYPLAN_2 = "(TYPICAL DETAILS)"      # set by the content module (general notes: "(GENERAL NOTES)")
 REVS = [("A", "ISSUED FOR REVIEW", PROJ["date"])]
 REVS_BY_SHEET = {}                   # series -> own revision rows (a sheet added at a later revision)
+STATUS = ("FOR REVIEW", "NOT FOR CONSTRUCTION")   # title-block status stamp (2 lines); set by the set for an issue
+
+
+def _centre_status(tb):
+    """a one-line status stamp (STATUS[1] empty) is moved midway between the two status lines, so it sits centred
+    in its box; a two-line stamp is left as defined"""
+    if STATUS[1]:
+        return
+    at = {a.dxf.tag: a for a in tb.attribs}
+    if "STATUS_1" in at and "STATUS_2" in at:
+        y = [a.dxf.align_point.y if a.dxf.hasattr("align_point") else a.dxf.insert.y
+             for a in (at["STATUS_1"], at["STATUS_2"])]
+        at["STATUS_1"].translate(0, (y[1] - y[0]) / 2, 0)
 
 
 def tb_values(series, title_lines, scale_txt, sheet_i):
@@ -1115,7 +1128,7 @@ def tb_values(series, title_lines, scale_txt, sheet_i):
          "DATE": PROJ["date"], "OFFICE": PROJ["office"], "OFFICE_ADDR": PROJ["office2"],
          "PROJECT": PROJ["project"], "LOCATION": PROJ["location"], "OWNER": PROJ["owner"],
          "KEYPLAN_1": "NOT APPLICABLE", "KEYPLAN_2": KEYPLAN_2,
-         "STATUS_1": "FOR REVIEW", "STATUS_2": "NOT FOR CONSTRUCTION"}
+         "STATUS_1": STATUS[0], "STATUS_2": STATUS[1]}
     for k, tl in enumerate(title_lines):
         v[f"TITLE_{k + 1}"] = tl
     for k, (r, d, dt) in enumerate(REVS_BY_SHEET.get(series, REVS)):
@@ -1207,6 +1220,7 @@ def new_sheet(i):
     _SH.update(i=i, before={e.dxf.handle for e in msp})
     tb = msp.add_blockref(TB_NAME, (0, 0), dxfattribs=A("S-TTLB"))
     tb.add_auto_attribs(tb_values(name, tl, sc, i + 1))
+    _centre_status(tb)
     print(f"sheet {dwg_no(name)}")
     return msp
 

@@ -14,12 +14,14 @@ Rule    : normal drawing rule, K = 1 (2026-09-29, user: text 2.0 mm, headers x 1
 import td_engine
 from td_engine import *
 
-BASE = "STR-ST-1001_General_Notes_Concrete_A3_RevB"
+BASE = "STR-ST-1001_General_Notes_Concrete_A3_RevA"
 SHEETS[:] = []              # set by build(): one entry per sheet the notes need
 td_engine.KEYPLAN_2 = "(GENERAL NOTES)"
-# Rev A (jobs/general_notes/rev_A): one sheet, text 1.25 / 1.75. Rev B: normal text 2.0 / 2.8, two sheets.
-PROJ["rev"] = "B"
-REV_A_DATE = "29/09/2026"      # revision rows are set in build(), once the number of sheets is known
+# Development: review print A (jobs/general_notes/rev_A, one sheet, text 1.25 / 1.75, 29/09/2026), then review print B
+# (normal text 2.0 / 2.8, notes over 3 sheets). Official issue F-A "ISSUED FOR USE", 03/10/2026 (user): the review
+# rows are dropped from the title block; the issue is recorded in standard_drawings/REGISTER.md.
+PROJ.update(stage="F", rev="A", date="03/10/2026")
+td_engine.STATUS = ("ISSUED FOR USE", "")
 
 # Project design data (note 2.5) - fill in per project; "[ ... ]" = to be completed
 DESIGN_DATA = [
@@ -798,10 +800,8 @@ def build():
     npage = 1
     while not fits(npage):
         npage += 1
-    td_engine.REVS = [("A", "ISSUED FOR REVIEW", REV_A_DATE),
-                      ("B", f"TEXT 2.0 mm, {npage} SHEETS", PROJ["date"])]
-    td_engine.REVS_BY_SHEET = {str(1001 + p): [("B", "FIRST ISSUE (FROM 1001 REV A)", PROJ["date"])]
-                               for p in range(1, npage)}
+    td_engine.REVS = [("A", "ISSUED FOR USE", PROJ["date"])]       # every sheet: one row, the official issue
+    td_engine.REVS_BY_SHEET = {}
     SHEETS[:] = [(str(1001 + p), [f"GENERAL NOTES ({p + 1})" if npage > 1 else "GENERAL NOTES",
                                   "STRUCTURAL CONCRETE"], "N.T.S.") for p in range(npage)]
     print(f"  notes: K = {K:.3f}: text {TB:.2f} / {TH:.2f}, pitch {LP:.2f}, table row {TRH:.2f}; "

@@ -143,7 +143,10 @@ python compare_pdf.py out/STR-ST-1111_Typical_Beam_Details_A3_RevA.pdf ../typica
 
 ## 6. General notes at the normal text size (2026-09-29)
 
-> **Issued as Rev B** (`out/STR-ST-1001_General_Notes_Concrete_A3_RevB.*`, drawing nos. STR-ST-1001-D-B … 1003-D-B).
+> **Later (03/10/2026): officially issued as F-A "ISSUED FOR USE"** (`out/STR-ST-1001_General_Notes_Concrete_A3_RevA.*`,
+> STR-ST-1001-F-A … 1003-F-A, one revision row; `standard_drawings/REGISTER.md`). The text below records review print B.
+>
+> **Review print B** (`out/STR-ST-1001_General_Notes_Concrete_A3_RevB.*`, drawing nos. STR-ST-1001-D-B … 1003-D-B).
 > - Revision rows are set in `build()` from the sheet count. 1001 shows A "ISSUED FOR REVIEW" and B "TEXT 2.0 mm, n SHEETS"; 1002 onwards show only B "FIRST ISSUE (FROM 1001 REV A)".
 > - Set in `gn_notes.py` (`PROJ["rev"]`, `REV_A_DATE`; the engine reads `td_engine.REVS` and `REVS_BY_SHEET`).
 > - A revision description must fit its 38 mm column (about 30 characters at 2.0 mm).

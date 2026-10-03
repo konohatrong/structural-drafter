@@ -13,7 +13,7 @@ import pymupdf as fitz
 from ezdxf import bbox
 
 HERE = Path(__file__).resolve().parent
-BASES = {"gn": "STR-ST-1001_General_Notes_Concrete_A3_RevB", "columns": "STR-ST-1101_Typical_Column_Details_A3_RevA",
+BASES = {"gn": "STR-ST-1001_General_Notes_Concrete_A3_RevA", "columns": "STR-ST-1101_Typical_Column_Details_A3_RevA",
          "beams": "STR-ST-1111_Typical_Beam_Details_A3_RevA", "slabs": "STR-ST-1121_Typical_Slab_Details_A3_RevA"}
 SHEET_DX, H = 460.0, 297.0
 args = [a for a in sys.argv[2:] if not a.startswith("--")]

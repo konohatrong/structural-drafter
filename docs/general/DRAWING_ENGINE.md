@@ -45,7 +45,7 @@ from drafter.steel import *                       # steel sets only: steel layer
 | `SHEETS` | `[(series, [title lines], scale text), ...]`, one per sheet, in order |
 | `REVS`, `REVS_BY_SHEET` | Revision rows for every sheet, or per sheet (a sheet added at a later revision) |
 | `KEYPLAN_2` | Key-plan text, e.g. "(TRUSS T1)" |
-| `STATUS` | Title-block status stamp, two lines. Default `("FOR REVIEW", "NOT FOR CONSTRUCTION")`; set for an official issue (`standard_drawings/README.md` §2) |
+| `STATUS` | Title-block status stamp, two lines. Default `("FOR REVIEW", "NOT FOR CONSTRUCTION")`; set for an official issue (`standard_drawings/README.md` §2). A one-line stamp (second line empty) is centred in its box |
 | `TABLES` | Table register: key → (number, name). `TABT(key)` gives "TABLE n - NAME", `TAB(key)` the citation "TABLE n" |
 | `SC` | Arranging scale of the sheet composition (25) |
 | `LEADER_ORTH`, `WRAP_UNITS` | Opt-in options (section 6) |

@@ -17,7 +17,7 @@ from ezdxf.addons.drawing.matplotlib import MatplotlibBackend
 from ezdxf.addons.drawing.config import Configuration, BackgroundPolicy, ColorPolicy
 
 HERE = Path(__file__).resolve().parent
-BASES = {"gn": "STR-ST-1001_General_Notes_Concrete_A3_RevB", "columns": "STR-ST-1101_Typical_Column_Details_A3_RevA",
+BASES = {"gn": "STR-ST-1001_General_Notes_Concrete_A3_RevA", "columns": "STR-ST-1101_Typical_Column_Details_A3_RevA",
          "beams": "STR-ST-1111_Typical_Beam_Details_A3_RevA", "slabs": "STR-ST-1121_Typical_Slab_Details_A3_RevA"}
 doc = ezdxf.readfile(HERE / "out" / f"{BASES[sys.argv[1]]}.dxf")
 cfg = Configuration(background_policy=BackgroundPolicy.WHITE, color_policy=ColorPolicy.BLACK, min_lineweight=0.1)

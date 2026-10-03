@@ -5,6 +5,7 @@ splices), STR-ST-1104 (column ends and special cases: roof, transfer beam, disco
 Sources : EIT 011008-21 ch. 7, 12; DPT 1301/1302-61 cl. 5.2.5 - 5.2.10; TATA RC detailing handbook (column chapter).
 """
 from drafter.td_engine import *
+import issue                     # noqa: F401  title-block issue data (stage, revision, status)
 from members import *
 
 BASE = "STR-ST-1101_Typical_Column_Details_A3_R2"
