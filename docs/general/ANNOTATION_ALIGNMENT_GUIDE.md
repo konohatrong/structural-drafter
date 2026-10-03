@@ -24,7 +24,7 @@
 - **Reference style:** "Life of an Architect" section details. Notes sit in tidy columns beside the detail, with leaders that leave the object at a standard angle and land on a short horizontal shelf.
 - **Implementation:** the rules are coded in an *annotation engine*, so they are applied automatically. This document is also the manual rule set for anyone drafting by hand.
   - `jobs/nooker_rw/build_rw.py` is the original engine (NRW-ST).
-  - `jobs/standard_set_R2/td_engine.py` is the current engine. It is used by the R2 typical details (RC) and the steel set SRT, and a new set of any structure type should import it. Its **orthogonal leader mode**, bolt rings and unit-safe wrapping are opt-in, so the R2 sheets are unchanged.
+  - `drafter/td_engine.py` is the current engine. It is used by the R2 typical details (RC) and the steel set SRT, and a new set of any structure type should import it. Its **orthogonal leader mode**, bolt rings and unit-safe wrapping are opt-in, so the R2 sheets are unchanged.
 - **History.** The worked examples keep the sheet numbers of the job they came from.
   - §1 – §8 were written for the retaining wall NRW-ST Rev A (RC). Its views are kept as worked examples.
   - §2.4.1 (clean dimensioning) was added on 2026-09-29 on the R2 typical details.
@@ -268,7 +268,7 @@ The same choices apply to any structure. Steel examples (SRT-ST) are in §9.
 
 ## 7. The engine (`build_rw.py`; current: `td_engine.py`)
 
-The calls below are the same in `jobs/standard_set_R2/td_engine.py`. A new set of any structure type imports that engine
+The calls below are the same in `drafter/td_engine.py`. A new set of any structure type imports that engine
 and sets its options (`LEADER_ORTH`, `WRAP_UNITS`) in its own engine module, as `srt_engine.py` does.
 
 1. A view function calls `leader(sp, target, knee_hint, text, S, side, width, mark=…, ring=db)`. Inside `capture()` the note is **collected**, not drawn.
@@ -401,7 +401,7 @@ units. Use the project's mark scheme; the circle and the placement rules are the
   beam tags above or below the beam at mid-span, column tags beside the column at mid-height.
 - **No node numbers** on a general elevation (user rule). Tables refer to "panel points counted from the pin end".
 
-### 9.3 Weld symbols (`srt_engine.weld`): steel, and welded inserts in any structure
+### 9.3 Weld symbols (`drafter.steel.weld`): steel, and welded inserts in any structure
 
 This also covers cast-in plates, embeds and anchor plates in concrete, and steel connectors in timber.
 
@@ -433,7 +433,7 @@ What the symbol says is set by `STEEL_DETAILING_INSTRUCTION.md` §S5. Placement 
 6. **Key**: sheet 1001 shows every symbol form used, with descriptions starting 50 mm from the symbol (clear of the
    tail), and a wrapped footnote for the conventions.
 
-### 9.4 Cutting planes (`srt_engine.cutmark`)
+### 9.4 Cutting planes (`drafter.steel.cutmark`)
 
 Every section of any structure type has its cutting plane on the parent view: a wall section on the plan, a beam
 section on the frame elevation, a truss section on the truss elevation.
@@ -494,7 +494,7 @@ beam-column joint, a timber connection or a precast connection:
 
 ### 9.7 Detail callouts (user rule, 2026-10-03)
 
-When part of a view is enlarged in another detail, mark it on the parent view like this (`srt_engine.detail_callout`).
+When part of a view is enlarged in another detail, mark it on the parent view like this (`drafter.steel.detail_callout`).
 This applies to any structure: a beam-column joint on an RC frame elevation, a pile cap on a foundation plan, a
 connection on a steel or timber elevation. A set without the `S-CALL` layer adds it (pen 6, HIDDENX2).
 1. **Boundary**:

@@ -8,8 +8,8 @@ description: Design and draw structural steel (hollow-section trusses, connectio
 Steel sets follow the same pipeline as the RC sets:
 
 1. **Design calc**: `calc_*.py`, pure Python + numpy. It is the single source of sizes, geometry, welds and bolts.
-2. **Project engine**: `*_engine.py` on top of `jobs/standard_set_R2/td_engine.py`. It holds the layers, steel helpers
-   and marks.
+2. **Project engine**: `*_engine.py` on top of `drafter/td_engine.py` and `drafter/steel.py` (steel layers and
+   helpers). It holds the project data, options, the design geometry and the marks.
 3. **Sheets**: `*_sheets.py`.
 4. **Build**: `build.py`, which exits 1 on any `!!` layout problem.
 5. **Plot**: `plot.py` (AutoCAD Core Console, or the ezdxf fallback with `--ezdxf`).

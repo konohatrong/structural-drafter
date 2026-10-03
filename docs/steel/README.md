@@ -50,12 +50,15 @@ STEELWORK\`. Review the matching sheet before detailing that kind of connection,
 
 ## 4. Engine helpers for steel
 
-In `jobs/steel_roof_truss/srt_engine.py`, on top of `td_engine.py`:
-- members: `chord`, `branch`, `chs_section`, `chs_break`, `break_point`, `plate`;
+In `drafter/steel.py`, on top of `drafter/td_engine.py`. Import it with `from drafter.steel import *` after the
+project data and options are set; it adds the steel layers to the document:
+- members and plates: `chs_section`, `chs_break`, `break_point`, `plate`;
 - bolts: `hole`, `slot`, `bolt_side`;
-- welds: `weld` (symbol), `weld_region`, `weld_bead`, `weld_band`, `weld_branch`, `branch_zones`;
-- references: `cutmark`, `detail_callout`, `wp_mark`, `tag`, `place_tag`;
-- marks: `_web_marks`, `mark_of`, `marks_at`.
+- welds: `weld` (symbol), `weld_region`, `weld_bead`, `weld_band`;
+- references: `cutmark`, `detail_callout`, `wp_mark`, `tag`, `place_tag`.
 
-A new steel job copies or imports these helpers. Generalise a helper (for example to open sections) rather than
-forking it, and record the change in `docs/general/SYMBOLS.md`.
+In the example job's `jobs/steel_roof_truss/srt_engine.py` (tied to the truss design geometry): `chord`, `branch`,
+`branch_zones`, `weld_branch`, and the marks `_web_marks`, `mark_of`, `marks_at`.
+
+Generalise a helper in `drafter/steel.py` (for example to open sections) rather than forking it in a job. Keep its
+output unchanged for the existing sets (or opt-in), and record the change in `docs/general/SYMBOLS.md`.

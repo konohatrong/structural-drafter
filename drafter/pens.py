@@ -1,6 +1,6 @@
 """
-Pens by colour and the linetype scale of standard set R2. No side effects: plot.py reads them without
-building a drawing (td_engine creates its document at import).
+Pens by colour and the linetype scale of the general engine (drafter/td_engine.py; first set: standard set R2).
+No side effects: the plot scripts read them without building a drawing (td_engine creates its document at import).
 """
 LTS = 3.75                         # LTSCALE (model space) for 1:25 with acadiso.lin (user, 2026-09-30)
 

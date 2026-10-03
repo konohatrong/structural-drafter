@@ -14,7 +14,7 @@ Every set is a script, and its drawings are rebuilt from it. Nothing is drawn by
 | Step | File (pattern) | Rule |
 |---|---|---|
 | 1. **Design / data** | `calc_*.py` or a member catalogue (`members.py`) | The **single source** of every size, length, force, weld and bolt. The drawings never retype a number; notes and tables quote the calc |
-| 2. **Project engine** | `*_engine.py` | Imports the general engine `jobs/standard_set_R2/td_engine.py`. It sets the project data (title block, revision, tables register), the layers the material needs, and the opt-in options (`LEADER_ORTH`, `WRAP_UNITS`). Material helpers live here (bars, welds, bolts, breaks) |
+| 2. **Project engine** | `*_engine.py` | Imports the general engine `drafter/td_engine.py`. It sets the project data (title block, revision, tables register), the opt-in options (`LEADER_ORTH`, `WRAP_UNITS`) and any layers of its own, then imports the material helpers from `drafter/` (bars are in `td_engine.py`, steel in `steel.py`). Only job-specific geometry stays in the job |
 | 3. **Views and sheets** | `*_sheets.py` or `td_<member>.py` | One function per view, which draws geometry, dimensions and `leader()` notes. One function per sheet, which places the views with `viewport()`, then tables and notes |
 | 4. **Build** | `build.py` | Writes the DXF and the detail index. It prints `!!` for every layout problem and exits 1 if there is any |
 | 5. **Look** | `plot.py --ezdxf`, then render the PDF pages to PNG | **Look at every sheet at print size.** Check leaders, clutter, overlaps, and views near the frame. The checks catch geometry, not readability |
@@ -22,7 +22,7 @@ Every set is a script, and its drawings are rebuilt from it. Nothing is drawn by
 | 7. **Test** | `pytest -q` at the repository root | Builds every job without AutoCAD; fails on any `!!`, a non-zero exit or a DXF audit error |
 | 8. **Review** | The user reviews the PDF | Every correction is fixed in the job **and** written into the rules (see `AGENTS.md`, "How the rules grow") |
 
-## 2. How the drawings are built (engine `td_engine.py`)
+## 2. How the drawings are built (engine `drafter/td_engine.py`)
 
 - **Model space at real size.**
   - Every detail is a block (`DET-<sheet>-<id>`), inserted at 1/scale.
@@ -38,7 +38,7 @@ Every set is a script, and its drawings are rebuilt from it. Nothing is drawn by
 - **Linetypes:** `acadiso.lin` patterns (HIDDENX2, HIDDEN, CENTER, PHANTOM, DASHED, kept in `ACADISO`); LTSCALE
   3.75, PSLTSCALE 0 (on every layout), MSLTSCALE 0. Steel adds `EIT_GRID`. Never set an entity ltscale inside a
   detail block. (The older NRW engine uses `EIT_*` linetypes at LTSCALE 1: EIT §19.2.)
-- **Pens by colour:** the `PEN` table (`jobs/standard_set_R2/pens.py`) maps each colour to a lineweight. `plot.py`
+- **Pens by colour:** the `PEN` table (`drafter/pens.py`) maps each colour to a lineweight. `plot.py`
   writes the matching CTB. Greys (ACI 8, 9, 252) are screened.
 - **Annotation engine:** `leader()` collects the notes and `_layout_notes()` packs them into columns or rows, then
   routes the leaders. The rules are in `ANNOTATION_ALIGNMENT_GUIDE.md`.
@@ -111,6 +111,11 @@ pytest -q
 - `drafter/acad.py`: the AutoCAD Core Console plot (script, run, checks, PDF merge, font check) and the CTB helpers.
 - `drafter/ezplot.py`: the same plot without AutoCAD, rendered by ezdxf.
 - `drafter/plotting.py`: picks AutoCAD when it is installed, ezdxf otherwise (or with `--ezdxf`).
+- `drafter/td_engine.py`: the drafting engine (document, layers, dimension styles, annotation engine, detail blocks,
+  title block, tables, bar graphics). It creates its DXF document at import: one set per process.
+- `drafter/pens.py`: pens by colour and LTSCALE, with no side effects (the plot scripts read it).
+- `drafter/steel.py`: steel layers and helpers on top of the engine (welds, bolts, breaks, cutting planes, callouts,
+  tags). Moved out of the job folders on 2026-10-03, with the DXF output unchanged.
 
 Each job script adds the repository root to `sys.path` and imports from it. The superseded `jobs/typical_details`
 keeps its own copies.

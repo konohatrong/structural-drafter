@@ -13,10 +13,9 @@ from pathlib import Path
 import ezdxf
 
 HERE = Path(__file__).resolve().parent
-sys.path.insert(0, str(HERE.parent / "standard_set_R2"))
 sys.path.insert(0, str(HERE.parents[1]))            # repository root: shared drafter package
 from drafter import acad, plotting                 # noqa: E402
-from pens import PEN, LTS                          # noqa: E402
+from drafter.pens import PEN, LTS                  # noqa: E402
 
 BASE = "SRT-ST_Steel_Roof_Truss_T1_A3_RevA"
 OUT, LIB = HERE / "out", HERE / "library"

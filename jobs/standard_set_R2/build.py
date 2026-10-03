@@ -9,7 +9,7 @@ Also writes library/INDEX_<set>.csv (every block: detail, title block, view titl
 Output folders are fixed (next to this file) so a plot can never pick up a stale DXF.
 Exit code 1 when the build finds a layout problem ("!!" lines) or the DXF audit reports an error; the DXF is
 still written so the problem can be inspected.
-Engine: td_engine.py.   Guide: MODEL_SPACE_SHEETS.md
+Engine: drafter/td_engine.py.   Guide: MODEL_SPACE_SHEETS.md
 """
 import importlib
 import subprocess
@@ -31,8 +31,9 @@ if SET == "all":
     sys.exit(1 if failed else 0)
 
 sys.path.insert(0, str(HERE))
+sys.path.insert(0, str(HERE.parents[1]))          # repository root: the drafter package (engine, pens)
 mod = importlib.import_module(MODS[SET])
-import td_engine                                   # noqa: E402  (already loaded by the content module)
+from drafter import td_engine                      # noqa: E402  (already loaded by the content module)
 
 mod.build()
 mod.finish()

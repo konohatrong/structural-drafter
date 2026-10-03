@@ -52,7 +52,7 @@ For how this differs from steel, see the comparison in `docs/README.md`.
 
 ## 4. Engine helpers for concrete
 
-In `jobs/standard_set_R2/td_engine.py`:
+In `drafter/td_engine.py`:
 - bars: `bar`, `strip`, `dot` / `rdot`, `stirrup`, `crosstie`, `lap_crank`, `dist_line`, `dowel_end`;
 - symbols: `zigzag` (construction joint), `level`, `zbreak`, `earth_band`, `nf_hatch` (focus rule);
 - annotation: `leader(..., ring=db, mark=n)`, `callout`, `callout_list`, `row_label`, `zone` (stirrup positions);

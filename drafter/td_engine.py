@@ -1,8 +1,11 @@
 """
-Standard set R2 engine: document, layers, pens, dimension styles, leader engine, title-block block, detail
-blocks, stirrup / crosstie graphics, table / notes helpers.
+The general drafting engine (first written for the standard set R2, now shared by every current set): document,
+layers, pens, dimension styles, leader engine, title-block block, detail blocks, stirrup / crosstie graphics,
+table / notes helpers. Import it as `from drafter import td_engine` (one document per process: it is created at
+import). Project data and options (PROJ, REVS, KEYPLAN_2, TABLES, LEADER_ORTH, WRAP_UNITS) are set by the job's
+own engine or content module. Steel helpers: drafter/steel.py. Rules: docs/general/DRAWING_PRODUCTION.md.
 
-R2 structure (see MODEL_SPACE_SHEETS.md, R2 section):
+Structure (see jobs/standard_set_R2/MODEL_SPACE_SHEETS.md, R2 section):
   * every typical detail is N.T.S. and drawn at REAL size (1 unit = 1 mm) with the typical members of
     members.py, annotated for one dummy scale 1:25 (SC): text 2.0 mm = 50 units;
   * each sheet is arranged in MODEL space at real size: sheet i occupies (i * SHEET_DX * SC, 0) ..
@@ -15,8 +18,8 @@ R2 structure (see MODEL_SPACE_SHEETS.md, R2 section):
     lineweights are generated from the same table only so the screen matches the plot.
 
 Rule    : normal drawing rule (2.0 / 2.8 text, 2 mm arrows, standard pens) - detail sheets.
-Content : td_columns.py (1101 - 1104), td_beams.py (1111 - 1116), td_slabs.py (1121 - 1128).
-Driver  : build.py / plot.py.   Guides: MODEL_SPACE_SHEETS.md, TYPICAL_DETAILS_INSTRUCTION.md
+Used by : jobs/standard_set_R2 (td_columns.py, td_beams.py, td_slabs.py), jobs/steel_roof_truss (srt_engine.py).
+Guides  : docs/general/ (annotation guide, symbols, drawing production), MODEL_SPACE_SHEETS.md (R2)
 """
 import math
 import sys
@@ -27,7 +30,7 @@ from ezdxf import bbox
 from ezdxf.path import make_path
 from ezdxf.enums import TextEntityAlignment as TA, MTextEntityAlignment as MA
 
-from pens import PEN, LTS          # pens by colour, LTSCALE: no side effects, so plot.py can read them too
+from .pens import PEN, LTS         # pens by colour, LTSCALE: no side effects, so plot.py can read them too
 
 
 # --------------------------------------------------------------------------- project data
@@ -274,8 +277,7 @@ def arrowhead(sp, tip, frm, size, layer="S-ANNO"):
 #    at a uniform pitch, as close as possible to their target height, avoiding reserved y-bands.
 #  * ROW mode (sides "T"/"B"): notes share one knee y above / below the view, ordered by target x.
 #  * One straight leader segment + 3 mm horizontal shelf. Crossing leaders are swapped.
-sys.path.insert(0, str(Path(__file__).resolve().parents[2]))    # repository root: shared drafter package
-from drafter.fonts import text_w, wrap as _wrap                  # noqa: E402  widths from the Arial Narrow TTFs
+from .fonts import text_w, wrap as _wrap                         # noqa: E402  widths from the Arial Narrow TTFs
 
 WRAP_UNITS = False     # True: a number and its unit stay on one line (a project opts in; the R2 sets keep their wrap)
 

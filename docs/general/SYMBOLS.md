@@ -6,9 +6,11 @@ the rule behind it. **Draw a symbol only with its helper**, never by hand, so it
 - Placement of symbols among the notes: `ANNOTATION_ALIGNMENT_GUIDE.md`.
 - Lines, pens, levels, marks, callouts in the EIT standard: `DRAWING_STANDARD_EIT-011006-19.md`.
 - Engines:
-  - `td` = `jobs/standard_set_R2/td_engine.py`, the general engine for any set;
-  - `srt` = `jobs/steel_roof_truss/srt_engine.py`, the steel helpers on top of `td`.
-  A new set imports `td` and copies or imports the steel helpers it needs.
+  - `td` = `drafter/td_engine.py`, the general engine for any set;
+  - `steel` = `drafter/steel.py`, the steel layers and helpers on top of `td`;
+  - `srt` = `jobs/steel_roof_truss/srt_engine.py`, helpers tied to the SRT truss geometry (chord, branch, branch
+    welds).
+  A new set imports `td`, and `steel` when it has steel.
 - Sizes are **plotted (paper) mm**. Helpers take the view scale `S` and draw at S × the paper size.
 
 General rules:
@@ -25,13 +27,13 @@ General rules:
 
 | Symbol | Drawn as | Layer / pen | Helper | Rule |
 |---|---|---|---|---|
-| **Cutting plane** (section) | EIT: chain 0.25 with a split bubble at each end, its triangle pointing the viewing way. Office (busy views): **end strokes only**, heavy, outside the object, with arrows of 4.5 mm to the viewing side and the label "n/sheet". Sections look left or down | `S-CUTL` 0.25, pen 6 | `srt.cutmark(..., ends_only=True, lab="end"/"side")` | EIT §11; guide §9.4 |
+| **Cutting plane** (section) | EIT: chain 0.25 with a split bubble at each end, its triangle pointing the viewing way. Office (busy views): **end strokes only**, heavy, outside the object, with arrows of 4.5 mm to the viewing side and the label "n/sheet". Sections look left or down | `S-CUTL` 0.25, pen 6 | `steel.cutmark(..., ends_only=True, lab="end"/"side")` | EIT §11; guide §9.4 |
 | **Section / detail title** | Underlined title, 2.8 mm bold, "SCALE 1:n" below. A split bubble Ø9.2 at the right end: ID 2.8 bold above, sheet 2.0 below. Filled triangles for a section; none for a detail | `S-TITL` | `td.view_title(..., triangles=)` | EIT §11; guide §6 |
-| **Detail callout** | Office (2026-10-03): a **dashed circle** round the enlarged area, and a leader landing on the circle edge in clear space to the note "DETAIL n/sheet - WHAT". EIT alternative: a chain circle plus a leader to a split bubble | `S-CALL` HIDDENX2, 0.25, pen 6 | `srt.detail_callout(..., at=angle)` + `leader()` | EIT §11; guide §9.7 |
+| **Detail callout** | Office (2026-10-03): a **dashed circle** round the enlarged area, and a leader landing on the circle edge in clear space to the note "DETAIL n/sheet - WHAT". EIT alternative: a chain circle plus a leader to a split bubble | `S-CALL` HIDDENX2, 0.25, pen 6 | `steel.detail_callout(..., at=angle)` + `leader()` | EIT §11; guide §9.7 |
 | **Grid line and bubble** | Grid line in the centre linetype (chain), letters on the short direction and numbers on the long, in circles at the line ends | Line `S-CENT` 0.18 (RC) or `S-GRID` grey (steel); bubble `S-SYMB` | `td.grid_bubble()` | EIT §7 |
 | **Level mark** | Open datum triangle, apex on the line (2.4 wide, 2.0 high), with the value and description 2.0 mm above the line, **outside** the view. Values in m, 3 decimals (`+0.600 TOP OF WALL`). Benchmark: `TBM` boxed with an upward triangle | `S-ANNO`, text `S-TEXT` | `td.level()` | EIT §9; guide §2.5 |
 | **Break line, straight** | A straight line with one Z in the middle, past the object on both sides. For whole views, RC, open sections and plates | `S-BREAK` grey 0.18 | `td.zbreak()` | EIT §0, Table 2.3 |
-| **Break, round tube** | One half a single arc bulging toward the broken-away part; the other half a lens. Square to the member axis, sagitta about R/4, no inner-wall loop. Hidden wall lines stop on the break curve | Member layer | `srt.chs_break()`, `srt.break_point()` | Steel S4.5; guide §9 |
+| **Break, round tube** | One half a single arc bulging toward the broken-away part; the other half a lens. Square to the member axis, sagitta about R/4, no inner-wall loop. Hidden wall lines stop on the break curve | Member layer | `steel.chs_break()`, `steel.break_point()` | Steel S4.5; guide §9 |
 | **Match line** | Long dash-dot-dot, 0.35 | `S-MATCH` | – | EIT §0 |
 | **Table title** | "TABLE n - NAME" above the table; notes cite "TABLE n" only | `S-TEXT` | `td.TABT()`, `td.TAB()`, `td.tbl(title=)` | guide §6; R2 notes |
 
@@ -45,7 +47,7 @@ General rules:
 | **Dot terminator** | Filled dot Ø0.7, for a point inside an area. Not used for reinforcement | `S-ANNO` | `leader(..., dot_tip=True)` | guide §2.1 |
 | **Bar-mark bubble** | Circle Ø4.0 on the shelf, number 2.0 bold (1.7 for two digits) | `S-SYMB` | `leader(..., mark=n)` | guide §2 |
 | **Numbered callout** | 4 mm circle with a thin leader to the bar or stirrup; the texts in a list beside the detail | `S-SYMB` | `td.callout()`, `td.callout_list()` | R2 `MODEL_SPACE_SHEETS.md` |
-| **Member tag** | The mark in a circle (radius fitted to the text, at least 2.4), bold text, placed **beside** the member | Circle `S-SYMB`, text `S-TEXT` | `srt.tag()`, `srt.place_tag()` | guide §9.2 |
+| **Member tag** | The mark in a circle (radius fitted to the text, at least 2.4), bold text, placed **beside** the member | Circle `S-SYMB`, text `S-TEXT` | `steel.tag()`, `steel.place_tag()` | guide §9.2 |
 | **Label on the member** | Text inside the member's own band, no leader | `S-TEXT` | `td.text()` | guide §9.8 |
 
 ## 3. Concrete symbols
@@ -73,12 +75,12 @@ Full rules: `docs/steel/STEEL_DETAILING_INSTRUCTION.md` S4 – S5.
 
 | Symbol | Drawn as | Layer / pen | Helper | Rule |
 |---|---|---|---|---|
-| **Weld symbol** | AWS A2.4: reference line, arrow (never collinear with it), basic symbol (arrow side below, other side above), size left and length right. Also all-round circle, field flag toward the tail, NDT letters, a tail reference, and a broken arrow for a bevel | `S-ANNO`, text 2.0 | `srt.weld()` | Steel S5; guide §9.3 |
-| **Weld as seen** | 45° hatch only (ANSI31), spacing 1/3 of the leg; boundary on Defpoints (never plotted). A band along the joint plus the profile triangles at the silhouettes | `S-WELD` | `srt.weld_region()`, `weld_bead()`, `weld_band()`, `weld_branch()` | Steel S4.7 |
-| **Work point** | Small cross in a circle, "WP" | `S-SYMB` | `srt.wp_mark()` | Steel S2.1 |
+| **Weld symbol** | AWS A2.4: reference line, arrow (never collinear with it), basic symbol (arrow side below, other side above), size left and length right. Also all-round circle, field flag toward the tail, NDT letters, a tail reference, and a broken arrow for a bevel | `S-ANNO`, text 2.0 | `steel.weld()` | Steel S5; guide §9.3 |
+| **Weld as seen** | 45° hatch only (ANSI31), spacing 1/3 of the leg; boundary on Defpoints (never plotted). A band along the joint plus the profile triangles at the silhouettes | `S-WELD` | `steel.weld_region()`, `weld_bead()`, `weld_band()`; `srt.weld_branch()` | Steel S4.7 |
+| **Work point** | Small cross in a circle, "WP" | `S-SYMB` | `steel.wp_mark()` | Steel S2.1 |
 | **Centre / work line** | Grey chain, EIT grid linetype, work point to work point | `S-GRID` grey 0.18 | `srt.chord(cl=True)`, `branch(cl=True)` | Steel S4.2 |
-| **Bolt, hole, slot** | Hole: circle + centre mark; slot: two arcs + straight sides; centre marks grey | `S-BOLT`; `S-CENT` grey 0.18 | `srt.hole()`, `srt.slot()`, `srt.bolt_side()` | Steel S4.2, S8 |
-| **Hollow section in section** | Outer + inner circle, the wall solid-filled. Never cross-hatched | Member layer | `srt.chs_section()` | Steel S4.1 |
+| **Bolt, hole, slot** | Hole: circle + centre mark; slot: two arcs + straight sides; centre marks grey | `S-BOLT`; `S-CENT` grey 0.18 | `steel.hole()`, `steel.slot()`, `steel.bolt_side()` | Steel S4.2, S8 |
+| **Hollow section in section** | Outer + inner circle, the wall solid-filled. Never cross-hatched | Member layer | `steel.chs_section()` | Steel S4.1 |
 | **Hollow-section wall in elevation** | Fine hidden line, grey, in every view; stops on the break | `S-STL-WALL` grey 0.18, fine hidden | `srt.chord(walls=True)`, `branch()` | Steel S4.1 – S4.2 |
 | **Hidden steel** | A part behind another is dashed where it is covered | `S-STL-HIDN` grey 252, fine hidden | `srt_sheets.behind()`, `hide_under()` | Steel S4.2 |
 | **Fly-braced node** | Open triangle under the node, mark FB1 | `S-SYMB` | `srt_sheets` (half elevation) | Steel S9A.6 |

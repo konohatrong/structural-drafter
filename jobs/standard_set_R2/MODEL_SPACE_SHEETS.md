@@ -1,5 +1,8 @@
 # Standard set R2: typical details (started 2026-09-30)
 
+> The engine described here (`td_engine.py`, `pens.py`) moved to `drafter/` on 2026-10-03 and is shared by every
+> current set; the R2 content modules import it as `from drafter.td_engine import *`. Output unchanged.
+
 R2 is a separate version of the typical-detail sheets. R1 (`jobs/standard_set`) stays frozen. General notes are not part of R2 (they are built in `jobs/standard_set`, `python build.py gn`); R2 cites their tables by number only, for example "TABLE 6".
 
 ## R2 rules (user decisions, 2026-09-30)

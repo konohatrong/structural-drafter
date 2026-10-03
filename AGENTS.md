@@ -6,7 +6,7 @@ to the Thai drafting standard EIT 011006-19 and the office conventions. It has t
 | Part | Folder | Role |
 |---|---|---|
 | **Rules, guides, instructions** | `docs/` | What a drawing must show and how it is presented: `general/` for every structure type, `concrete/` and `steel/` for each material. Index: `docs/README.md` |
-| **Toolkit** | `drafter/`, `jobs/standard_set_R2/td_engine.py`, job engines | Font metrics, plotting, the annotation engine and the drawing helpers |
+| **Toolkit** | `drafter/` | The drafting engine (`td_engine.py`), pens (`pens.py`), steel helpers (`steel.py`), font metrics, plotting |
 | **Worked examples** | `jobs/` | Complete sets built with the rules, and the record of how the rules were developed. Catalogue: `jobs/README.md` |
 
 ## 1. Reading order for any drawing task
@@ -64,7 +64,8 @@ Fix the disagreement in the documents, not only in one drawing.
    - Drawings and notes never retype a number.
    - Never invent an engineering value. An assumption is stated on the drawing and listed as an open item in the
      job README.
-2. **Engine.** Import `td_engine.py` and add the material helpers. Draw every symbol with its helper (`SYMBOLS.md`).
+2. **Engine.** In the job's engine module: `from drafter import td_engine`, `from drafter.td_engine import *`,
+   set the project data and options, then `from drafter.steel import *` for steel. Draw every symbol with its helper (`SYMBOLS.md`).
 3. **Views and sheets.**
    - Annotate only through `leader()` / `note_cfg()`; never hand-place notes in column or row modes.
    - Choose one leader style per set (guide §0).
@@ -109,9 +110,9 @@ The rules come from the user's reviews of real sets. When the user corrects a dr
   redesign. Propose with reasons, then ask. Open decisions are listed in each job README.
 - **Status of jobs** (`jobs/README.md` §4): an **issued** job changes only by a new revision; a **frozen** or
   **superseded** job is not changed.
-- **Shared code lives in two job folders.** `jobs/standard_set_R2/td_engine.py` (with `pens.py`) is the general
-  engine, and `jobs/steel_roof_truss/srt_engine.py` holds the steel helpers. Other jobs import them, so a change there
-  is a change to every set that uses them.
+- **Shared code is in `drafter/`.** `td_engine.py` (the engine), `pens.py` and `steel.py` are imported by every
+  current set, so a change there is a change to all of them. Job folders hold only the job's own data, views and
+  sheets.
   - Keep new options opt-in (off by default), as `LEADER_ORTH` and `WRAP_UNITS` are.
   - Run the full `pytest -q` after any change to them.
 - **Verify refactors**: build before and after and diff the DXFs. Never change drawing output silently.

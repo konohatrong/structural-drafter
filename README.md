@@ -14,8 +14,7 @@ The repository is written for **AI agents and drafters alike**. An agent starts 
 | [`AGENTS.md`](AGENTS.md) | Entry point for an agent: reading order, workflow, how the rules grow, rules of engagement (`CLAUDE.md` loads it for Claude Code) |
 | [`docs/`](docs/README.md) | **The rule book.** `general/` applies to every structure type: drawing standard, annotation guide, symbols, general-notes sheets, drawing production. `concrete/` and `steel/` describe each material's presentation approach and rules, with their sources. The index compares how concrete and steel are presented |
 | [`jobs/`](jobs/README.md) | **Worked examples**: complete sets built with the rules, and the record of the reviews that produced them |
-| `drafter/` | Shared code: font metrics and wrapping, AutoCAD plotting, the ezdxf fallback plotter |
-| `jobs/standard_set_R2/td_engine.py` | The drafting engine every new set imports: model-space blocks, the annotation engine, tables, title block, checks |
+| `drafter/` | **Shared code.** `td_engine.py`, the drafting engine every set imports (model-space blocks, the annotation engine, tables, title block, checks, bar graphics); `pens.py`, pens by colour; `steel.py`, steel layers and helpers; font metrics and wrapping; AutoCAD plotting and the ezdxf fallback |
 | `.claude/skills/` | Claude Code skills: `concrete-detailing`, `steel-detailing` |
 | `tests/` | Smoke test: builds every job without AutoCAD |
 | `references/` | Conversion scripts for third-party reference material (the material itself is not in the repository) |

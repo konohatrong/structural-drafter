@@ -8,7 +8,7 @@ description: Draw reinforced concrete (typical details, member details, slabs, s
 RC sets follow the pipeline in `docs/general/DRAWING_PRODUCTION.md`:
 
 1. data (design calc or the member catalogue `members.py`);
-2. engine (`jobs/standard_set_R2/td_engine.py`);
+2. engine (`drafter/td_engine.py`);
 3. views and sheets (`td_<member>.py`);
 4. `build.py`, which exits 1 on any `!!`;
 5. `plot.py`.

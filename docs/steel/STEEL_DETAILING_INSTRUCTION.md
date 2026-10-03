@@ -131,7 +131,7 @@ Placement of leaders, tags, weld symbols, cutting planes and node dimensions: `A
    - A CHS cut in section is a solid-filled ring. Never cross-hatch steel in section (DSC p.94 #12).
 2. **Centre and work lines**: grey ACI 8, EIT grid linetype (S-GRID).
    - Bolt, hole, slot and anchor-rod centre lines stay on S-CENT, but in a steel set **S-CENT is grey ACI 8, 0.18**
-     (`srt_engine`; user rule 2026-10-03).
+     (`drafter/steel.py`; user rule 2026-10-03).
    - **Hidden wall lines end on the pipe break.** A tube's inner wall stops where it meets the first break curve from
      the kept side: the single arc on one half, the inner arc of the lens on the other (`break_point`). It never runs
      through the break. Use `chord(..., breaks=(left, right))`; `branch()` and the loose-diagonal tube do the same.
@@ -170,7 +170,7 @@ Placement of leaders, tags, weld symbols, cutting planes and node dimensions: `A
 ## S5. Weld symbols (AWS A2.4; DSC p.115-127, DG21 Fig 3-36)
 
 1. **Every weld gets a symbol.** Never write "FILLET ALL ROUND" in a note (DSC p.95 #42). Symbols are drawn with
-   `srt_engine.weld()`.
+   `drafter.steel.weld()`.
 2. **Grammar**
    - Arrow side is below the reference line, other side above.
    - **Both sizes are written for a both-sides weld** (p.117).
@@ -361,7 +361,7 @@ The build enforces a clean layout (exit code 1 on any `!!`). Before sending a se
 | Weld zones and legs | `calc_truss.dihedral`, `branch_weld`, `weld_leg`, `leg_std`, `j24_min` |
 | Splice, knife plate, support, bolt length | `flange_splice`, `loose_diagonal`, `support`, `bolt_length`, `l_end_req` |
 | Marks | `srt_engine._web_marks`, `CHORD_MARK`, `CHORD_LEN` |
-| Symbols and graphics | `srt_engine.weld`, `cutmark`, `weld_branch` / `branch_zones`, `chs_break`, `break_point`, `place_tag`, `detail_callout` |
+| Symbols and graphics | `drafter/steel.py`: `weld`, `weld_region` / `weld_band` / `weld_bead`, `cutmark`, `chs_break`, `break_point`, `chs_section`, `hole`, `slot`, `bolt_side`, `place_tag` / `tag`, `detail_callout`, `wp_mark`; `srt_engine`: `chord`, `branch`, `weld_branch` / `branch_zones` |
 | Fly braces | `calc_truss.fly_brace`, `FB_*` constants, `ANGLES`; `srt_sheets._fb`, `angle_strip`, `hide_under`, `cross_section`, `fb_lug`, `fb_purlin` |
 | Leader engine | `td_engine.LEADER_ORTH`, `ORTH_RISE`, `ORTH_LEG_MIN`, `BOLT_RING_K`, `WRAP_UNITS` (`drafter.fonts.wrap(keep_units=True)`) |
 | Views and tables | `srt_sheets`: `node_detail` (set-out, symbols), `branch_weld_detail`, `camber_diagram`, `bearing_elev`, `anchor_rod`, `base_plans`, `loose_conn` (`behind`), tables 1-6 |

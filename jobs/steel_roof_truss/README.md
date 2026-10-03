@@ -78,7 +78,7 @@ The build runs the design first and caches it in `out\.design_<hash>.pkl` while 
 | File | Role |
 |---|---|
 | `calc_truss.py` | Design: loads, analysis, sizing by search over the JIS G 3444 sizes, member and joint checks, connections, the drawn node geometry (`layout`, `outline`) |
-| `srt_engine.py` | Project data on the R2 drafting engine (`jobs/standard_set_R2/td_engine.py`, with `LEADER_ORTH` and `WRAP_UNITS` on), steel layers and helpers (CHS outlines with wall lines trimmed at pipe breaks, sections, holes, slots, bolts, AWS weld symbols, cutting planes, work points, member tags, detail callouts) |
+| `srt_engine.py` | Project data and options on the drafting engine (`drafter/td_engine.py`, with `LEADER_ORTH` and `WRAP_UNITS` on) and the steel helpers (`drafter/steel.py`); the design, marks and the truss members drawn from it (chords and branches with walls trimmed at pipe breaks, branch welds) |
 | `srt_sheets.py` | The views and the six sheets, notes and tables |
 | `build.py`, `plot.py` | Drivers |
 

@@ -40,7 +40,7 @@ Generated output (`out/`, `library/`) is not in the repository. Rebuild it with 
 
 1. Pick the closest job above and copy its structure: `calc_*.py` (if there is a design), `*_engine.py`,
    `*_sheets.py`, `build.py`, `plot.py`.
-2. Import the general engine `jobs/standard_set_R2/td_engine.py` (as `srt_engine.py` does) rather than copying it.
+2. Import the engine from `drafter/` (`td_engine`, and `steel` for steel) as `srt_engine.py` does; never copy it.
    Set the project data and options in the job's own engine module.
 3. Write the job's `README.md` from the start, with:
    - the drawing set, stage and status;

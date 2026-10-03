@@ -7,7 +7,7 @@ Sources : EIT 011008-21 ch. 7, 9, 10, 11.11, 13 (Fig 13.3.8); DPT 1301/1302-61 c
 Rules   : dimensions on one side of a view, notes on the other (no leader crosses a dimension); bar-end key on
           every sheet with bar ends / laps; views >= 8 m apart in model space.
 """
-from td_engine import *
+from drafter.td_engine import *
 from members import *
 
 BASE = "STR-ST-1121_Typical_Slab_Details_A3_R2"

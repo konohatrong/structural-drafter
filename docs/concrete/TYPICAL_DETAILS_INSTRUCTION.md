@@ -40,7 +40,7 @@ This file explains how to draw the office typical-detail sheets. **Current set R
 | `STR-ST-1127-D-A` | Typical slab details (7): slab on ground | Slab at a ground beam; thickened free edge; contraction, construction, expansion / isolation joints; joint layout; notes |
 
 - **Generator (working):** `jobs/standard_set_R2/`:
-  - `td_engine.py` is the shared engine, `pens.py` the pens by colour and `members.py` the typical member sizes;
+  - the shared engine is `drafter/td_engine.py` with `drafter/pens.py` (pens by colour); `members.py` holds the typical member sizes;
   - `td_columns.py`, `td_beams.py` and `td_slabs.py` hold the content;
   - `build.py <set|all>` and `plot.py <set|all>` are the drivers. A build with any `!!` layout problem exits 1.
   - Sheets are laid out in model space from blocks at real size (see `jobs/standard_set_R2/MODEL_SPACE_SHEETS.md`).

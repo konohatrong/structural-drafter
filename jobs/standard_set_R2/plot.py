@@ -23,7 +23,7 @@ HERE = Path(__file__).resolve().parent
 sys.path.insert(0, str(HERE))
 sys.path.insert(0, str(HERE.parents[1]))           # repository root: shared drafter package
 from drafter import acad, plotting                 # noqa: E402
-from pens import PEN, LTS                          # noqa: E402  pens by colour, LTSCALE
+from drafter.pens import PEN, LTS                  # noqa: E402  pens by colour, LTSCALE
 
 SETS = {"columns": "STR-ST-1101_Typical_Column_Details_A3_R2",
         "beams": "STR-ST-1111_Typical_Beam_Details_A3_R2",
