@@ -1,0 +1,15 @@
+# Sources are written with LF by the generators; keep them LF on every checkout
+* text=auto eol=lf
+*.py text eol=lf
+*.md text eol=lf
+*.csv text eol=lf
+
+# AutoCAD script files must stay CRLF for accoreconsole
+*.scr text eol=crlf
+
+# Binary drawing / image formats (if ever committed)
+*.dwg binary
+*.dxf binary
+*.pdf binary
+*.png binary
+*.ctb binary

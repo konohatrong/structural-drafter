@@ -1,0 +1,34 @@
+# Generated drawings - rebuilt by build*.py / plot*.py (ezdxf + AutoCAD accoreconsole)
+out/
+library/
+jobs/general_notes/rev_A/
+*.dxf
+*.dwg
+*.pdf
+*.png
+*.ctb
+*.bak
+*.dwl
+*.dwl2
+
+# AutoCAD script / log by-products
+*.log
+*.scr
+plot.log
+
+# Python
+__pycache__/
+*.pyc
+
+# Reference material (third-party, copyrighted, large): keep only our own notes and scripts
+references/**/dxf/
+references/**/pdf/
+references/**/png/
+references/**/txt/
+references/**/ours/
+
+# OS / editor
+desktop.ini
+Thumbs.db
+.vscode/
+.idea/
