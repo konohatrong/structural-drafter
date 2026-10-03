@@ -11,7 +11,8 @@
   - `DRAWING_STANDARD_EIT-011006-19.md` covers *what* to draw: lines, pens, marks, callouts, EIT rules.
   - `SYMBOLS.md` catalogues every symbol: its form, layer, helper and rule.
   - `DRAWING_PRODUCTION.md` covers how a set is built, checked and plotted.
-  - `NRW-ST_Linetype_and_Lineweight_Guide.md` covers CAD setup.
+  - CAD setup (linetypes, pens, CTB): EIT §19.2 and `DRAWING_PRODUCTION.md`. The NRW job's own
+    `NRW-ST_Linetype_and_Lineweight_Guide.md` is outside the repository (its `Drawings\` folder).
   - This guide covers *where and how* annotation is placed, so every sheet reads as calm, aligned columns of notes.
 - **Content rules per structure type** say what a note, mark or table must contain; this guide says only where it
   goes:
@@ -46,6 +47,9 @@
 **Leader style: one per drawing set.**
 - **Standard angle** (§1): an inclined 45° / 60° leg, a run and a shelf. Used on NRW, the R2 typical details, the stair
   and the general notes.
+  - R2 variant (user, 2026-09-30): the leader form is chosen per target. A note aimed at a vertical line, a corner,
+    a dot or an area is placed at its height and gets one horizontal leader. Only a target on a horizontal line gets
+    the inclined leg (`_target_kind`, `_snap_tip`; `jobs/standard_set_R2/MODEL_SPACE_SHEETS.md`).
 - **Orthogonal** (§9.1): straight, or an L with a real second leg. Used on SRT.
 - A new set of any structure type may use either. The orthogonal style suits views where many targets sit close
   together, such as connections, framing nodes and congested reinforcement.
@@ -120,7 +124,7 @@ Text is wrapped using the **real glyph advances** of Arial Narrow (average ≈ 0
 - Bars at a U-bend or L-bend sit **inside the bend**, touching its inner face, e.g. the free-end verticals at ±60° inside the U (3/5004).
 - The view carries a note "… DRAWN OFFSET FOR CLARITY".
 
-### 2.4 Dimensions (see the CAD guide §5 for all variables)
+### 2.4 Dimensions (dimension style: `dimstyle()` in `td_engine.py`; EIT §19.3)
 
 - **Terminators:** **filled arrowheads, 2.0 mm** (`DIMBLK` closed filled, `DIMASZ 2`, `DIMTSZ 0`). This is a project preference; EIT §3.2.3 permits arrows (its figures show 45° ticks).
 - **Colour:** dimension lines and text plot black. **Extension lines are ACI 8 grey** (50 % screened), like grid lines.

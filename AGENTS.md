@@ -23,15 +23,38 @@ to the Thai drafting standard EIT 011006-19 and the office conventions. It has t
 4. The closest example job in `jobs/README.md`: its README, then its code.
 5. Sources (`docs/*/reference/`) when a rule or value needs checking. Check the code itself when the value matters.
 
-Precedence when documents disagree:
-1. the project's own requirements and the engineer's instruction in this conversation;
-2. a dated user rule;
-3. the material instruction;
-4. the general rules;
-5. the EIT digest;
-6. handbooks and sources.
+**Precedence** when documents disagree:
+1. the project's own requirements, law, and the engineer's instruction in this conversation;
+2. **office rules**: the dated user rules, EIT §19 office conventions, the annotation guide, and the material
+   instructions. The newest dated rule wins, and a material rule wins over a general one on the same point;
+3. the EIT standard text ([STD], then [FIG]) in the EIT digests;
+4. [REC] recommendations, handbooks and sources.
 
 Fix the disagreement in the documents, not only in one drawing.
+
+**Task router.** Read §1 – §5 of this list once; for a specific task go straight to:
+
+| Task | Read |
+|---|---|
+| Start a new set or job | `jobs/README.md` §3, the closest job's README, `DRAWING_PRODUCTION.md` §1 – §2 |
+| Sheet, title block, revision, drawing number | EIT §3, §13, §19.1 |
+| Line weight, linetype, layer, colour | EIT §0, §19.2 (current engine), material instruction (steel S4) |
+| Place notes and leaders | Guide §0, §1, §3 – §5 (standard angle) or §9.1 (orthogonal), §2.1 terminators |
+| Dimensions | Guide §2.4 – §2.4.1, §9.5; EIT §8, §19.3 |
+| Units in text | Guide §2.4.2 |
+| Any symbol (section, callout, level, break, tag, weld …) | `SYMBOLS.md`, then the rule it cites |
+| Bars, ties, laps, bar notation | `RC_DRAWING_RULES_EIT-011006-19.md` §12, §19.4, §19.7; guide §2.1 – §2.3 |
+| Welds, bolts, marks, bills, camber, erection | `STEEL_DETAILING_INSTRUCTION.md` S3 – S9 |
+| Tables | Guide §6; `DRAWING_PRODUCTION.md` §2 (register, "TABLE n - NAME") |
+| General-notes sheet | `GENERAL_NOTES_DRAWING_INSTRUCTION.md` §0, plus the material content file |
+| A `!!` build warning | `DRAWING_PRODUCTION.md` §3 |
+
+**Before issue**, run every checklist that applies:
+- every set: EIT §17 (sheet) and guide §8 (annotation);
+- steel: S10;
+- typical details: `TYPICAL_DETAILS_INSTRUCTION.md` §7;
+- stairs: `STAIRCASE_DRAWING_INSTRUCTION.md` §11;
+- general notes: `GENERAL_NOTES_DRAWING_INSTRUCTION.md` §10.
 
 ## 2. Workflow
 
@@ -86,6 +109,11 @@ The rules come from the user's reviews of real sets. When the user corrects a dr
   redesign. Propose with reasons, then ask. Open decisions are listed in each job README.
 - **Status of jobs** (`jobs/README.md` §4): an **issued** job changes only by a new revision; a **frozen** or
   **superseded** job is not changed.
+- **Shared code lives in two job folders.** `jobs/standard_set_R2/td_engine.py` (with `pens.py`) is the general
+  engine, and `jobs/steel_roof_truss/srt_engine.py` holds the steel helpers. Other jobs import them, so a change there
+  is a change to every set that uses them.
+  - Keep new options opt-in (off by default), as `LEADER_ORTH` and `WRAP_UNITS` are.
+  - Run the full `pytest -q` after any change to them.
 - **Verify refactors**: build before and after and diff the DXFs. Never change drawing output silently.
 - **Commit or push only when asked.**
 - **Copyright**: no standards PDFs, handbooks or other offices' details in the repository; only digests and short
@@ -96,11 +124,16 @@ The rules come from the user's reviews of real sets. When the user corrects a dr
 
 ## 5. Quick commands
 
+From the repository root, in PowerShell:
+
 ```powershell
-pip install -r requirements.txt            # ezdxf, fonttools, pymupdf, matplotlib, numpy
-cd jobs\steel_roof_truss; python build.py; python plot.py --ezdxf
-cd jobs\standard_set_R2;  python build.py all; python plot.py all
-pytest -q                                  # from the repository root
+pip install -r requirements.txt                       # ezdxf, fonttools, pymupdf, matplotlib, numpy
+$env:PYTHONIOENCODING = "utf-8"
+python jobs\steel_roof_truss\build.py                 # these write to the job's own out folder
+python jobs\steel_roof_truss\plot.py --ezdxf
+python jobs\standard_set_R2\build.py all
+python jobs\standard_set_R2\plot.py all
+pytest -q
 ```
 
 All commands, the checks and the environment: `docs/general/DRAWING_PRODUCTION.md`.

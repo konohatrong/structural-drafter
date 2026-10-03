@@ -76,7 +76,7 @@ This file explains how to draw the office typical-detail sheets. **Current set R
 |---|---|
 | Text | Arial Narrow 2.0; headers and view titles 2.8 bold |
 | Dimensions | 2 mm filled arrows, grey extension lines |
-| Leaders | 45° / 60° legs with a 3 mm shelf; tips on edges; bar marks in bubbles |
+| Leaders | Standard-angle style: 45° / 60° legs with a 3 mm shelf; R2 chooses the form per target (one horizontal leader to a vertical line, dot or area; the inclined leg only to a horizontal line); tips on edges; bar marks in bubbles |
 | Units | Every measured value in a note or leader carries its unit; table headers carry it for the cells; dimension figures stay bare (`ANNOTATION_ALIGNMENT_GUIDE.md` §2.4.2). The R2 sets keep their issued line breaks until revised (`WRAP_UNITS` stays off) |
 | Pens | Standard: bars 0.50, ties and secondary bars 0.35, cut concrete 0.35, seen 0.25, annotation 0.18, grey hatch 0.13 |
 | View titles | EIT style: underlined bold 2.8, scale below, bubble with detail number / sheet. Title width is **measured** (`text_w`) so the bubble never overlaps |

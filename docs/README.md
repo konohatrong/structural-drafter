@@ -9,9 +9,9 @@ The knowledge base an agent (or a drafter) uses to produce structural drawings i
 3. **`../jobs/`**: worked examples. Each job is a complete set built with these rules, and the record of how the
    rules were developed (`jobs/README.md`).
 
-When two layers disagree, the more specific one governs: material over general, and a dated user rule over an older
-rule. A project's own requirements govern over all of them. Resolve a conflict in the documents rather than in one
-drawing.
+When two documents disagree, follow the precedence in `AGENTS.md` §1: the project and the engineer first, then the
+office rules (newest dated rule first, material over general), then the EIT text, then sources. Resolve a conflict in
+the documents rather than in one drawing.
 
 ## 1. Index
 
@@ -22,7 +22,7 @@ drawing.
 | `general/DRAWING_STANDARD_EIT-011006-19.md` | EIT 011006-19 digest: sheet set-up, title block, lines and pens, scales, lettering, grids, dimensioning, levels, member marks, section and detail callouts, drawing numbering, CAD layers, QA checklist; **§19 office conventions** (A3, Arial Narrow, pens, dimensions, annotation summary, earthwork graphics) |
 | `general/ANNOTATION_ALIGNMENT_GUIDE.md` | Where and how annotation goes: note columns and rows, leaders (standard angle and orthogonal), terminators, clean dimensioning, **units on numbers**, view titles, keep-out zones, member tags, cutting planes, detail callouts, labels on the member, fitting views. §0 maps the rules to structure types |
 | `general/SYMBOLS.md` | Catalogue of every symbol: reference, annotation, concrete and steel symbols, with layer, helper and rule |
-| `general/GENERAL_NOTES_DRAWING_INSTRUCTION.md` | Layout of a general-notes sheet: sizes (× 0.625), anatomy, wording, tables, layout engine, checklist. Its §4.3 lists what a concrete notes sheet must carry; steel equivalents are in the steel instruction S1 and S9 |
+| `general/GENERAL_NOTES_DRAWING_INSTRUCTION.md` | Layout of a general-notes sheet: sizes (Rev B: normal sizes, flowing over sheets; Rev A: × 0.625), anatomy, wording, tables, layout engine, checklist. Its §4.3 lists what a concrete notes sheet must carry; steel equivalents are in the steel instruction S1 and S9 |
 | `general/DRAWING_PRODUCTION.md` | The pipeline (calc → engine → views → build → look → plot → test → review), the engine, the `!!` checks, requirements, commands, plotting without AutoCAD, environment pitfalls |
 
 ### concrete/

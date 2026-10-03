@@ -35,8 +35,9 @@ Every set is a script, and its drawings are rebuilt from it. Nothing is drawn by
     lengths are shortened, with break lines.
   - Steel views are drawn to their stated scale (1:50, 1:20, 1:10, 1:5, 1:1). See the presentation approach in
     `docs/concrete/README.md` and `docs/steel/README.md`.
-- **Linetypes:** `acadiso.lin` plus the project `EIT_*` linetypes; LTSCALE 3.75, PSLTSCALE 0 (on every layout),
-  MSLTSCALE 0. Never set an entity ltscale inside a detail block.
+- **Linetypes:** `acadiso.lin` patterns (HIDDENX2, HIDDEN, CENTER, PHANTOM, DASHED, kept in `ACADISO`); LTSCALE
+  3.75, PSLTSCALE 0 (on every layout), MSLTSCALE 0. Steel adds `EIT_GRID`. Never set an entity ltscale inside a
+  detail block. (The older NRW engine uses `EIT_*` linetypes at LTSCALE 1: EIT §19.2.)
 - **Pens by colour:** the `PEN` table (`jobs/standard_set_R2/pens.py`) maps each colour to a lineweight. `plot.py`
   writes the matching CTB. Greys (ACI 8, 9, 252) are screened.
 - **Annotation engine:** `leader()` collects the notes and `_layout_notes()` packs them into columns or rows, then

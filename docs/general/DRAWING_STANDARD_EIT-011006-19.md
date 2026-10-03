@@ -416,6 +416,13 @@ Rules [STD §2.4]:
 - Draw a **chain-line circle** around the area.
 - Add a leader to a split bubble (no triangles): upper = detail ID, lower = sheet where it is drawn.
 
+**Office forms (they govern for new sets):**
+- On a busy view, the cutting plane is drawn as **end strokes only**, outside the object, with arrows looking left or
+  down and the label "n/sheet" (`cutmark`; `ANNOTATION_ALIGNMENT_GUIDE.md` §9.4).
+- The detail callout is a **dashed circle** (`S-CALL`) with an ordinary leader landing on its edge, to the note
+  "DETAIL n/sheet - WHAT" (guide §9.7). The chain circle with a split bubble above is the EIT alternative.
+- All forms are in `SYMBOLS.md` §1.
+
 **Detail title:**
 - `DETAIL` text, underlined, with the scale, plus a split bubble (no triangles).
 - The lower half gives the source sheet.
@@ -539,6 +546,10 @@ Built on Table 2.3 for **A2**. Scale the pens per §4.3 for other sizes.
 
 ## 17. Pre-issue QA Checklist
 
+Sheet-level checks for every set. The bar, beam and slab items apply to RC sets. Also run the annotation checklist
+(`ANNOTATION_ALIGNMENT_GUIDE.md` §8) and the material checklist: steel S10, typical details §7, stairs §11, general
+notes §10.
+
 - [ ] Correct paper size, frame margins (left binding margin) and frame line weight
 - [ ] Title block complete: owner, project, office, title, designers, number, scale, date, approval
 - [ ] Revision table filled in (No., description, date, signature)
@@ -584,7 +595,7 @@ These conventions were agreed with the engineer during NRW-ST Rev A and apply to
 | Zone grid | 8 × 6 (numbers 1–8 horizontal, letters A–F vertical), both sides | §2.3 |
 | Font | **Arial Narrow**: 2.0 mm body, **2.8 mm** bold headers and titles | §2.6 (2.5 / 3.5 series adapted) |
 | Drawing number | `<PROJ>-ST-<series>-<stage>-<rev>`, e.g. `NRW-ST-5001-D-A` | Ch. 4 |
-| **General-notes sheets** | All annotation = the rules below **× 0.625** (1.25/2.00): text 1.25 / 1.75, pitch 2.08, dimensions 1.25. Frame, title strip and pens are not scaled. See `GENERAL_NOTES_DRAWING_INSTRUCTION.md` | – |
+| **General-notes sheets** | **Rev B (current, 2026-09-29): the normal sizes (K = 1)**, the notes flowing over as many sheets as they need. Rev A used × 0.625 (text 1.25 / 1.75, pitch 2.08). See `GENERAL_NOTES_DRAWING_INSTRUCTION.md` §0 | – |
 
 ### 19.2 Pens and lines (supersede §4.3 / §16 for A3 originals)
 
@@ -605,8 +616,16 @@ These conventions were agreed with the engineer during NRW-ST Rev A and apply to
 **Rules:**
 - EIT Table 2.3 A2 pens are used **unreduced on A3 originals**, and cut concrete is one step heavier than seen.
 - ACI 8 is secondary information, screened 50 % by `NRW-EIT.ctb` (derived from `monochrome.ctb`).
-- Linetypes use project names `EIT_*` so `acadiso.lin` can't overwrite them.
-- `LTSCALE = PSLTSCALE = MSLTSCALE = 1`, entity ltscale 1. Office patterns (plotted mm): **centre 12 / 2 / 2 / 2, phantom 10 / 2 / 2 / 2 / 2 / 2, match 13 / 2.5 … (= §4.4)**; **hidden 3.0 / 1.5 and fine hidden 1.5 / 0.75** (the user keeps these shorter office values; §4.4 would be 4.8 / 2.4 and 2.4 / 1.2). The old 8.5 / 1.4 chain read as solid and was raised to §4.4 on 2026-09-30.
+- **Two engine generations; use the current one for new sets.**
+  - **Current engine** (`td_engine.py`; R2, SRT and every new set; user 2026-09-30): AutoCAD `acadiso.lin`
+    patterns, LTSCALE 3.75, PSLTSCALE 0 on **every** layout, MSLTSCALE 0. Hidden = HIDDENX2 (1.9 / 0.95 plotted),
+    fine hidden = HIDDEN (0.95 / 0.48), centre and cutting plane = CENTER (4.8 / 0.95 / 0.95 / 0.95), property =
+    PHANTOM. Steel adds `EIT_GRID` (12 / 2 / 2 / 2) for centre and work lines. Details and pitfalls:
+    `jobs/standard_set_R2/MODEL_SPACE_SHEETS.md` (R2 rules).
+  - **NRW engine** (`build_rw.py`; NRW, stair, general notes Rev A; kept as issued): the project `EIT_*` linetypes
+    and values in the bullets below.
+- (NRW engine) Linetypes use project names `EIT_*` so `acadiso.lin` can't overwrite them.
+- (NRW engine) `LTSCALE = PSLTSCALE = MSLTSCALE = 1`, entity ltscale 1. Office patterns (plotted mm): **centre 12 / 2 / 2 / 2, phantom 10 / 2 / 2 / 2 / 2 / 2, match 13 / 2.5 … (= §4.4)**; **hidden 3.0 / 1.5 and fine hidden 1.5 / 0.75** (the user keeps these shorter office values; §4.4 would be 4.8 / 2.4 and 2.4 / 1.2). The old 8.5 / 1.4 chain read as solid and was raised to §4.4 on 2026-09-30.
 - AutoCAD draws the linetype of an entity inside a scaled detail block at **sheet size** in both the Model tab and the layouts (tested 2026-09-30 for PSLTSCALE 0 and 1). So detail blocks keep entity ltscale 1; ltscale = scale makes the dashes 25× too long, and they read as solid.
 - Short closed notional outlines, such as a 26 mm critical-section square, use the fine hidden line, not a chain: a 12 mm chain dash leaves only fragments. Never let a notional line coincide with a bar or stirrup line; move the first stirrup line to d/4.
 
