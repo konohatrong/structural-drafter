@@ -32,6 +32,7 @@ For how this differs from steel, see the comparison in `docs/README.md`.
 | `RC_DRAWING_RULES_EIT-011006-19.md` | Reinforcement graphics (§12), required content of RC plans and member details (§14 – §15), office bar rules (§19.4, §19.7) |
 | `TYPICAL_DETAILS_INSTRUCTION.md` | Typical-detail sheets 11xx (columns, beams, slabs): numbering, sources, the content of every detail, generator, pitfalls, checklist |
 | `STAIRCASE_DRAWING_INSTRUCTION.md` | RC stairs: design checks, views, bar shapes, notes |
+| `docs/general/FLOOR_PLAN_DRAWING_INSTRUCTION.md` | Floor and foundation plans of RC buildings (with RC §14 for the required content) |
 | `GENERAL_NOTES_STRUCTURAL_CONCRETE.md` | Content of the concrete general notes (office master text and tables). The sheet layout is in `docs/general/GENERAL_NOTES_DRAWING_INSTRUCTION.md` |
 | `reference/SPEC_RC_DESIGN_EIT-011008-21.md` | Digest of EIT 011008-21 (RC design) chapters used by the notes and details |
 | `reference/SPEC_CONCRETE_EIT-011014-19.md` | Digest of EIT 011014-19 (concrete materials and construction) |
@@ -43,7 +44,7 @@ For how this differs from steel, see the comparison in `docs/README.md`.
 1. `docs/general/`: the drawing standard, the annotation guide (§0 says which parts apply), the symbols catalogue and
    drawing production.
 2. This README, then `RC_DRAWING_RULES_EIT-011006-19.md`.
-3. The instruction for the member or sheet type (typical details, stairs, general notes).
+3. The instruction for the member or sheet type (typical details, stairs, general notes, floor plans).
 4. The source digest for the member, when a rule or value needs checking.
 5. The closest example job (`jobs/README.md`):
    - `jobs/standard_set_R2` for typical details;

@@ -594,6 +594,7 @@ These conventions were agreed with the engineer during NRW-ST Rev A and apply to
 | Title strip | Right side, 70 wide (EIT 100 × 0.7 for A3), full height; revision table above the title block; key plan; status stamp | §2.2.2 |
 | Zone grid | 8 × 6 (numbers 1–8 horizontal, letters A–F vertical), both sides | §2.3 |
 | Font | **Arial Narrow**: 2.0 mm body, **2.8 mm** bold headers and titles | §2.6 (2.5 / 3.5 series adapted) |
+| Font, A1 project sheets | **A project setting** (user, 2026-10-04: "font in each project may be change depending on user"): ask at the start of each project and keep it in the job's data, never in shared code. **SSK: `cordia.shx`, width factor 0.90, text height 2.00 mm plotted** (200 in model at 1:100) (user rule, 2026-10-04: "cordia.shx is used in this drawing with width factor 0.90, 1:1 font height = 2.00 mm"). Plot style and LTSCALE: §19.2; plans: `FLOOR_PLAN_DRAWING_INSTRUCTION.md` FP6 | §2.6 |
 | Drawing number | `<PROJ>-ST-<series>-<stage>-<rev>`, e.g. `NRW-ST-5001-D-A` | Ch. 4 |
 | **General-notes sheets** | **Current (issued F-A, 03/10/2026; developed as review print B, 2026-09-29): the normal sizes (K = 1)**, the notes flowing over as many sheets as they need. Rev A used × 0.625 (text 1.25 / 1.75, pitch 2.08). See `GENERAL_NOTES_DRAWING_INSTRUCTION.md` §0 | – |
 
@@ -624,6 +625,15 @@ These conventions were agreed with the engineer during NRW-ST Rev A and apply to
     `DRAWING_ENGINE.md` §4, §9.
   - **NRW engine** (`build_rw.py`; NRW, stair, general notes Rev A; kept as issued): the project `EIT_*` linetypes
     and values in the bullets below.
+- **A1 project sheets** (plans at 1:100 and their sets; user rule, 2026-10-04: "set LTSCALE = 45 when plot as A1
+  paper"; 2026-10-04: "30 for A2"): plot with the office plot style **`STRUCT-A1-A2.ctb`**
+  (`G:\My Drive\##Workset_Autocad\Structology\Plot Style\`), and use `acadiso.lin` patterns at **LTSCALE 45 on
+  A1 paper, LTSCALE 30 on A2 paper** (PSLTSCALE 0, entity ltscale 1: at 1:100 on A1 a DASHED dash plots
+  12.7 × 45 / 100 = 5.7 mm). The office drawings are saved at LTSCALE 30 (the A2 value). The CTB plots by
+  colour: 1 = 0.25, 2 and 6 = 0.35, 3 = 0.45, 4 and 7 = 0.20, 5 = 0.40, all black; **8 = grey 0.18**; 9 = object
+  colour 0.13; every other colour black at the object lineweight. Background drawings from other disciplines go on
+  **colour 9** (light grey 0.13; user, 2026-10-04: "AR goes for colour 9 instead of 8"). First used on the SSK
+  overlay sheets (job SSK, outside the repository).
 - (NRW engine) Linetypes use project names `EIT_*` so `acadiso.lin` can't overwrite them.
 - (NRW engine) `LTSCALE = PSLTSCALE = MSLTSCALE = 1`, entity ltscale 1. Office patterns (plotted mm): **centre 12 / 2 / 2 / 2, phantom 10 / 2 / 2 / 2 / 2 / 2, match 13 / 2.5 … (= §4.4)**; **hidden 3.0 / 1.5 and fine hidden 1.5 / 0.75** (the user keeps these shorter office values; §4.4 would be 4.8 / 2.4 and 2.4 / 1.2). The old 8.5 / 1.4 chain read as solid and was raised to §4.4 on 2026-09-30.
 - AutoCAD draws the linetype of an entity inside a scaled detail block at **sheet size** in both the Model tab and the layouts (tested 2026-09-30 for PSLTSCALE 0 and 1). So detail blocks keep entity ltscale 1; ltscale = scale makes the dashes 25× too long, and they read as solid.

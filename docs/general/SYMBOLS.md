@@ -69,6 +69,24 @@ Full rules: `docs/concrete/RC_DRAWING_RULES_EIT-011006-19.md` §12, §19.4, §19
 | **Soil, fill, stone** | Undisturbed soil an `EARTH` band; selected fill `AR-SAND`; drainage stone `GRAVEL` | `S-HATCH` grey 0.13 | `td.earth_band()`, `td.hatch()` | EIT §19.6 |
 | **Concrete** | In an RC drawing the RC section is **not hatched**: the bars are the subject. An element that is not the subject of the detail (beam stubs in a column detail, columns in a beam detail) is hatched grey ANSI31 at 1.6 mm pitch, and its bars are grey (focus rule) | `S-HATCH`; bars `S-REBR-NF` | `td.nf_hatch()` | EIT §19.6; `docs/concrete/README.md` |
 
+## 3A. Plan symbols (floor, foundation and roof plans)
+
+Full rules: `FLOOR_PLAN_DRAWING_INSTRUCTION.md`. Office blocks from the SSK structural file; no engine helper yet.
+
+| Symbol | Drawn as | Layer / pen (STRUCT-A1-A2.ctb) | Office block | Rule |
+|---|---|---|---|---|
+| **Column, continuous** | Outline solid filled | `S-CONT_COL` 1 → 0.25 | `Col-Continuous` | FP9.1 |
+| **Column sits on beam** | Outline half filled on the diagonal | `S-CX_COL` 1 → 0.25 | – | FP9.1 |
+| **Column stops under** | Outline with an X (office) or hidden HIDDEN2 (EIT) | `S-HID_COL` 2 → 0.35 | `Col-Break` | FP9.1, D6 |
+| **Slab tag** | Box: slab mark on top, `SFL. | +7.50` below; thickness where it differs | text 2 → 0.35, 2.0 mm | `Sym-SFL` | FP10.3 |
+| **Step in a slab** | Step line with the step height and `UPPER FLOOR` / `LOWER FLOOR` | `S-EDGE_SLAB` | `Sym-Step` | FP9.5 |
+| **Footing + column tag** | `F4,C1` at the footing's lower right | text 2 → 0.35 | – | FP10.4 |
+| **Pile** | Office pile symbols, explained in the legend | `S_Pile_I` 8 → grey 0.18 | `hexagonal_pile`, `I-Pile` | FP13.1 |
+| **Opening / void** | Outline plus X, labelled | `S-EDGE_SLAB` | – | FP9.4 |
+| **Existing structure** | Outline, grey ANSI31 hatch, label | `S-HATCH` 8 | – | FP9.7 |
+| **View title** | Thai (and English) title 4.0 underlined, `มาตราส่วน` / `1:100` below | `S-T200` 1, `S-TH` 7 | dynamic title block on `S-40Txt` | FP1.4 |
+| **North arrow** | On every plan sheet, same size and place | – | – | FP14.3 |
+
 ## 4. Steel symbols
 
 Full rules: `docs/steel/STEEL_DETAILING_INSTRUCTION.md` S4 – S5.

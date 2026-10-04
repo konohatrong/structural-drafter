@@ -50,6 +50,7 @@ Fix the disagreement in the documents, not only in one drawing.
 | Welds, bolts, marks, bills, camber, erection | `STEEL_DETAILING_INSTRUCTION.md` S3 – S9 |
 | Tables | Guide §6; `DRAWING_PRODUCTION.md` §2 (register, "TABLE n - NAME") |
 | General-notes sheet | `GENERAL_NOTES_DRAWING_INSTRUCTION.md` §0, plus the material content file |
+| Floor plans (pile, foundation, floor, roof), A1 project sheets | `FLOOR_PLAN_DRAWING_INSTRUCTION.md` (FP0 project settings first), RC §14 |
 | A `!!` build warning | `DRAWING_PRODUCTION.md` §3 |
 | Hand a standard set for review, or issue it | `standard_drawings/README.md` |
 
@@ -58,7 +59,8 @@ Fix the disagreement in the documents, not only in one drawing.
 - steel: S10;
 - typical details: `TYPICAL_DETAILS_INSTRUCTION.md` §7;
 - stairs: `STAIRCASE_DRAWING_INSTRUCTION.md` §11;
-- general notes: `GENERAL_NOTES_DRAWING_INSTRUCTION.md` §10.
+- general notes: `GENERAL_NOTES_DRAWING_INSTRUCTION.md` §10;
+- floor plans: `FLOOR_PLAN_DRAWING_INSTRUCTION.md` FP17.
 
 ## 2. Workflow
 
@@ -105,6 +107,7 @@ The rules come from the user's reviews of real sets. When the user corrects a dr
 | Pipeline, checks, plotting, environment | `docs/general/DRAWING_PRODUCTION.md` |
 | Engine mechanics, functions, options, engine pitfalls | `docs/general/DRAWING_ENGINE.md` |
 | General-notes sheet layout | `docs/general/GENERAL_NOTES_DRAWING_INSTRUCTION.md` |
+| Floor / framing plans: presentation, layers, pens, linetypes, text, tags, coordination | `docs/general/FLOOR_PLAN_DRAWING_INSTRUCTION.md` |
 | Bars, RC content, typical details, stairs, concrete notes | `docs/concrete/` |
 | Steel content, welds, bolts, marks, bills, erection | `docs/steel/STEEL_DETAILING_INSTRUCTION.md` |
 | A new material (timber, masonry, composite) | A new `docs/<material>/` with a README modelled on `concrete/` and `steel/` |

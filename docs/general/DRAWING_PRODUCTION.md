@@ -129,6 +129,14 @@ it even when AutoCAD is there. For a quick look at any single DXF, run
   reference for an issued set.**
 - **ezdxf 1.4 workaround:** ezdxf scales a hatch pattern wrongly inside a scaled block. `drafter/ezplot.py` corrects
   it while rendering; the DXF itself is right. Recheck if ezdxf is upgraded.
+- **ezdxf 1.4, linetypes in viewports** (found 2026-10-04 on job SSK, user: "wrong linetype scale when plotted?"):
+  ezdxf applies the linetype pattern after the viewport transform, in paper mm, and multiplies it by
+  1 / viewport scale (`RenderPipeline2d.get_vp_ltype_scale`). With PSLTSCALE 0 (EIT §19.2) AutoCAD plots a model
+  dash at pattern × LTSCALE × viewport scale, so ezdxf's dashes come out 10 000 times too long at 1:100 and every
+  hidden and centre line plots solid. Measured: factor = viewport scale gives HIDDEN 2.9 mm at LTSCALE 45, 1:100, as
+  AutoCAD. The SSK review renderer (`revplot.py`, outside the repository) sets that factor per sheet;
+  `drafter/ezplot.py` does not yet, so check viewport sheets rendered without AutoCAD for solid dashed lines.
+  Model-space sheets are not affected.
 
 ## 8. Environment pitfalls
 

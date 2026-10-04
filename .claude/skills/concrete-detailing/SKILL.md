@@ -28,6 +28,7 @@ Reference jobs:
 3. Read the instruction for the sheet type:
    - `TYPICAL_DETAILS_INSTRUCTION.md`;
    - `STAIRCASE_DRAWING_INSTRUCTION.md`;
+   - floor, foundation and roof plans: `docs/general/FLOOR_PLAN_DRAWING_INSTRUCTION.md` (FP0 project settings first);
    - `GENERAL_NOTES_STRUCTURAL_CONCRETE.md` with `docs/general/GENERAL_NOTES_DRAWING_INSTRUCTION.md`.
 4. Check a value in `docs/concrete/reference/` (EIT 011008 / 011014 digests, DPT / TATA / ACI extracts), and in the
    code itself when the value matters.
