@@ -1,0 +1,152 @@
+# 06 · Slabs with Auto-mesh
+
+Goal: every slab panel meshed as plates that share nodes with the beams around it, at the
+**beam level**, with openings left out and cantilevers handled, verified panel by panel.
+
+Fire-station settings: element size **0.50 m**, thick plates, material C280, slabs at the
+beam level (local SFL steps ignored), GS1 carried by the ground beams (a suspended slab).
+
+| Slab | Thickness ID | t (mm) |
+|---|---|---|
+| GS1 | 1 | 200 |
+| S1 | 2 | 180 |
+| S1C (cantilever) | 3 | 180 |
+| RS1 | 4 | 180 |
+
+---
+
+## 1. Panels = faces of the beam graph (`slab_faces.py`)
+
+Treat the level's beams as a planar graph and walk its faces: at each node sort neighbours by
+angle, and from each directed edge always take the most clockwise turn. Faces with positive
+(CCW) area are panels; the outer face is negative and dropped. `simplify()` removes collinear
+vertices to give true corners.
+
+Each panel gets: polygon (on beam centrelines), corners, area, boundary beam IDs, and
+
+- **slab type** from the `Sym-SFL` tags inside it (majority); if none is inside (small or
+  sloped panels), the nearest tag within 3 m, flagged on the sheet;
+- **mesh type**: `Quadrilateral` for a 4-corner orthogonal panel, else `Quad and Triangle`;
+- estimated plate count = area / 0.5².
+
+## 2. Openings
+
+An opening is a closed `S-EDGE_SLAB` polyline crossed by an `S-GRID` diagonal (the drafting
+convention for "no slab"). Openings under **1 m²** are ignored (shafts, sleeves). A panel whose
+centroid is inside a modelled opening is marked `OPENING` and not meshed.
+
+## 3. Cantilevers with no edge beam
+
+Auto-mesh needs a closed boundary of line elements. For an overhang with a free edge:
+
+1. Define the cantilever polygon (on beam centrelines) and its **free edges** explicitly.
+2. `free_prepare`: make every polygon vertex a node. If a vertex lies inside an existing beam,
+   **split that beam** at the new node. Add temporary beam lines along the free edges.
+3. Mesh the panel against the real beams + temporary lines.
+4. `free_cleanup`: delete every line element lying on the free edges (the temporary lines *and*
+   the pieces Auto-mesh split them into). Check that the element count drops by exactly that
+   number.
+
+Fire station: 2F S1C wrap (1.725 m from the beam centreline), RF S1C overhang (south 1.725 m,
+east 1.925 m, north to Y = 9.325).
+
+**Order matters.** Run `free_prepare` for **all** cantilever panels of the level **before
+meshing any panel**. A vertex added later splits a beam in the middle of an already-meshed
+plate edge and leaves a hanging node (this happened on RF-P12 and needed a re-mesh).
+
+![Roof slab sheet: RS1 panels, two openings left empty, and the S1C overhang with its free edges.](img/06_slab_sheet_RF.png)
+*Roof slab sheet: RS1 panels, two openings left empty, and the S1C overhang with its free edges.*
+
+## 4. The Auto-mesh call (`slab_build.py <KEY> <L> [n|a-b|verify]`)
+
+One call per panel. Before each call, re-read the model and find the **current** boundary beam
+pieces geometrically (neighbouring panels have already split them):
+
+```python
+T = [eid for eid,(pa,pb) in level_beams.items()
+     if any(on_seg(pa,a,b) and on_seg(pb,a,b) for a,b in panel_edges)]
+cover = sum(math.dist(*level_beams[t]) for t in T)
+if abs(cover - perimeter) > 5: sys.exit("STOP: boundary not fully covered")   # mm
+```
+
+```json
+POST /ope/AUTOMESH
+{"Argument":{
+  "MESHER":{"METHOD":"Line Elements","TARGETS":[…beam ids…],"TYPE":"Quadrilateral",
+            "MESH_INNER_DOMAIN":false,
+            "INCLUDE_INTERIOR_NODES":{"OPT_CHECK":false},"INCLUDE_INTERIOR_LINES":{"OPT_CHECK":false},
+            "INCLUDE_BOUNDARY_CONNECTIVITY":true},
+  "MESH_SIZE":{"LENGTH":0.5},
+  "PROPERTY":{"ELEMENT_TYPE":"Plate","ELEMENT_SUB_TYPE":{"TYPE":"Thick"},"MATERIAL":1,"THICKNESS":2},
+  "DOMAIN_NAME":{"NAME":"2F-P07"},
+  "ADDITIONAL_OPTION":{"DELETE_LINE_ELEM":false,"SUBDIVIDE_LINE_ELEM":true}}}
+```
+
+`SUBDIVIDE_LINE_ELEM: true` splits the boundary beams at the mesh nodes, so plates and beams
+share nodes.
+
+**Behaviour to code around:**
+
+| Behaviour | Handling |
+|---|---|
+| The reply also lists the split beam pieces | Keep only `TYPE == "PLATE"` as plates |
+| An edge already split finer than the mesh size → MIDAS replies with a **warning only**, but the mesh is created | Find new elements by **diffing ELEM before and after**, never from the reply |
+| A `DOMAIN_NAME` already in use → the mesh fails | Check `/db/MADO`; retry as `<name>-2`, `-3` … |
+| The mesher reports failure on an awkward panel | Fallback sequence: panel type → Quad and Triangle → Quadrilateral → Quad and Triangle at 0.4 m → Triangle |
+| Domain tables (`MADO`, `SBDO`, `DOEL`) are **read-only** through the API | Organise panels with structure groups instead (below) |
+| Split pieces inherit the parent's groups and become members (`/db/MEMB`) | Beam groups stay complete; select beams by group, not ID range |
+
+## 5. Per-panel check (inside the loop)
+
+For the new plates of each panel: area equals the panel area (± 0.01 m²), all nodes at the
+level Z, triangle count printed. Any mismatch → STOP. Progress is saved to
+`fs_slab_<L>_done.json`, so a re-run skips finished panels.
+
+## 6. Level verification (`slab_build.py <KEY> <L> verify`, also run BEFORE and AFTER)
+
+| Check | Pass |
+|---|---|
+| Plates and total area | Area equals the sheet total |
+| Beams at level: count and **total length** | Length unchanged by splitting (GB: 53 → 391 pieces, 190.800 m before and after) |
+| Plate edges used by one plate only | All on a slab free edge (cantilever edges); **0 others without a beam** |
+| Plate edges on a beam line without a beam of the same node pair | 0 (otherwise a plate is not connected to the beam) |
+| Duplicate nodes at the level | 0 |
+| Beam pieces outside `BEAM_<L>` | 0 (add them if any) |
+
+## 7. Groups
+
+- Level group `SLAB_<L>` (GRUP 13–17) with all plates of the level.
+- One group per panel `SLAB_<L>-Pxx`, ID = level base + panel number (GB 100, 2F 200, 3F 300,
+  RF 400, AR 500). This replaces domains/sub-domains for navigation in the works tree.
+- **`PUT /db/GRUP` merges `E_LIST`** into an existing group. Never write beams into a slab
+  group; to remove members, delete the group and PUT it again.
+
+## 8. Re-meshing one panel (`redo_panel.py`)
+
+Delete the panel's plates and any orphan nodes, run the cantilever preparation for the whole
+level again, then mesh the panel under a **new domain name** (`RF-P12-2`).
+
+## 9. Result on the fire station
+
+| Level | Panels | Plates | Area (m²) |
+|---|---|---|---|
+| GB (GS1) | 19 | 1,237 | 296.21 |
+| 2F (S1 + S1C) | 23 (3 openings skipped) | 1,333 | 306.89 |
+| 3F (S1) | 20 (2 openings skipped) | 991 | 229.07 |
+| RF (RS1 + S1C) | 13 (2 openings skipped) | 1,089 | 267.60 |
+| Annex roof (RS1) | 2 | 125 | 26.54 |
+| **Total** | | **4,775** | |
+
+Model after slabs: 5,120 nodes, 6,368 elements (1,593 beam pieces, 4,775 plates).
+
+![The roof after Auto-mesh in MIDAS (plan view).](img/06_slab_mesh_RF_midas.png)
+*The roof after Auto-mesh in MIDAS (plan view).*
+
+## Pitfalls
+
+- Meshing before all cantilever vertices exist → hanging nodes.
+- Trusting the Auto-mesh reply → missed plates on warning-only replies.
+- Rounded half-millimetre coordinates failing an on-segment test → add a tolerance *along* the
+  segment too (`e = tol / sqrt(L²)`), not only across it.
+- Modelling slabs at the local SFL step → plates offset from the beams; the rule is slab = beam
+  level.

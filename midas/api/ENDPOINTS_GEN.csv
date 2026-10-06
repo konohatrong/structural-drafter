@@ -1,0 +1,178 @@
+family,code,command,handler_module,also_in_civil
+config,VER,/config/VER,_mapi.py,no
+db,ACTL,/db/ACTL,_analysiscontrol.py _mapi.py,yes
+db,BCCT,/db/BCCT,_BoundaryChangeAssignment.py _mapi.py,yes
+db,BMLD,/db/BMLD,_load.py _mapi.py,yes
+db,BNGR,/db/BNGR,_group.py _mapi.py,yes
+db,BODF,/db/BODF,_load.py _mapi.py,yes
+db,BTMP,/db/BTMP,_mapi.py _temperature.py,yes
+db,BUCK,/db/BUCK,_analysiscontrol.py _mapi.py,yes
+db,CGLP,/db/CGLP,_mapi.py,yes
+db,CJFG,/db/CJFG,_mapi.py,yes
+db,CLDR,/db/CLDR,_mapi.py,yes
+db,CLWP,/db/CLWP,_mapi.py,yes
+db,CMCS,/db/CMCS,_construction.py _mapi.py,yes
+db,CNLD,/db/CNLD,_load.py _mapi.py,yes
+db,CONS,/db/CONS,_boundary.py _mapi.py,yes
+db,CRGR,/db/CRGR,_mapi.py,yes
+db,CRPC,/db/CRPC,_construction.py _mapi.py,yes
+db,CSCS,/db/CSCS,_construction.py _mapi.py,yes
+db,CUTL,/db/CUTL,_mapi.py,yes
+db,DOEL,/db/DOEL,_mapi.py,yes
+db,DRLS,/db/DRLS,_mapi.py,yes
+db,DYFG,/db/DYFG,_mapi.py,yes
+db,DYLA,/db/DYLA,_mapi.py,yes
+db,DYNF,/db/DYNF,_mapi.py,yes
+db,EDMP,/db/EDMP,_mapi.py,yes
+db,EIGV,/db/EIGV,_analysiscontrol.py _mapi.py,yes
+db,ELEM,/db/ELEM,_element.py _mapi.py _utils.py _utilsFunc/_line2plate.py,yes
+db,ELNK,/db/ELNK,_boundary.py _mapi.py,yes
+db,EPMT,/db/EPMT,_mapi.py,yes
+db,EPSE,/db/EPSE,_mapi.py,yes
+db,EPST,/db/EPST,_mapi.py,yes
+db,ESSF,/db/ESSF,_element.py _mapi.py,yes
+db,ETMP,/db/ETMP,_mapi.py _temperature.py,yes
+db,EWSF,/db/EWSF,_mapi.py,yes
+db,EXLD,/db/EXLD,_mapi.py,yes
+db,FBLA,/db/FBLA,_load.py _mapi.py,yes
+db,FBLD,/db/FBLD,_load.py _mapi.py,yes
+db,FIBR,/db/FIBR,_mapi.py,yes
+db,FIMP,/db/FIMP,_mapi.py,yes
+db,FMLD,/db/FMLD,_mapi.py,yes
+db,FRLS,/db/FRLS,_boundary.py _mapi.py,yes
+db,GRDP,/db/GRDP,_mapi.py,yes
+db,GRUP,/db/GRUP,_group.py _mapi.py,yes
+db,GSPR,/db/GSPR,_mapi.py,yes
+db,GSTP,/db/GSTP,_mapi.py,yes
+db,GTMP,/db/GTMP,_mapi.py _temperature.py,yes
+db,HHCT,/db/HHCT,_mapi.py,yes
+db,IEHC,/db/IEHC,_mapi.py,yes
+db,IEHG,/db/IEHG,_mapi.py,yes
+db,IMFM,/db/IMFM,_mapi.py,yes
+db,IMPF,/db/IMPF,_mapi.py,yes
+db,LCOM-CONC,/db/LCOM-CONC,_loadcomb.py _mapi.py,no
+db,LCOM-GEN,/db/LCOM-GEN,_loadcomb.py _mapi.py,no
+db,LCOM-SEISMIC,/db/LCOM-SEISMIC,_loadcomb.py _mapi.py,no
+db,LCOM-SRC,/db/LCOM-SRC,_loadcomb.py _mapi.py,no
+db,LCOM-STEEL,/db/LCOM-STEEL,_loadcomb.py _mapi.py,no
+db,LCOM-STLCOMP,/db/LCOM-STLCOMP,_loadcomb.py _mapi.py,no
+db,LDGR,/db/LDGR,_group.py _mapi.py,yes
+db,LLAN,/db/LLAN,_mapi.py _movingload.py,yes
+db,LLANCH,/db/LLANCH,_mapi.py _movingload.py,yes
+db,LLANID,/db/LLANID,_mapi.py _movingload.py,yes
+db,LLANOP,/db/LLANOP,_mapi.py,yes
+db,LLANTR,/db/LLANTR,_mapi.py,yes
+db,LTOM,/db/LTOM,_load.py _mapi.py,yes
+db,MADO,/db/MADO,_mapi.py,yes
+db,MATL,/db/MATL,_mapi.py _material.py,yes
+db,MCON,/db/MCON,_mapi.py,yes
+db,MLFC,/db/MLFC,_boundary.py _mapi.py,yes
+db,MLSP,/db/MLSP,_mapi.py,yes
+db,MLSR,/db/MLSR,_mapi.py,yes
+db,MVCD,/db/MVCD,_mapi.py _movingload.py,yes
+db,MVCT,/db/MVCT,_mapi.py,yes
+db,MVCTBS,/db/MVCTBS,_mapi.py,yes
+db,MVCTCH,/db/MVCTCH,_mapi.py,yes
+db,MVCTID,/db/MVCTID,_mapi.py,yes
+db,MVCTTR,/db/MVCTTR,_mapi.py,yes
+db,MVHC,/db/MVHC,_mapi.py,yes
+db,MVHL,/db/MVHL,_mapi.py _movingload.py,yes
+db,MVHLTR,/db/MVHLTR,_mapi.py,yes
+db,MVLD,/db/MVLD,_mapi.py _movingload.py,yes
+db,MVLDBS,/db/MVLDBS,_mapi.py,yes
+db,MVLDCH,/db/MVLDCH,_mapi.py,yes
+db,MVLDEU,/db/MVLDEU,_mapi.py _movingload.py,yes
+db,MVLDID,/db/MVLDID,_mapi.py _movingload.py,yes
+db,MVLDPL,/db/MVLDPL,_mapi.py,yes
+db,MVLDTR,/db/MVLDTR,_mapi.py,yes
+db,NBOF,/db/NBOF,_mapi.py,yes
+db,NLCT,/db/NLCT,_mapi.py,yes
+db,NLLP,/db/NLLP,_mapi.py,yes
+db,NLNK,/db/NLNK,_mapi.py,yes
+db,NMAS,/db/NMAS,_load.py _mapi.py,yes
+db,NODE,/db/NODE,_mapi.py _node.py _utilsFunc/_line2plate.py,yes
+db,NSPR,/db/NSPR,_boundary.py _mapi.py,yes
+db,NTMP,/db/NTMP,_mapi.py _temperature.py,yes
+db,OFFS,/db/OFFS,_mapi.py,yes
+db,PDEL,/db/PDEL,_analysiscontrol.py _mapi.py,yes
+db,PJCF,/db/PJCF,_mapi.py _model.py,yes
+db,PLCB,/db/PLCB,_load.py _mapi.py,yes
+db,PNLA,/db/PNLA,_mapi.py,yes
+db,PNLD,/db/PNLD,_mapi.py,yes
+db,POSL,/db/POSL,_mapi.py,yes
+db,POSP,/db/POSP,_mapi.py,yes
+db,PRES,/db/PRES,_load.py _mapi.py,yes
+db,PRLS,/db/PRLS,_mapi.py,yes
+db,PRST,/db/PRST,_mapi.py,yes
+db,PSLT,/db/PSLT,_mapi.py,yes
+db,PSSF,/db/PSSF,_mapi.py,yes
+db,PTNS,/db/PTNS,_mapi.py,yes
+db,PZEF,/db/PZEF,_mapi.py,yes
+db,RIGD,/db/RIGD,_boundary.py _mapi.py,yes
+db,RPSC,/db/RPSC,_mapi.py,yes
+db,SBDO,/db/SBDO,_mapi.py,yes
+db,SDHY,/db/SDHY,_mapi.py,yes
+db,SDIS,/db/SDIS,_mapi.py,yes
+db,SDSP,/db/SDSP,_load.py _mapi.py,yes
+db,SDST,/db/SDST,_mapi.py,yes
+db,SDVE,/db/SDVE,_mapi.py,yes
+db,SDVI,/db/SDVI,_mapi.py,yes
+db,SECF,/db/SECF,_mapi.py,yes
+db,SECT,/db/SECT,_mapi.py _section/__init__.py _section/_offsetSS.py _utils.py,yes
+db,SINF,/db/SINF,_mapi.py,yes
+db,SKEW,/db/SKEW,_mapi.py _node.py,yes
+db,SLAN,/db/SLAN,_mapi.py,yes
+db,SLANCH,/db/SLANCH,_mapi.py,yes
+db,SLANOP,/db/SLANOP,_mapi.py,yes
+db,SMCT,/db/SMCT,_analysiscontrol.py _mapi.py,yes
+db,SMLC,/db/SMLC,_mapi.py _settlement.py,yes
+db,SMPT,/db/SMPT,_mapi.py _settlement.py,yes
+db,SPFC,/db/SPFC,_mapi.py,yes
+db,SPLC,/db/SPLC,_mapi.py,yes
+db,SSPS,/db/SSPS,_mapi.py,yes
+db,STAG,/db/STAG,_construction.py _mapi.py,yes
+db,STBK,/db/STBK,_mapi.py,yes
+db,STCT,/db/STCT,_mapi.py,yes
+db,STLD,/db/STLD,_load.py _mapi.py,yes
+db,STMP,/db/STMP,_mapi.py _temperature.py,yes
+db,STRPSSM,/db/STRPSSM,_mapi.py,yes
+db,STYP,/db/STYP,_mapi.py _model.py,yes
+db,TDCS,/db/TDCS,_mapi.py,yes
+db,TDGR,/db/TDGR,_group.py _mapi.py,yes
+db,TDME,/db/TDME,_mapi.py _material.py,yes
+db,TDMF,/db/TDMF,_mapi.py,yes
+db,TDMT,/db/TDMT,_mapi.py _material.py,yes
+db,TDNA,/db/TDNA,_mapi.py _tendon.py,yes
+db,TDNT,/db/TDNT,_mapi.py _tendon.py,yes
+db,TDPL,/db/TDPL,_mapi.py _tendon.py,yes
+db,THFC,/db/THFC,_mapi.py,yes
+db,THGA,/db/THGA,_mapi.py,yes
+db,THGC,/db/THGC,_mapi.py,yes
+db,THIK,/db/THIK,_mapi.py _thickness.py,yes
+db,THIS,/db/THIS,_mapi.py,yes
+db,THMS,/db/THMS,_mapi.py,yes
+db,THNL,/db/THNL,_mapi.py,yes
+db,THSL,/db/THSL,_mapi.py,yes
+db,TMAT,/db/TMAT,_mapi.py _material.py,yes
+db,TMLD,/db/TMLD,_construction.py _mapi.py,yes
+db,TSGR,/db/TSGR,_mapi.py _section/__init__.py,yes
+db,UNIT,/db/UNIT,_mapi.py _model.py,yes
+db,VBEM,/db/VBEM,_mapi.py,yes
+db,VSEC,/db/VSEC,_mapi.py,yes
+doc,ANAL,/doc/ANAL,_mapi.py _model.py,yes
+doc,CLOSE,/doc/CLOSE,_mapi.py _model.py,yes
+doc,EXPORT,/doc/EXPORT,_mapi.py _model.py,yes
+doc,EXPORTMXT,/doc/EXPORTMXT,_mapi.py _model.py,yes
+doc,IMPORT,/doc/IMPORT,_mapi.py _model.py,yes
+doc,IMPORTMXT,/doc/IMPORTMXT,_mapi.py _model.py,yes
+doc,NEW,/doc/NEW,_mapi.py _model.py,yes
+doc,OPEN,/doc/OPEN,_mapi.py _model.py,yes
+doc,SAVE,/doc/SAVE,_mapi.py _model.py,yes
+doc,SAVEAS,/doc/SAVEAS,_mapi.py _model.py,yes
+doc,STAGAS,/doc/STAGAS,_mapi.py _model.py,yes
+ope,PROJECTSTATUS,/ope/PROJECTSTATUS,_model.py,yes
+ope,UTBLTYPES,/ope/UTBLTYPES,_result_table.py,yes
+post,TABLE,/post/TABLE,_material.py _result_table.py _section/__init__.py _utilsFunc/_line2plate.py,yes
+view,CAPTURE,/view/CAPTURE,_model.py _result_table.py _view.py,no
+view,DISPLAY,/view/DISPLAY,_view.py,no
+view,SELECT,/view/SELECT,_model.py _utilsFunc/_line2plate.py,no

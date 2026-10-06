@@ -1,0 +1,8 @@
+# MIDAS GEN NX work (midas/). Not needed for the drawing toolkit; install only to drive a live model.
+midas-gen          # the official GEN NX library (source copy in lib/midas-gen-python)
+ezdxf              # reading the structural DXF
+matplotlib         # review sheets
+pymupdf            # reading schedule / AR PDFs as images
+python-docx        # calculation report (calc-report/)
+pillow
+polars             # result tables (also pulled in by midas-gen)

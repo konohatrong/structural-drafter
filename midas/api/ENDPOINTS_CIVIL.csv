@@ -1,0 +1,177 @@
+family,code,command,handler_module
+db,ACTL,/db/actl,_analysiscontrol.py
+db,BCCT,/db/bcct,_BoundaryChangeAssignment.py
+db,BMLD,/db/bmld,_load.py
+db,BNGR,/db/bngr,_group.py
+db,BODF,/db/bodf,_load.py
+db,BTMP,/db/btmp,_temperature.py
+db,BUCK,/db/buck,_analysiscontrol.py
+db,CGLP,/db/cglp,_mapi.py (master enum)
+db,CJFG,/db/cjfg,_mapi.py (master enum)
+db,CLDR,/db/cldr,_mapi.py (master enum)
+db,CLWP,/db/clwp,_mapi.py (master enum)
+db,CMCS,/db/cmcs,_construction.py
+db,CNLD,/db/cnld,_load.py
+db,CONS,/db/cons,_boundary.py
+db,CRGR,/db/crgr,_mapi.py (master enum)
+db,CRPC,/db/crpc,_construction.py
+db,CSCS,/db/cscs,_construction.py
+db,CUTL,/db/cutl,_mapi.py (master enum)
+db,DOEL,/db/doel,_mapi.py (master enum)
+db,DRLS,/db/drls,_mapi.py (master enum)
+db,DYFG,/db/dyfg,_mapi.py (master enum)
+db,DYLA,/db/dyla,_mapi.py (master enum)
+db,DYNF,/db/dynf,_mapi.py (master enum)
+db,EDMP,/db/edmp,_mapi.py (master enum)
+db,EIGV,/db/eigv,_analysiscontrol.py
+db,ELEM,/db/elem,_element.py
+db,ELEM,/db/elem,_utils.py
+db,ELNK,/db/elnk,_boundary.py
+db,EPMT,/db/epmt,_mapi.py (master enum)
+db,EPSE,/db/epse,_mapi.py (master enum)
+db,EPST,/db/epst,_mapi.py (master enum)
+db,ESSF,/db/essf,_element.py
+db,ETMP,/db/etmp,_temperature.py
+db,EWSF,/db/ewsf,_mapi.py (master enum)
+db,EXLD,/db/exld,_mapi.py (master enum)
+db,FBLA,/db/fbla,_load.py
+db,FBLD,/db/fbld,_load.py
+db,FIBR,/db/fibr,_mapi.py (master enum)
+db,FIMP,/db/fimp,_mapi.py (master enum)
+db,FMLD,/db/fmld,_mapi.py (master enum)
+db,FRLS,/db/frls,_boundary.py
+db,GRDP,/db/grdp,_mapi.py (master enum)
+db,GRUP,/db/grup,_group.py
+db,GSPR,/db/gspr,_mapi.py (master enum)
+db,GSTP,/db/gstp,_mapi.py (master enum)
+db,GTMP,/db/gtmp,_temperature.py
+db,HHCT,/db/hhct,_mapi.py (master enum)
+db,IEHC,/db/iehc,_mapi.py (master enum)
+db,IEHG,/db/iehg,_mapi.py (master enum)
+db,IMFM,/db/imfm,_mapi.py (master enum)
+db,IMPF,/db/impf,_mapi.py (master enum)
+db,LCOM,/db/lcom,_loadcomb.py
+db,LDGR,/db/ldgr,_group.py
+db,LLAN,/db/llan,_movingload.py
+db,LLANCH,/db/llanch,_movingload.py
+db,LLANID,/db/llanid,_movingload.py
+db,LLANOP,/db/llanop,_mapi.py (master enum)
+db,LLANTR,/db/llantr,_mapi.py (master enum)
+db,LTOM,/db/ltom,_load.py
+db,MADO,/db/mado,_mapi.py (master enum)
+db,MATL,/db/matl,_material.py
+db,MCON,/db/mcon,_mapi.py (master enum)
+db,MLFC,/db/mlfc,_boundary.py
+db,MLSP,/db/mlsp,_mapi.py (master enum)
+db,MLSR,/db/mlsr,_mapi.py (master enum)
+db,MVCD,/db/mvcd,_movingload.py
+db,MVCT,/db/mvct,_mapi.py (master enum)
+db,MVCTBS,/db/mvctbs,_mapi.py (master enum)
+db,MVCTCH,/db/mvctch,_mapi.py (master enum)
+db,MVCTID,/db/mvctid,_mapi.py (master enum)
+db,MVCTTR,/db/mvcttr,_mapi.py (master enum)
+db,MVHC,/db/mvhc,_mapi.py (master enum)
+db,MVHL,/db/mvhl,_movingload.py
+db,MVHLTR,/db/mvhltr,_mapi.py (master enum)
+db,MVLD,/db/mvld,_movingload.py
+db,MVLDBS,/db/mvldbs,_mapi.py (master enum)
+db,MVLDCH,/db/mvldch,_mapi.py (master enum)
+db,MVLDEU,/db/mvldeu,_movingload.py
+db,MVLDID,/db/mvldid,_movingload.py
+db,MVLDPL,/db/mvldpl,_mapi.py (master enum)
+db,MVLDTR,/db/mvldtr,_mapi.py (master enum)
+db,NBOF,/db/nbof,_mapi.py (master enum)
+db,NLCT,/db/nlct,_mapi.py (master enum)
+db,NLLP,/db/nllp,_mapi.py (master enum)
+db,NLNK,/db/nlnk,_mapi.py (master enum)
+db,NMAS,/db/nmas,_load.py
+db,NODE,/db/node,_node.py
+db,NSPR,/db/nspr,_boundary.py
+db,NTMP,/db/ntmp,_temperature.py
+db,OFFS,/db/offs,_mapi.py (master enum)
+db,PDEL,/db/pdel,_analysiscontrol.py
+db,PJCF,/db/pjcf,_model.py
+db,PLCB,/db/plcb,_load.py
+db,PNLA,/db/pnla,_mapi.py (master enum)
+db,PNLD,/db/pnld,_mapi.py (master enum)
+db,POSL,/db/posl,_mapi.py (master enum)
+db,POSP,/db/posp,_mapi.py (master enum)
+db,PRES,/db/pres,_load.py
+db,PRLS,/db/prls,_mapi.py (master enum)
+db,PRST,/db/prst,_mapi.py (master enum)
+db,PSLT,/db/pslt,_mapi.py (master enum)
+db,PSSF,/db/pssf,_mapi.py (master enum)
+db,PTNS,/db/ptns,_mapi.py (master enum)
+db,PZEF,/db/pzef,_mapi.py (master enum)
+db,RIGD,/db/rigd,_boundary.py
+db,RPSC,/db/rpsc,_mapi.py (master enum)
+db,SBDO,/db/sbdo,_mapi.py (master enum)
+db,SDHY,/db/sdhy,_mapi.py (master enum)
+db,SDIS,/db/sdis,_mapi.py (master enum)
+db,SDSP,/db/sdsp,_load.py
+db,SDST,/db/sdst,_mapi.py (master enum)
+db,SDVE,/db/sdve,_mapi.py (master enum)
+db,SDVI,/db/sdvi,_mapi.py (master enum)
+db,SECF,/db/secf,_mapi.py (master enum)
+db,SECT,/db/sect,_TapdbSecSS.py
+db,SECT,/db/sect,__init__.py
+db,SECT,/db/sect,_offsetSS.py
+db,SECT,/db/sect,_utils.py
+db,SINF,/db/sinf,_mapi.py (master enum)
+db,SKEW,/db/skew,_node.py
+db,SLAN,/db/slan,_mapi.py (master enum)
+db,SLANCH,/db/slanch,_mapi.py (master enum)
+db,SLANOP,/db/slanop,_mapi.py (master enum)
+db,SMCT,/db/smct,_analysiscontrol.py
+db,SMLC,/db/smlc,_settlement.py
+db,SMPT,/db/smpt,_settlement.py
+db,SPFC,/db/spfc,_responseSpectrum.py
+db,SPLC,/db/splc,_responseSpectrum.py
+db,SSPS,/db/ssps,_mapi.py (master enum)
+db,STAG,/db/stag,_construction.py
+db,STBK,/db/stbk,_mapi.py (master enum)
+db,STCT,/db/stct,_mapi.py (master enum)
+db,STLD,/db/stld,_load.py
+db,STMP,/db/stmp,_temperature.py
+db,STRPSSM,/db/strpssm,_mapi.py (master enum)
+db,STYP,/db/styp,_model.py
+db,TDCS,/db/tdcs,_mapi.py (master enum)
+db,TDGR,/db/tdgr,_group.py
+db,TDME,/db/tdme,_material.py
+db,TDMF,/db/tdmf,_mapi.py (master enum)
+db,TDMT,/db/tdmt,_material.py
+db,TDNA,/db/tdna,_tendon.py
+db,TDNT,/db/tdnt,_tendon.py
+db,TDPL,/db/tdpl,_tendon.py
+db,THFC,/db/thfc,_mapi.py (master enum)
+db,THGA,/db/thga,_mapi.py (master enum)
+db,THGC,/db/thgc,_mapi.py (master enum)
+db,THIK,/db/thik,_thickness.py
+db,THIS,/db/this,_mapi.py (master enum)
+db,THMS,/db/thms,_mapi.py (master enum)
+db,THNL,/db/thnl,_mapi.py (master enum)
+db,THSL,/db/thsl,_mapi.py (master enum)
+db,TMAT,/db/tmat,_material.py
+db,TMLD,/db/tmld,_construction.py
+db,TSGR,/db/tsgr,__init__.py
+db,UNIT,/db/unit,_model.py
+db,UTBL,/db/utbl,_result_test.py
+db,VBEM,/db/vbem,_mapi.py (master enum)
+db,VSEC,/db/vsec,_mapi.py (master enum)
+doc,ANAL,/doc/anal,_model.py
+doc,CLOSE,/doc/close,_model.py
+doc,EXPORT,/doc/export,_model.py
+doc,EXPORTMXT,/doc/exportmxt,_model.py
+doc,IMPORT,/doc/import,_model.py
+doc,IMPORTMXT,/doc/importmxt,_model.py
+doc,NEW,/doc/new,_model.py
+doc,OPEN,/doc/open,_model.py
+doc,SAVE,/doc/save,_model.py
+doc,SAVEAS,/doc/saveas,_model.py
+doc,STAGAS,/doc/stagas,_model.py
+ope,PROJECTSTATUS,/ope/projectstatus,_model.py
+ope,UTBLTYPES,/ope/utbltypes,_result_table.py
+post,TABLE,/post/table,__init__.py
+post,TABLE,/post/table,_material.py
+post,TABLE,/post/table,_result_table.py
+post,TABLE,/post/table,_result_test.py
