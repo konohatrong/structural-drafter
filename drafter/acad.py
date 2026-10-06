@@ -37,6 +37,7 @@ _VER = re.search(r"AutoCAD (20\d\d)", ACC)
 VERSION = _VER.group(1) if _VER else None              # e.g. "2026"; None for an unusual ACCORECONSOLE path
 STYLE_GLOB = r"%APPDATA%\Autodesk\AutoCAD 20[0-9][0-9]\*\*\Plotters\Plot Styles"
 PAPER = "ISO full bleed A3 (420.00 x 297.00 MM)"
+PAPER_A1 = "ISO full bleed A1 (841.00 x 594.00 MM)"
 # a rejected answer puts every later line of the script out of step: one such message spoils the whole run
 REJECTED = re.compile(r"Unknown command|\*Invalid\*|Invalid option keyword|Point or option keyword required|"
                       r"Requires an integer|Value must be|\*Cancel\*")
@@ -89,10 +90,11 @@ def install_ctb(ctb, name, out):
         ctb.save(str(Path(d) / name))
 
 
-def plot(dxf, layouts, ctb, *, setvars, per_layout=(), wblocks=(), lib=None, timeout=600, font_check=True):
+def plot(dxf, layouts, ctb, *, setvars, per_layout=(), wblocks=(), lib=None, timeout=600, font_check=True,
+         paper=None):
     """Plot every layout of dxf to <dxf dir>/<base>.pdf, save <base>.dwg and, with wblocks, one DWG per block
     into lib. setvars: system variables set once ("LTSCALE 1", ...); per_layout: script lines run after CTAB
-    on each layout (e.g. PSLTSCALE, which is stored per layout)."""
+    on each layout (e.g. PSLTSCALE, which is stored per layout). paper: the plotter's paper name (default A3)."""
     dxf = Path(dxf)
     out = dxf.parent
     dwg, pdf = dxf.with_suffix(".dwg"), dxf.with_suffix(".pdf")
@@ -100,7 +102,7 @@ def plot(dxf, layouts, ctb, *, setvars, per_layout=(), wblocks=(), lib=None, tim
     lines = ["FILEDIA 0", "CMDDIA 0", "BACKGROUNDPLOT 0", *setvars, "-PLOTSTAMP", "OFF", ""]
     for lay in layouts:
         lines += ["CTAB", lay, *per_layout, "REGENALL",
-                  "-PLOT", "Y", lay, "DWG To PDF.pc3", PAPER, "M", "L", "N",
+                  "-PLOT", "Y", lay, "DWG To PDF.pc3", paper or PAPER, "M", "L", "N",
                   "L", "1:1", "0,0", "Y", ctb, "Y", "N", "N", "N",
                   q(out / f"_{lay}.pdf"), "Y", "Y"]          # save page setup = Y: the DWG keeps the CTB
     if wblocks:

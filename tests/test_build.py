@@ -91,6 +91,14 @@ def test_steel_roof_truss():
     check_dxf(JOBS / "steel_roof_truss" / "out" / "SRT-ST_Steel_Roof_Truss_T1_A3_RevA.dxf", 5)
 
 
+def test_steel_portal_frame(tmp_path):
+    """connection calc from the MIDAS snapshot (no connection check fails) and the eight A1 SPF sheets"""
+    out = run("steel_portal_frame", "calc_spf.py")
+    assert "!! FAIL" not in out
+    run("steel_portal_frame", str(JOBS / "steel_portal_frame" / "build.py"), str(tmp_path), cwd=tmp_path)
+    check_dxf(tmp_path / "SPF-ST_Steel_Portal_Frame_A1_RevA.dxf", 8)
+
+
 def test_retaining_wall_calc():
     out = run("nooker_rw", "calc_rw.py")
     assert "FSot=" in out and "psi_t = 1.3" in out

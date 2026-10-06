@@ -1152,11 +1152,84 @@ FX0, FY0, FX1, FY1 = 20.0, 10.0, 410.0, 287.0      # frame (EIT A2-A4: 10, left 
 TBW = 70.0                                           # title strip width (EIT 100 mm x 0.7 for A3)
 TBX = FX1 - TBW                                      # 340
 PAD = 2.0
+PAPER = "A3"                                         # use_paper() switches the set to another sheet size
+ZONES = (8, 6)                                       # zone grid: numbers along x, letters along y
+CTB_NAME = "NRW-EIT-R2.ctb"                          # plot style named in every layout's page setup
+COLOUR_MAP = {}                                      # engine colour -> plot-style colour, applied by finish()
+_A3_STRIP = (340.0, 410.0, 10.0, 287.0, 70.0)        # the A3 title strip every paper size is drawn from
+# paper: (W, H, frame x0, y0, x1, y1, title strip width, zones, page setup name). EIT §3.2: A0/A1 margins 15, left 30;
+# §3.4: vertical title block <= 100 mm wide on A1/A2
+PAPERS = {
+    "A3": (420.0, 297.0, 20.0, 10.0, 410.0, 287.0, 70.0, (8, 6), "ISO_full_bleed_A3_(420.00_x_297.00_MM)"),
+    "A1": (841.0, 594.0, 30.0, 15.0, 826.0, 579.0, 100.0, (12, 8), "ISO_full_bleed_A1_(841.00_x_594.00_MM)"),
+}
+PAGE_NAME = PAPERS["A3"][8]
+# Office A1 project sheets (EIT §19.2, user 2026-10-04): plot style STRUCT-A1-A2.ctb, whose pens differ from the
+# engine's (pens.py). Each engine colour is moved to the office colour of the nearest pen, keeping the greys.
+STRUCT_A1_A2 = {
+    1: 3,       # 0.50 main bars -> 0.45
+    4: 2,       # 0.35 steel / concrete cut, title text -> 0.35
+    5: 1,       # 0.25 seen beyond -> 0.25
+    6: 1,       # 0.25 bolts, symbols, cutting planes, callouts -> 0.25
+    3: 7,       # 0.18 leaders, centre lines -> 0.20
+    2: 7,       # 0.18 dimensions -> 0.20
+    7: 7,       # 0.18 text -> 0.20
+    252: 8,     # 0.25 grey hidden -> grey 0.18
+    8: 8,       # grey 0.18
+    9: 9,       # light grey 0.13 (the plot style keeps the object colour)
+    # 10 (frame 0.70) and 30 (0.35) stay: colours 10 - 254 plot with the object (layer) lineweight
+}
+STRUCT_PEN = {1: 25, 2: 35, 3: 45, 4: 20, 5: 40, 6: 35, 7: 20, 8: 18, 9: 13}   # STRUCT-A1-A2.ctb, 1/100 mm
+
+
+def use_paper(size, ctb=None, colour_map=None, ltscale_equiv=None):
+    """Switch the set to another sheet size (opt-in; the default A3 sets never call it). Call it right after
+    `from drafter import td_engine` and BEFORE `from drafter.td_engine import *` and `from drafter.steel import *`:
+    the job's sheet code reads FX0, TBX ... through the star import, and steel.py builds its grid linetype from LTS.
+
+    size          : "A1" or "A3" (PAPERS)
+    ctb           : plot style named in the page setups (A1 office sheets: "STRUCT-A1-A2.ctb")
+    colour_map    : engine colour -> plot-style colour (STRUCT_A1_A2 for STRUCT-A1-A2.ctb); finish() applies it
+    ltscale_equiv : the office LTSCALE for a 1:100 viewport (45 on A1, 30 on A2, user 2026-10-04). The sheets here
+                    are composed at 1:SC, so the model LTSCALE becomes ltscale_equiv x SC / 100 and a dash plots at
+                    pattern x ltscale_equiv / 100, as on the office plans."""
+    global W, H, FX0, FY0, FX1, FY1, TBW, TBX, ZONES, PAPER, PAGE_NAME, SHEET_DX, AREA_W, CTB_NAME, COLOUR_MAP, LTS, TB_NAME
+    W, H, FX0, FY0, FX1, FY1, TBW, ZONES, PAGE_NAME = PAPERS[size]
+    TBX = FX1 - TBW
+    AREA_W = TBX - FX0
+    SHEET_DX = W + 40.0
+    PAPER = size
+    TB_NAME = f"TB-{size}-NRW"
+    if ctb:
+        CTB_NAME = ctb
+    if colour_map is not None:
+        COLOUR_MAP = dict(colour_map)
+    if ltscale_equiv:
+        LTS = ltscale_equiv * SC / 100.0
+        doc.header["$LTSCALE"] = LTS
+
+
+def _apply_colour_map():
+    """move every layer, and the dimension-style colours, to the plot style's colours (COLOUR_MAP); the layer
+    lineweight follows the new colour's pen so the screen matches the plot"""
+    if not COLOUR_MAP:
+        return
+    for lay in doc.layers:
+        c = lay.color
+        if c in COLOUR_MAP:
+            lay.color = COLOUR_MAP[c]
+            if COLOUR_MAP[c] in STRUCT_PEN and CTB_NAME.upper().startswith("STRUCT"):
+                lay.dxf.lineweight = STRUCT_PEN[COLOUR_MAP[c]]
+    for ds in doc.dimstyles:
+        for k in ("dimclrd", "dimclre", "dimclrt"):
+            c = ds.dxf.get(k, 0)
+            if c in COLOUR_MAP:
+                ds.dxf.set(k, COLOUR_MAP[c])
 
 
 def frame_and_zones(ps):
     pline(ps, [(FX0, FY0), (FX1, FY0), (FX1, FY1), (FX0, FY1)], "S-FRAME", close=True)
-    nx, ny = 8, 6
+    nx, ny = ZONES
     dx, dy = (FX1 - FX0) / nx, (FY1 - FY0) / ny
     for i in range(nx + 1):
         x = FX0 + i * dx
@@ -1170,7 +1243,7 @@ def frame_and_zones(ps):
         line(ps, (FX0 - 4, y), (FX0, y), "S-ZONE")
         line(ps, (FX1, y), (FX1 + 4, y), "S-ZONE")
         if j < ny:
-            lab = "ABCDEF"[j]
+            lab = "ABCDEFGHJK"[j]
             text(ps, lab, (FX0 - 4, y - dy / 2), 2.0, "S-ZONE", TA.MIDDLE_CENTER)
             text(ps, lab, (FX1 + 4, y - dy / 2), 2.0, "S-ZONE", TA.MIDDLE_CENTER)
     # trim / centring marks
@@ -1265,11 +1338,24 @@ def tb_define():
     pline(tb, [(0, 0), (W, 0), (W, H), (0, H)], "S-SHEET", close=True)
     pline(tb, [(FX0, FY0), (TBX, FY0), (TBX, FY1), (FX0, FY1)], "S-TB-AREA", close=True)
     frame_and_zones(tb)
-    ps = tb
-    x0, x1 = TBX, FX1
+    line(tb, (TBX, FY0), (TBX, FY1), "S-TTLB")
+    before = {e.dxf.handle for e in tb}
+    _tb_strip(tb, *_A3_STRIP)                      # the strip is drawn once, at A3 size ...
+    if PAPER != "A3":                              # ... and scaled into another paper's strip (A1: 100 mm wide)
+        from ezdxf.math import Matrix44
+        x0, x1, fy0, fy1, tbw = _A3_STRIP
+        k = TBW / tbw
+        m = Matrix44.chain(Matrix44.translate(-x1, -fy0, 0), Matrix44.scale(k, k, k), Matrix44.translate(FX1, FY0, 0))
+        for e in tb:
+            if e.dxf.handle not in before:
+                e.transform(m)
+    INDEX.append((TB_NAME, "title block", "-", f"OFFICE {PAPER} TITLE BLOCK", "1:1", "1"))
+
+
+def _tb_strip(ps, x0, x1, FY0, FY1, TBW):
+    """the title strip (A3 geometry: x0 - x1 = 340 - 410, frame FY0 - FY1 = 10 - 287, width TBW = 70)"""
     xc = (x0 + x1) / 2
     tx = x0 + 1.5
-    line(ps, (x0, FY0), (x0, FY1), "S-TTLB")
 
     def hline(yy, lay="S-TTLB"):
         line(ps, (x0, yy), (x1, yy), lay)
@@ -1368,7 +1454,6 @@ def tb_define():
              "3. DO NOT SCALE FROM DRAWINGS.\\P"
              "4. DRAFTING TO EIT 011006-19.")
     mtext(ps, notes, (tx, FY1 - 6.5), 2.0, TBW - 3)
-    INDEX.append((TB_NAME, "title block", "-", "OFFICE A3 TITLE BLOCK", "1:1", "1"))
 
 
 KEYPLAN_2 = "(TYPICAL DETAILS)"      # set by the content module (general notes: "(GENERAL NOTES)")
@@ -1390,7 +1475,7 @@ def _centre_status(tb):
 
 
 def tb_values(series, title_lines, scale_txt, sheet_i):
-    v = {"DWG_NO": dwg_no(series), "SHEET": f"SHEET {sheet_i} OF {len(SHEETS)}  |  A3", "SCALE": scale_txt,
+    v = {"DWG_NO": dwg_no(series), "SHEET": f"SHEET {sheet_i} OF {len(SHEETS)}  |  {PAPER}", "SCALE": scale_txt,
          "DATE": PROJ["date"], "OFFICE": PROJ["office"], "OFFICE_ADDR": PROJ["office2"],
          "PROJECT": PROJ["project"], "LOCATION": PROJ["location"], "OWNER": PROJ["owner"],
          "KEYPLAN_1": "NOT APPLICABLE", "KEYPLAN_2": KEYPLAN_2,
@@ -1507,11 +1592,12 @@ def finish():
     """close the last sheet and add one layout per sheet: title block in paper space, one locked viewport
     at 1:SC onto the sheet's model-space area"""
     _close_sheet()
+    _apply_colour_map()
     for i, (name, tl, sc) in enumerate(SHEETS):
         ps = doc.layouts.new(name)
         ps.page_setup(size=(W, H), margins=(0, 0, 0, 0), units="mm", offset=(0, 0), rotation=0, scale=1,
-                      name="ISO_full_bleed_A3_(420.00_x_297.00_MM)", device="DWG To PDF.pc3")
-        ps.dxf_layout.dxf.current_style_sheet = "NRW-EIT-R2.ctb"
+                      name=PAGE_NAME, device="DWG To PDF.pc3")
+        ps.dxf_layout.dxf.current_style_sheet = CTB_NAME
         ps.dxf_layout.dxf.layout_flags = 0         # PSLTSCALE = 0 is PER LAYOUT (bit 1 of the layout flags); a new
                                                    # layout defaults to 1 and plotted patterns x 25 (1123, user 2026-09-30)
         vp = ps.add_viewport(center=(W / 2, H / 2), size=(W, H),

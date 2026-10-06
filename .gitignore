@@ -27,9 +27,16 @@ references/**/png/
 references/**/txt/
 references/**/ours/
 
+# MIDAS (midas/): the guide figures are sources; the API key file never is
+!midas/**/img/*.png
+midas/**/config.json
+
 # OS / editor
 desktop.ini
 Thumbs.db
 .vscode/
 .idea/
 .pytest_cache/
+
+# Local working notes (not in the repository)
+jobs/steel_portal_frame/STATUS.md
