@@ -168,7 +168,7 @@ These stay bare because a convention already gives the unit:
 | Dimension figures, including labelled ones ("8125 (FIELD SPLICE)", "a = 40") | General note "DIMENSIONS IN mm, LEVELS IN m" |
 | Weld symbol sizes and lengths | Weld key: "SIZES = FILLET LEG mm" |
 | Section, plate, bolt, bar and hole designations (CHS 76.3 x 2.8, PL 10 x 70, M20, Ø22, DB12@200) | Standard designation form |
-| Table cells | The **column header** carries the unit ("LENGTH mm", "e mm (e/D)", "GAP mm", "T kN") |
+| Table cells | The **column header** carries the unit ("LENGTH mm", "e mm (e/D)", "GAP mm", "T kN"). Exception: the weight per length written after a steel section is part of the designation and keeps its unit in the cell, "PG 139.8x4.5 (15.01 kg/m)" (user, 2026-10-07; steel S3.8) |
 | Diagram ordinates | The view title carries the unit ("CAMBER DIAGRAM (ORDINATES mm, ...)") |
 | Counts, ratios, grades and references | Not measurements: "2 PER TRUSS", "e/D ≤ 0.25", "GRADE 8.8", "TABLE 3", "5002", "AISC 303 7.10" |
 
@@ -519,6 +519,11 @@ connection on a steel or timber elevation. A set without the `S-CALL` layer adds
    - Move a nearby note's tip away from the circle edge, so it can't be read as pointing at the callout.
 5. **Use**: a section or elevation at 1:20 – 1:50 calls up its connections, enlarged at 1:5 – 1:10 on the same or
    another sheet. Example: 1/5004 calls up 2/5004 (lug end) and 3/5004 (purlin end).
+6. **Dense views** (user, 2026-10-06: "detail call out"): where note leaders would cross members or dimension chains -
+   a 1:50 truss elevation with a joint every 1.25 m - use the EIT form: the same dashed circle, a **short leader from
+   its edge to a split bubble** "n" over "sheet" (radius about 3.4 mm) placed in clear space, preferably inside the
+   view, never on a member, a tag or a label. Call out one example of each kind of joint on every view that has it.
+   Example: BANWA2 S-202 - S-204, joints 1 - 4, 6, 7 on S-205 (`truss_details.callout_nodes`).
 
 ### 9.8 Labels written on the member (user rule, 2026-10-03)
 

@@ -171,10 +171,15 @@ structure.
 | `S-CONT_BEAM` | Beams **seen from above** (upturned, at a slab edge or step, beams with no slab over) | 2 → 0.35 | Continuous |
 | `S-HID_BEAM` | Beams **below the slab** | 7 → 0.20 | HIDDEN |
 | `S-EDGE_SLAB` | Slab edges, slab steps, opening edges | 2 → 0.35 | Continuous |
+| `S-OPEN` | The cross over an opening or void (FP9.4) | 8 → grey 0.18 | CENTER (the grid linetype) |
 | `S-Footing` | Footings / pile caps (foundation plan) | 2 → 0.35 | Continuous |
 | `S_Pile_I` | Piles | 8 → grey 0.18 | Continuous |
 | `S-PILE-I` | Piles below, for reference | 8 → grey 0.18 | HIDDEN2 |
-| `S-WF`, `S-ST` | Steel members in plan (stair, frames) | 2 / 1 | Continuous |
+| `S-WF`, `S-ST` | Steel members in plan (stair, frames; on a steel roof plan: struts, purlins / posts) | 2 / 1 | Continuous |
+| `S-WF-THIN` | Steel members drawn lighter on a steel roof plan (truss chords under the subject members) | 7 → 0.20 | Continuous |
+| `S-ROD` | Tie rods, one line each (FP9.2, steel S4.11) | 1 → 0.25 | CENTER (the grid linetype) |
+| `S-SAG` | Sag rods between purlins | 7 → 0.20 | DASHED |
+| `S-BRACKET` | Member length brackets of beam and truss marks (FP10.2) | 8 → grey 0.18 | Continuous |
 | `S-HATCH` | Hatch: existing structure, fill concrete | 8 → grey 0.18 | Continuous |
 | `S-TXT_2.5_MM`, `Slab_Txt`, `SYM_TXT` | Member marks, tags, notes (the layer names are historical: the height is FP6's) | 2 → 0.35 | Continuous |
 | `S-40Txt` (block), `S-T200`, `S-TH` | View titles: title and scale text, underline | 1 → 0.25; 7 → 0.20 | Continuous |
@@ -280,12 +285,27 @@ above is continuous; what lies below the slab is hidden.
 
 - Column size drawn true; the column mark beside it (FP10).
 - On the foundation plan the column stub is shown in its footing with the column mark (FP13.2).
+- **Steel columns and posts are drawn as their actual section** (user, 2026-10-06: "show as actual section for steel
+  post"): the projected outline at true size (SHS 200 x 200: a 200 mm square), no wall thickness; where a member above
+  covers part of it, that part is left out. Worked example: BANWA2 S-103 / S-104, posts on the column tops.
 
 ### FP9.2 Beams
 - **Below the slab: hidden** (`S-HID_BEAM`, HIDDEN), both faces drawn, mitred at the columns they frame into.
 - **Seen**: upturned beams, beams at a slab edge or a step where the face shows, beams with no slab over them:
   continuous (`S-CONT_BEAM`).
 - Steel beams in an RC plan: by their outline or centre line with the section designation (steel S1).
+- **Steel framing plans** (truss chords, bracing, purlins): every member as a **double line at its projected width**
+  (CHS outside diameter, SHS / box width, channel flange width, round bar diameter), **no wall thickness** (user,
+  2026-10-06: "show as double line showing project dimension (no need to show wall thickness)"); junctions clean as
+  for RC beams (union of the member strips), a member below another left out where covered (steel S4.11).
+  - A post that runs up through the truss **trims the chords** on every roof plan (FP9.1, steel S4.11).
+  - **Tie rods**: one line each on the grid linetype with their own pen (`S-ROD`), never merged with the other rod of a
+    cross (user, 2026-10-06).
+  - **Purlins on a row with a post** stand **beside the post**, flange edge on the post face, on the down-slope side
+    (eave and line ends: inside); the whole row moves (user, 2026-10-06; steel S7.8). The purlin spacing chain still
+    gives the node spacing and a plan note gives the offset. Worked example: BANWA2 S-105 (`model_data.purlin_rows`).
+- **No moment-release (hinge) symbols on framing plans** (user, 2026-10-06: "no need to show moment release
+  symbol"). End conditions belong to the design and the beam details, not to the plan.
 - **Clean junctions** [USER 2026-10-04: "dirty line when beam across each others; join, trim, fillet (90 deg. join
   each others), extend, any make it tidy"]:
   - beams that cross form a clean "+": neither beam's faces run through the other;
@@ -302,8 +322,10 @@ above is continuous; what lies below the slab is hidden.
 - Each slab panel carries a slab tag (FP10.3). Cantilevers and canopies are slab panels with their own tag.
 
 ### FP9.4 Openings and voids
-- Outline plus an **X** across the void (`S-EDGE_SLAB` outline, X thin), and a label: `OPENING`, `LIFT`, `STAIR`,
-  `VOID (DOUBLE HEIGHT)`, `SHAFT` [EIT; REC labels]. A void without a label is a question on site.
+- Outline plus an **X** across the void, and a label: `OPENING`, `LIFT`, `STAIR`, `VOID (DOUBLE HEIGHT)`, `SHAFT`
+  [EIT; REC labels]. A void without a label is a question on site.
+- The outline is the slab edge (`S-EDGE_SLAB`, continuous); **the X is on the grid linetype in grey** (`S-OPEN`,
+  CENTER, colour 8) (user, 2026-10-06: "add cross symbol for opening area with grid line linetype colour 8").
 
 ### FP9.5 Steps in a slab
 - The line of the step continuous, the **step symbol** (office `Sym-Step`: the step height, `UPPER FLOOR` /
@@ -340,6 +362,17 @@ above is continuous; what lies below the slab is hidden.
   inside the bay, above a horizontal beam and left of a vertical one, reading from the bottom or the right.
 - Never on the beam line, a grid line or another tag; never at a column. A beam that changes type changes mark at the
   column.
+- **A main beam is one member from column to column**, even where secondary beams frame into it and the analysis model
+  splits it at every joint. It is marked **once, with a bracket over its length** and the mark at the middle of the
+  bracket (user, 2026-10-06: "this is main beam use bracket to present length of main beam avoid misunderstanding").
+  An edge beam has its bracket on the outside of the slab. A beam with no beam framing into it keeps the plain mark at
+  mid-span. If a secondary beam frames in at the middle, the mark moves to the middle of the nearest clear segment.
+- **The bracket** (user, 2026-10-06, second review): a **solid grey line** (colour 8, layer `S-BRACKET`) parallel to
+  the member; **both ends a 45° diagonal** whose size is the **text height** (dx = dy = 2.0 mm plotted) for a beam
+  mark, or the **mark circle's diameter** for a circled (truss) mark; the diagonals **end on the member's start and end
+  lines** (a beam: its face at the column face; a truss: its chord at the post face); the mark sits **in a gap in the
+  bracket line**, centred on it (`bw_plans.bracket_mark` of job BANWA2).
+  Worked example: BANWA2 S-102, B1A edge girders of the chiller floor (one mark per column bay, not one per joist).
 
 ### FP10.3 Slabs: the slab tag
 - Office block **`Sym-SFL`**: a box with the slab mark on top (`S1`) and `SFL. | +7.50` below; thickness added where
@@ -358,7 +391,10 @@ above is continuous; what lies below the slab is hidden.
 
 ### FP10.5 Other members
 - Stairs `ST-n`, lift walls `W-n`, steel members by designation ("H 200x200x8x12 - 49.90 kg./m."), canopy and tank
-  slabs by their slab tag.
+  slabs by their slab tag. In every table and schedule a steel section is followed by its weight per length,
+  `PG 139.8x4.5 (15.01 kg/m)` (user, 2026-10-07; steel S3.8).
+- **Trusses on a plan**: one erection mark per **support span**, marks shared only by spans of the same length and the
+  same sections, each with a bracket over the span and the circled mark at its middle (steel S3.7).
 
 ---
 
@@ -430,6 +466,12 @@ link bridges to their supports.
 ### FP13.5 Roof-deck and roof plans [RC §14.4]
 Slab falls and drain positions, parapets with size, upstands, lift overrun slab and lift roof, column stubs (`CK`)
 for future floors, roof structure by others (steel roof: steel S1).
+
+A **steel roof** on an RC frame is drawn as its own plans, each at the plan scale with the sheet layout of FP1.2:
+the column-top / RC roof framing plan (posts on the column tops, actual section), the **truss bottom-chord bracing
+plan** (chords, struts, tie rods, truss marks per support span with brackets, FP10.5) and the **top-chord purlin
+plan** (purlins, sag rods, ridge, slope arrows). The trusses themselves follow on key sections, elevations, joint
+details and the bill (steel S4.12, S7.8, S1.6). Worked example: BANWA2 S-103 - S-105, then S-201 - S-206.
 
 ### FP13.6 Enlarged views
 Stair cores, lift pits, congested corners at 1:50 with a callout on the plan ("DETAIL n/sheet", guide §9.7) and the
@@ -506,6 +548,9 @@ North arrow on every plan sheet, same size and place; the plan always drawn in t
 - [ ] Openings and voids crossed and labelled; stairs and lifts marked with their detail sheets
 - [ ] Existing structure hatched and labelled; joints shown with width on every floor
 - [ ] Every footing has its column or a note; lift pit and equipment foundations on the foundation plan
+- [ ] Steel framing plans: double lines at projected width, posts as actual section trimming the chords, tie rods one
+  line each on `S-ROD`, purlins beside the posts, truss marks per support span with brackets (FP9.2, FP10.5)
+- [ ] Tables: every steel section followed by its weight per length (FP10.5)
 
 **Coordination**
 - [ ] Overlay check run against the current AR; every finding fixed or answered
@@ -537,3 +582,7 @@ North arrow on every plan sheet, same size and place; the plan always drawn in t
 |---|---|
 | 2026-10-04 | Written for job SSK before its plans are drafted: office practice read from the SSK structural file, the user's rules of the day (plot style, LTSCALE 45, colour 9 background, cordia.shx 0.90 at 2.00 mm with the font a project setting), the SSK review findings as "never" rules, open decisions D1 – D7 |
 | 2026-10-04 | FP11.2 SFL = FFL − 50 mm as the usual rule, and FP10.3 slab tags placed in their panel, not aligned with AR tags (user); the overlay check compares levels by area |
+| 2026-10-06 | Review of the BANWA2 plans (user): main beams marked once per column bay with a length bracket (FP10.2); opening cross on the grid linetype, colour 8 (FP9.4, `S-OPEN`); no moment-release symbols on plans and steel framing as double lines at projected width (FP9.2); steel posts as their actual section (FP9.1); truss marks per support span (FP10.5, steel S3.7) |
+| 2026-10-06 | Second BANWA2 review (user): the bracket solid grey with 45° ends of the text height / mark diameter, ending on the member's start and end lines (FP10.2, `S-BRACKET`); chords trimmed by the posts on every roof plan; tie rods one line each on the grid linetype (FP9.2, `S-ROD`); layers added to FP5 |
+| 2026-10-06 | BANWA2: purlins on post rows beside the post (FP9.2, steel S7.8); steel roof plan set described (FP13.5) |
+| 2026-10-07 | Weight per length after every steel section in tables (FP10.5, steel S3.8); FP17 steel items |

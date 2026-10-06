@@ -9,6 +9,7 @@ to the Thai drafting standard EIT 011006-19 and the office conventions. It has t
 | **Toolkit** | `drafter/` | The drafting engine (`td_engine.py`), pens (`pens.py`), steel helpers (`steel.py`), font metrics, plotting |
 | **Worked examples** | `jobs/` | Complete sets built with the rules, and the record of how the rules were developed. Catalogue: `jobs/README.md` |
 | **Standard drawings** | `standard_drawings/` | The office standard sets (general notes, typical details) as plotted output: `developing/` review copies (local) and `issued/` official revisions (in git), with the issue register. Rules: `standard_drawings/README.md` |
+| **MIDAS GEN NX** | `midas/` | Driving the analysis program through its API (MAPI): building the model from the structural DXF, loads, analysis, results, calculation report, plug-ins. Not used by the drawing toolkit. Start: `midas/MIDAS_GEN_NX_INSTRUCTION.md` |
 
 ## 1. Reading order for any drawing task
 
@@ -48,11 +49,14 @@ Fix the disagreement in the documents, not only in one drawing.
 | Any symbol (section, callout, level, break, tag, weld …) | `SYMBOLS.md`, then the rule it cites |
 | Bars, ties, laps, bar notation | `RC_DRAWING_RULES_EIT-011006-19.md` §12, §19.4, §19.7; guide §2.1 – §2.3 |
 | Welds, bolts, marks, bills, camber, erection | `STEEL_DETAILING_INSTRUCTION.md` S3 – S9 |
+| Continuous steel trusses (roof on an RC frame): marks per span, key sections, elevations, joints, posts, purlins | Steel S2.10, S3.7 – S3.8, S4.10 – S4.12, S7.8; `FLOOR_PLAN_DRAWING_INSTRUCTION.md` FP9.2, FP13.5; example BANWA2 (`jobs/README.md`) |
+| Bill of materials, steel weight, weight per area | Steel S1.6, S3.8 |
 | Tables | Guide §6; `DRAWING_PRODUCTION.md` §2 (register, "TABLE n - NAME") |
 | General-notes sheet | `GENERAL_NOTES_DRAWING_INSTRUCTION.md` §0, plus the material content file |
 | Floor plans (pile, foundation, floor, roof), A1 project sheets | `FLOOR_PLAN_DRAWING_INSTRUCTION.md` (FP0 project settings first), RC §14 |
 | A `!!` build warning | `DRAWING_PRODUCTION.md` §3 |
 | Hand a standard set for review, or issue it | `standard_drawings/README.md` |
+| Anything with MIDAS GEN NX (API, model from drawings, loads, results, report, plug-in) | `midas/MIDAS_GEN_NX_INSTRUCTION.md` (rules M1 – M12 and its router), then `midas/README.md` |
 
 **Before issue**, run every checklist that applies:
 - every set: EIT §17 (sheet) and guide §8 (annotation);

@@ -92,8 +92,13 @@ The drawing area is a rectangle on `S-TB-AREA`; the paper edge is on `S-SHEET` (
 
 **A project title block** is a new block with the same attribute tags and an `S-TB-AREA` rectangle. In AutoCAD,
 INSERT the project DWG under the name `TB-A3-NRW` and choose to redefine; the attribute values on every sheet are
-kept (`ATTSYNC` if needed). The sheet layouts are designed for A3: another drawing area (e.g. A1) needs the sheet
-functions changed (positions only; the details do not change).
+kept (`ATTSYNC` if needed). The sheet layouts are designed for A3; an A1 set switches the paper with `use_paper()` (§6) and lays out its
+own sheets (positions only; the details do not change).
+
+A project title block can also be set up **in job code**, without touching the engine: BANWA2 (`plans/bw_engine.py`)
+imports the office's `Head_satoA1` DXF (DXFOUT of the DWG) into a block `TB-A1-SATO`, adds attribute definitions
+with the engine's tags at the office fields, sets `td_engine.TB_NAME`, the frame globals `FX0 … FY1`, `TBW = 0` and a
+`dwg_no` function for the project series; `new_sheet()` / `finish()` then fill it as usual.
 
 ## 4. Linetypes and pens
 
@@ -148,6 +153,14 @@ Off by default, so a set that does not set them is unchanged. SRT sets both.
 - `WRAP_UNITS = True`: notes wrap with `drafter.fonts.wrap(..., keep_units=True)`, so a number never leaves its unit
   on the next line (guide §2.4.2).
 
+- `use_paper("A1", ctb="STRUCT-A1-A2.ctb", colour_map=STRUCT_A1_A2, ltscale_equiv=45)` (2026-10-04, first on
+  `jobs/steel_portal_frame`): A1 sheets (EIT §3.2 margins 15 / 30, a 100 mm title strip drawn from the A3 strip
+  scaled by 100 / 70, zones 12 x 8, title block `TB-A1-NRW`), the office plot style named in every page setup,
+  the engine colours moved to the office pens by `finish()` (`STRUCT_A1_A2`: the greys kept), and LTSCALE = the
+  office 45-at-1:100 rule in this 1:SC composition (45 x 25 / 100 = 11.25). Call it after `from drafter import
+  td_engine` and **before** the star imports of `td_engine` and `steel`. A3 sets never call it and are unchanged
+  (verified by DXF diff of every job). The job's plot script passes `paper=acad.PAPER_A1`.
+
 Without `LEADER_ORTH` the leader form is chosen per target (the R2 rule): a target on a vertical line, a corner, a dot
 or an area gets one horizontal leader at its height; a target on a horizontal line gets the inclined 45° / 60° leg
 (`_target_kind`, `_rise`, `_snap_tip`).
@@ -191,3 +204,12 @@ or an area gets one horizontal leader at its height; a target on a horizontal li
 - **Layout is set by the notes:** at 1:25 the height of a view is often set by its stacked leader notes, not by its
   geometry. Widening the note column is the cheapest fix; shorten lengths next; move notes or tables to a
   continuation sheet last.
+- **Wipeouts do not plot** in AutoCAD's PDF of these sets (BANWA2): a mark over a member is cleared by cutting the
+  member geometry round it, not by a wipeout.
+- **`place_tag` samples 9 points of the tag box**: a thin member (a CHS web at 1:50) can cross the box between them.
+  Where members are thin and dense, check the clearance on the exact geometry (BANWA2 `truss_details.best_spot`).
+- **Text that is known only after the layout** (the sheet number of a detail drawn on a later sheet, inside a view
+  captured earlier): write a placeholder (BANWA2 `S-2JJ`) and replace it in the blocks once the sheets are numbered;
+  the text width must not change the layout.
+- **A `level()` line on another layer** (grey grid linetype): draw the triangle and value and the line yourself
+  (BANWA2 `truss_details.level_grey`); `level(ext=(0, 0))` would leave a zero-length line.

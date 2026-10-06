@@ -1,6 +1,6 @@
 ---
 name: steel-detailing
-description: Design and draw structural steel (hollow-section trusses, connections, bearings) as script-built EIT drawing sets in this repo. Use for any new steel job or change to jobs/steel_roof_truss - member and joint design to AISC 360-16 / DG24, welds to AWS D1.1, weld symbols, marks, bills, camber, anchor rods, erection notes.
+description: Design and draw structural steel (hollow-section trusses, continuous roof trusses on RC frames, portal frames, connections, bearings) as script-built EIT drawing sets in this repo. Use for any new steel job or change to jobs/steel_roof_truss or jobs/steel_portal_frame - member and joint design to AISC 360-16 / DG24, welds to AWS D1.1, weld symbols, marks, key sections, joint details, bills, camber, anchor rods, erection notes.
 ---
 
 # Steel detailing (structural-drafter repo)
@@ -14,7 +14,9 @@ Steel sets follow the same pipeline as the RC sets:
 4. **Build**: `build.py`, which exits 1 on any `!!` layout problem.
 5. **Plot**: `plot.py` (AutoCAD Core Console, or the ezdxf fallback with `--ezdxf`).
 
-The reference job is `jobs/steel_roof_truss`.
+Reference jobs: `jobs/steel_roof_truss` (one welded CHS truss, shop-ready), `jobs/steel_portal_frame` (portal frame
+from a live MIDAS model) and BANWA2 (outside the repository, `jobs/README.md`: continuous CHS roof trusses on an RC
+frame - roof plans, key sections, typical elevations, welded joints, posts through the trusses, bill of all steel).
 
 ## Before you start
 
@@ -41,6 +43,9 @@ The reference job is `jobs/steel_roof_truss`.
    - Size the members, then the joints.
    - Enforce the **K3.1A limits**, including 0.4 ≤ Db/D for gapped K-joints and the chord end distance.
    - Lay out the drawn geometry (e, gaps, θ) **in the calc** and check the joints on that same geometry.
+   - Geometry from a concentric analysis model: check the gaps first; set one WP offset e per truss type for gaps
+     ≥ 20 mm; report β < 0.4 and the e-moment to the engineer; check joint strength on the **current** forces only
+     (S2.10).
    - Return everything the drawings need (welds by zone, bolt lengths, x_oh, camber ordinates, support movement).
 2. **Engine**
    - Marks are generated, never typed: a different section, length or end preparation means a different mark.
@@ -73,6 +78,21 @@ The reference job is `jobs/steel_roof_truss`.
 - Concrete is hatched AR-CONC and grout AR-SAND.
 - Welds are 45° hatch only, with the boundary on Defpoints, drawn as seen: bands plus profiles.
 
+## Office rules from BANWA2 (user, 2026-10-06 / 07)
+
+- Continuous trusses: one mark per support span, shared only by spans of the same length and sections; on plans a
+  grey bracket with the circled mark at mid-span (S3.7, FP10.2).
+- Steel in plan: double lines at projected width, posts as actual section trimming the chords, tie rods one line each
+  on the grid linetype (S4.11, FP9.2).
+- A key section of every truss line at 1:200, span bubbles "mark / sheet" to the 1:50 elevations, post start level
+  (S4.12).
+- Elevations: the adjacent span hidden beyond each post ("ADJACENT SPAN Tn") or "END OF THE TRUSS LINE"; a grid
+  bubble on every post axis on a grid; level lines grey in the grid linetype; joint callouts as dashed circle + split
+  bubble (S4.10, S4.12).
+- A post through a truss runs 50 mm above the top chord and is capped; the purlin stands beside it (S7.8).
+- Every section in a table is followed by its weight per length; the bill covers all the structural steel, with the
+  weight per plan area (S3.8, S1.6).
+
 The rules and their reasons are written in `docs/steel/STEEL_DETAILING_INSTRUCTION.md` S4 and
 `docs/general/ANNOTATION_ALIGNMENT_GUIDE.md` §2.1, §2.4.2 and §9. Ask before changing any of these.
 
@@ -82,4 +102,9 @@ The rules and their reasons are written in `docs/steel/STEEL_DETAILING_INSTRUCTI
   the Thai ANSI codepage (cp874) and corrupts ≥ ° Ø Ψ µ. Edit with the Edit tool or a Python script that uses
   `encoding="utf-8", newline="\n"`.
 - Use the Python that has `ezdxf` installed (`requirements.txt`), not a bare system interpreter.
-- Run the AutoCAD plot from PowerShell. Git Bash breaks the Core Console paths.
+- Run the AutoCAD plot from PowerShell. Git Bash breaks the Core Console paths. Give `plot.py` an **absolute** output
+  folder (a relative one fails: "_plot.scr can't find").
+- The ezdxf plot draws viewport linetypes solid: judge dashed and chain lines on the AutoCAD plot.
+- A wipeout does not plot in AutoCAD's PDF of these sets: cut the geometry instead.
+- In a Python patch script, write regex text as raw strings: a `"\b"` inside a normal triple-quoted string becomes a
+  backspace character in the file.

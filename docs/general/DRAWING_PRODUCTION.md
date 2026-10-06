@@ -84,6 +84,7 @@ python plot.py slabs       # -> out\*.pdf, out\*.dwg, library\DET-*.dwg (one DWG
 |---|---|---|
 | `jobs/standard_set_R2` | `python build.py <set>` | `python plot.py <set>` (`columns \| beams \| slabs \| all`) |
 | `jobs/steel_roof_truss` | `python build.py` (design: `calc_truss.py`) | `python plot.py` |
+| `jobs/steel_portal_frame` (A1) | `python build.py` (design: `calc_spf.py`; model: `pull_model.py "<MAPI-KEY>"`, read-only) | `python plot.py` |
 | `jobs/standard_set` (general notes, issued F-A; R1 details frozen) | `python build.py gn` | `python plot.py gn` (`gn \| columns \| beams \| slabs \| all`) |
 | `jobs/general_notes` | `python build_gn.py out` | `python plot_gn.py out` |
 | `jobs/stair_demo` | `python build_stair.py out` | `python plot_stair.py out` |
@@ -146,6 +147,11 @@ it even when AutoCAD is there. For a quick look at any single DXF, run
 - Use a Python that has `ezdxf` installed (a venv with `requirements.txt`), not a bare system interpreter.
 - The PDF may be open in a viewer while you rebuild. Write review copies under another name instead of fighting the
   file lock.
+- Give a job's `plot.py` an **absolute** output folder: the Core Console script is written there and a relative path
+  is not found ("_plot.scr can't find", BANWA2).
+- The ezdxf plot draws viewport linetypes solid: judge dashed, hidden and chain lines on the AutoCAD plot.
+- In a Python patch script, write regex or path text as raw strings: `"\b"` inside a normal string becomes a
+  backspace character in the file (it happened twice on BANWA2). Check edited files for control characters.
 - **Revisions:** an issued job (for example `jobs/nooker_rw`) is changed only by a new revision, with its revision row
   and drawing numbers updated. A frozen set (`jobs/standard_set` R1, `jobs/typical_details`) is not changed. Verify a
   refactor by building both versions and diffing the DXFs, ignoring the header timestamps, CLASSES order and the ezdxf

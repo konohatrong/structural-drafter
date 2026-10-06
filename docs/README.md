@@ -23,7 +23,7 @@ the documents rather than in one drawing.
 | `general/ANNOTATION_ALIGNMENT_GUIDE.md` | Where and how annotation goes: note columns and rows, leaders (standard angle and orthogonal), terminators, clean dimensioning, **units on numbers**, view titles, keep-out zones, member tags, cutting planes, detail callouts, labels on the member, fitting views. §0 maps the rules to structure types |
 | `general/SYMBOLS.md` | Catalogue of every symbol: reference, annotation, concrete and steel symbols, with layer, helper and rule |
 | `general/GENERAL_NOTES_DRAWING_INSTRUCTION.md` | Layout of a general-notes sheet: sizes (current: normal sizes, flowing over sheets; first review print: × 0.625), anatomy, wording, tables, layout engine, checklist. Its §4.3 lists what a concrete notes sheet must carry; steel equivalents are in the steel instruction S1 and S9 |
-| `general/FLOOR_PLAN_DRAWING_INSTRUCTION.md` | Structural plans (pile, foundation, floor, roof) on A1 project sheets: project settings, plan set and sheets, plot style and pens, linetypes and LTSCALE, layers, text (font per project), dimension style, grid, what a plan shows, marks and tags, levels, dimensions, AR background and overlay check, checklist, open decisions |
+| `general/FLOOR_PLAN_DRAWING_INSTRUCTION.md` | Structural plans (pile, foundation, floor, roof, steel roof framing) on A1 project sheets: project settings, plan set and sheets, plot style and pens, linetypes and LTSCALE, layers, text (font per project), dimension style, grid, what a plan shows (beam brackets, steel double lines, posts, tie rods, purlins beside posts), marks and tags, levels, dimensions, AR background and overlay check, checklist, open decisions |
 | `general/DRAWING_ENGINE.md` | The shared engine (`drafter/td_engine.py`): model space and blocks, title block, linetypes and pens, the functions a job calls, opt-in options, checks, working in AutoCAD, pitfalls |
 | `general/DRAWING_PRODUCTION.md` | The pipeline (calc → engine → views → build → look → plot → test → review), the engine, the `!!` checks, requirements, commands, plotting without AutoCAD, environment pitfalls |
 
@@ -43,7 +43,7 @@ the documents rather than in one drawing.
 | File | Covers |
 |---|---|
 | `steel/README.md` | **The steel presentation approach**, documents, reading order, helpers |
-| `steel/STEEL_DETAILING_INSTRUCTION.md` | Rules S1 – S11 and S9A (fly bracing) |
+| `steel/STEEL_DETAILING_INSTRUCTION.md` | Rules S1 – S11 and S9A (fly bracing); continuous trusses: marks per support span, key sections, typical elevations, joints from a concentric model, posts through a truss, bill of all steel |
 | `steel/reference/SOURCES_STEEL_DETAILING.md` | AISC DSC, DG21, DG24 and Beca SE-1505 extracts |
 
 Other materials (timber, masonry, composite) have no folder yet. Use `general/` with the closest material rules (bolts
@@ -66,7 +66,7 @@ form, the **fabricator** makes pieces in a shop.
 | Connection information | Laps, anchorages, hooks: dimensions or rules ("≥ ld") and tables | **Weld symbols** (AWS A2.4) and bolt tables; joint geometry dimensioned from the chord face |
 | Leader style | Standard angle (45° / 60° leg + run + shelf) | Orthogonal (straight or L, ≥ 3 mm leg) |
 | Leader terminator on the key object | Arrow on a bar's edge; ring 2 × dot on a cut bar | Arrow on a plate edge; ring 1.25 × hole on a bolt |
-| Schedules | Lap, cover, tie spacing, slab tables; member schedules | Member schedule, plates and fittings, field bolts, node / weld table; one weight figure |
+| Schedules | Lap, cover, tie spacing, slab tables; member schedules | Member schedule, plates and fittings, field bolts, node / weld table; every section with its weight per length; bill of all steel, weight per area; one weight figure |
 | Extra content | Bar-end key, cover statement | Camber diagram, erection and lifting notes, weld key |
 
 Both use the same sheets, title block, pens by colour, text, units rule, dimensioning rules, view titles, cutting

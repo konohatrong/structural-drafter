@@ -660,7 +660,8 @@ These conventions were agreed with the engineer during NRW-ST Rev A and apply to
   - **open circle Ø = 2 × bar dot** on bars cut in section;
   - steel: open circle Ø = 1.25 × the hole on a bolt or hole seen end-on, and the arrow on the plate edge on a plate.
 - **Units on every bare number** in notes, leaders, titles and keys ("GROUT 30 mm"); dimension figures, designations and table cells stay bare, and table headers carry the unit (guide §2.4.2, user rule 2026-10-03).
-- Steel sets use orthogonal leaders (straight, or an L with a vertical leg ≥ 3 mm), dashed detail callouts and labels written on the member (guide §9).
+- Steel sets use orthogonal leaders (straight, or an L with a vertical leg ≥ 3 mm), dashed detail callouts (on dense views with a split bubble, guide §9.7 item 6) and labels written on the member (guide §9); their level lines are grey in the grid linetype (`SYMBOLS.md`, level mark).
+- In tables a steel section is followed by its weight per length with its unit, "PG 139.8x4.5 (15.01 kg/m)" (user, 2026-10-07; steel S3.8): the one exception to bare table cells.
 - View titles are left-aligned to their view, 6 mm below the lowest annotation.
 
 ### 19.6 Earthwork graphics
