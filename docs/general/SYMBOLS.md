@@ -80,6 +80,7 @@ Full rules: `FLOOR_PLAN_DRAWING_INSTRUCTION.md`. Office blocks from the SSK stru
 | **Column sits on beam** | Outline half filled on the diagonal | `S-CX_COL` 1 → 0.25 | – | FP9.1 |
 | **Column stops under** | Outline with an X (office) or hidden HIDDEN2 (EIT) | `S-HID_COL` 2 → 0.35 | `Col-Break` | FP9.1, D6 |
 | **Slab tag** | Box: slab mark on top, `SFL. | +7.50` below; thickness where it differs | text 2 → 0.35, 2.0 mm | `Sym-SFL` | FP10.3 |
+| **One-way / precast slab (plank)** | Span arrow 9.88 mm, half heads on opposite sides; mark over (`HC1`), level under (`SFL+5.95`); one per panel | text 2 → 0.35, 2.0 mm | `Plank_sym` (office); BANWA2 `bw_plans.plank_sym` | FP10.3a |
 | **Step in a slab** | Step line with the step height and `UPPER FLOOR` / `LOWER FLOOR` | `S-EDGE_SLAB` | `Sym-Step` | FP9.5 |
 | **Footing + column tag** | `F4,C1` at the footing's lower right | text 2 → 0.35 | – | FP10.4 |
 | **Pile** | Office pile symbols, explained in the legend | `S_Pile_I` 8 → grey 0.18 | `hexagonal_pile`, `I-Pile` | FP13.1 |

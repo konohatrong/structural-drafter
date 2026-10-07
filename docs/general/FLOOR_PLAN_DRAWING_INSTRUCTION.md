@@ -292,7 +292,15 @@ above is continuous; what lies below the slab is hidden.
 ### FP9.2 Beams
 - **Below the slab: hidden** (`S-HID_BEAM`, HIDDEN), both faces drawn, mitred at the columns they frame into.
 - **Seen**: upturned beams, beams at a slab edge or a step where the face shows, beams with no slab over them:
-  continuous (`S-CONT_BEAM`).
+  continuous (`S-CONT_BEAM`). Decide it per face, on every plan level, not per sheet: on a floor with voids (double
+  height) the beams round the void are seen while the beams under the slab are hidden (user, 2026-10-07: "don't
+  forget linetype rules when to use solid or hidden"; BANWA2 S-102 had every 2F beam hidden, B6 round the double-height
+  areas now continuous, `draw_beams(seen=True)`).
+- **Perimeter beams flush with the column face** (user, 2026-10-07: "align building perimeter beam edge to column
+  edge"): a beam on the building outline has its outer face on the outer face of the columns - its axis moves out by
+  (column - beam width) / 2 - so the facade line is straight; inner beams stay centred on the grid. The outer face is
+  then the slab edge (continuous), the inner face hidden under the slab. State it in the plan notes. Worked example:
+  BANWA2 S-102 / S-103 (`bw_plans.building_outline`, `flush`: C1 450, B 400 out by 25 mm, B6 / RB1 300 by 75 mm).
 - Steel beams in an RC plan: by their outline or centre line with the section designation (steel S1).
 - **Steel framing plans** (truss chords, bracing, purlins): every member as a **double line at its projected width**
   (CHS outside diameter, SHS / box width, channel flange width, round bar diameter), **no wall thickness** (user,
@@ -366,7 +374,9 @@ above is continuous; what lies below the slab is hidden.
   splits it at every joint. It is marked **once, with a bracket over its length** and the mark at the middle of the
   bracket (user, 2026-10-06: "this is main beam use bracket to present length of main beam avoid misunderstanding").
   An edge beam has its bracket on the outside of the slab. A beam with no beam framing into it keeps the plain mark at
-  mid-span. If a secondary beam frames in at the middle, the mark moves to the middle of the nearest clear segment.
+  mid-span - a split of the beam in the analysis model (mesh nodes) is not a beam framing in (BANWA2 secondaries B1,
+  B2, B3, B5, RB5 lost their brackets, 07/10/2026; `beam_marks` tests the beam directions at the inner nodes). If a
+  secondary beam frames in at the middle, the mark moves to the middle of the nearest clear segment.
 - **The bracket** (user, 2026-10-06, second review): a **solid grey line** (colour 8, layer `S-BRACKET`) parallel to
   the member; **both ends a 45° diagonal** whose size is the **text height** (dx = dy = 2.0 mm plotted) for a beam
   mark, or the **mark circle's diameter** for a circled (truss) mark; the diagonals **end on the member's start and end
@@ -383,6 +393,23 @@ above is continuous; what lies below the slab is hidden.
   slab panel, the AR tag to a room, and the two seldom coincide. A slab at a different level (toilet, balcony, step)
   has its own tag.
 - Text 2.0 mm (FP6.2).
+
+### FP10.3a One-way and precast slabs: the plank symbol
+- A one-way slab, hollow core or plank floor carries the office block **`Plank_sym`** (K.Nat plan legend "Plank No."):
+  an **arrow in the span direction**, 9.88 mm long, with a **half head at each end on opposite sides**, the slab mark
+  over it (`HC1`, bold) and the level under it (`SFL+5.95`, the block's own form without a space), text 2.0 mm (user,
+  2026-10-07: "use HC1 (hollow core slab as one way slab) use proper symbol place on every slab panel").
+- **One symbol in every slab panel** (the slab between the beam faces), the arrow across the panel's short side - the
+  span onto the supporting beams.
+- Placement, like the slab tag (FP10.3): in its panel, nearest the centre, clear of marks, brackets, symbols and grid
+  lines; a spot 5 mm clear of marks is preferred, 0.4 mm from lines and 1 mm from text is the least. A span up the
+  sheet: the arrow vertical and the two lines beside it, reading from the bottom. A panel narrower than the level
+  text: the level in two lines under the arrow (`SFL` / `+5.95`). The arrow shortens (to 5 mm) where a bracket
+  leaves less room; never across a beam face.
+- Legend entry and a plan note: what the mark is (precast hollow core, one-way), who designs it (depth, topping,
+  bearing), and that the analysis model's slab must transfer its load one way onto the supporting beams.
+- Worked example: BANWA2 S-102, 2F slabs HC1 in all 82 panels; the RC roof keeps its cast-in-place slab tag
+  (`bw_plans.slab_panels`, `hc_panels`, `plank_sym`).
 
 ### FP10.4 Columns and footings
 - Floor plans: column mark beside each column, outside the slab tag area, consistent position (lower right) [REC].

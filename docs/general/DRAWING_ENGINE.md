@@ -213,3 +213,14 @@ or an area gets one horizontal leader at its height; a target on a horizontal li
   the text width must not change the layout.
 - **A `level()` line on another layer** (grey grid linetype): draw the triangle and value and the line yourself
   (BANWA2 `truss_details.level_grey`); `level(ext=(0, 0))` would leave a zero-length line.
+- **Reading back what is drawn** (to place a tag or symbol clear of it, BANWA2 `bw_plans._geoms`): in ezdxf 1.4
+  `TEXT.get_placement()` returns three values (alignment, point, align point) and a `Vec3` cannot be sliced
+  (`e.dxf.start[:2]` raises); use `get_placement()[:2]` and `.x` / `.y`. Dimensions and blocks are read through
+  `virtual_entities()`, never by their extents (a grid dimension's extension lines span the whole plan). **Never
+  swallow an exception there**: a skipped entity is a missed obstacle and a clash on the sheet - collect the failures
+  and raise a `!!` warning (on BANWA2 every text was skipped silently until the warning was added).
+- **MTEXT copied from a project title block** (BANWA2 `Head_satoA1`: project name and location, middle-centre MTEXT
+  in a 125 mm box) plotted in AutoCAD left-aligned from the cell centre, running into the next cell, while the ezdxf
+  preview showed it centred. Write such fields as single-line TEXT (or attributes) centred on the cell, from the
+  project data, and check the title block in the **AutoCAD** PDF; centre every value in its cell (user, 2026-10-07:
+  "adjust title block text alignment"; BANWA2 `bw_engine.define_title_block`).

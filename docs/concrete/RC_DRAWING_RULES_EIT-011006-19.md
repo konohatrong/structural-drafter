@@ -202,6 +202,19 @@ Provide a **full-height elevation** (typical: bars and laps) plus a **column sch
 
 **Drawing practice [FIG]:**
 - The schedule is a grid: columns = C1…Cn, rows = floors (top → bottom). Each cell holds a section sketch plus rows for Size / Vertical bars / Ties.
+- **Office rule (user, 2026-10-07: "I don't want table with context inside; I would like section put in the table"):
+  column and beam schedules are drawn schedules - the member's section is drawn in the table cell, with only the size,
+  bars and ties written under it. A text-only schedule table (the Beca template `Detail Schedule\Beam Schedule.dwg`)
+  is not used. Reference: K.Nat house, `G:\My Drive\Works\20231129 - K. Nat\CAD\K.Nat_ST_Detail.dwg`, S2-06
+  (column schedule) and S2-07 (beam schedule), the base to upgrade from. Worked example of the upgraded form: BANWA2 S-301 (typical
+  column arrangement N.T.S. with tie zones A / B / C and Lo, column schedule at 1:25) and S-302 (beam schedule at 1:25,
+  one band per level, the section columns of §15.3 per mark, slab drawn where the model has one), all bars read from
+  the model's rebar data (`plans/rc_data.py`, `rc_schedules.py`).
+- **Scale and the typical arrangement** (user, 2026-10-07: "keep all column, beam detail as 1:25; for column legend
+  make it general symbol showing floor like representing, not to scale"): every column and beam section in the
+  schedules is drawn at **1:25**; the typical column arrangement beside the schedule is a **generic N.T.S. diagram** -
+  one representative storey between an UPPER FLOOR and a LOWER FLOOR (beam and slab), tie zones A / B / C with Lo, the
+  lap at mid-height, first tie 50 mm - with no project level or size on it (BANWA2 S-301 view 1, `col_typical`).
 - An **open up-arrow (⇧)** in a cell means "same as the floor below".
 - In the elevation:
   - First tie **50 mm** from the slab faces.
@@ -227,6 +240,29 @@ Provide a full-length elevation plus enough sections to show all bars. **Or** us
 - **Stirrup shape**
 - Stirrup size & spacing
 - Section ID
+
+**Inner stirrup legs sit on bars** (user, 2026-10-07: "tie as shear reinf. need to place on rebar it could not
+standalone"): a crosstie (third leg) or an inner stirrup (fourth leg) is shear reinforcement only where it hooks round
+a longitudinal bar at both ends. In the drawn section it is placed on a bar position that exists in **both** the top
+and the bottom outer layer, the one nearest the middle - never at b/2 when the layers have an even number of bars
+(4 bars: on the second or third bar). If the top and bottom layers share no inner bar position, the bars are
+rearranged before the section is drawn (a `!!` build warning). Worked example: BANWA2 S-302, B2 (4 + 4 bars, 3 legs)
+crosstie on the third bar, B1A (4 legs) inner stirrup on bars 2 and 3 (`rc_schedules.beam_section`).
+
+**Beam schedule** (office form, user 2026-10-07, see §15.2): one column per beam mark and support zone, the **section
+drawn in each cell**, then rows for size, top bars, bottom bars, side-face bars and stirrups (K.Nat S2-07).
+- **Section columns** (user, 2026-10-07: "add continuous span for all beam that end and middle span has different rebar
+  by using end span rebar for continuous span"; "for beam which has same rebar all location collapse to one section as
+  ALL SPAN and rebar no need to show + sign"):
+  - a beam whose support and mid-span bars differ has three columns: **END SUPPORT | MID SPAN | CONTINUOUS
+    SUPPORT** (CANTILEVER added where there is one). Where the design gives one support set per beam (the analysis
+    model's I / J ends), the continuous support repeats the end support bars, and a note says so until the design
+    check gives its own;
+  - a beam with the same bars and stirrups throughout has **one ALL SPAN column**, its bars written as the total
+    (`8-DB25`, not `4-DB25 + 4-DB25`): the drawn section shows the layers. Mixed bar sizes keep `a + b`;
+  - the other columns keep `a + b` = outer layer + second layer, defined in the notes.
+  - Worked example: BANWA2 S-302 (`rc_schedules.zones_of`, `bars_total`): B1, B2, B3, B5, B5A, RB5 in three columns,
+    B1A, B6, RB1, RB2, RB5A as ALL SPAN.
 
 **Beam schedule must show:**
 - Mark
