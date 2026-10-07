@@ -12,6 +12,7 @@ quoted are examples, not defaults.
 | First contact with the API, or any endpoint question | `api/MAPI_GUIDE.md` §0 – §12, `api/ENDPOINTS_GEN.csv`, `api/ENDPOINT_REFERENCE.md` |
 | Writing a script or tool that talks to GEN NX | M1 – M6 below, `api/CONVENTIONS.md`, `tools/connection.py` |
 | Model a building from the structural DXF and AR plan | M7 – M9, then `modeling-guide/README.md` and 01 – 07 in order |
+| Ground floor on piles (flat slab, drop panels, rigid zones, zones and seams) | M7.5, M8, `modeling-guide/08_PILE_SUPPORTED_FLAT_SLAB.md`, `06` §4.1 |
 | Beam loads (line, trapezoidal, partial, local / global) | `api/BEAM_LOAD_MAPPING.md` |
 | Plate loads, live load from room functions | `modeling-guide/07_AR_PLAN_ROOM_MAPPING.md`, M10 |
 | Run the analysis, read results, write the calculation report | M10, `calc-report/CALC_REPORT_GENERATION.md`, `examples/` |
@@ -73,6 +74,10 @@ A write changes the user's open model at once, with no undo through the API.
    off the level Z by more than 1 mm (`05`, Gate 4).
 2. **Back up** the tables a stage touches to JSON before its first write (`midas_backup_before_<stage>.json`); for a
    big change also have the user save the model under a new name.
+   A new revision can be made through the API: `POST /doc/SAVEAS {"Argument": "<full path>.mgbx"}` writes the file
+   and the open model continues in it, so the earlier file keeps the state before the write; `POST /doc/SAVE` after
+   the read-back stores the change (user rule, 2026-10-07: "save model as new RXX (XX - revision)"; BANWA 2
+   `..._r21` -> `BANWA2_underground_tank_walls_r22.mgbx` before the tank walls). Never overwrite an existing file.
 3. **Never blind-`PUT` or `DELETE` a table you do not wholly own.** Read, merge your own items, write back:
    - `PUT /db/BMLD` **replaces** an element's whole `ITEMS` list: read-merge or you delete the user's other loads;
    - `PUT /db/GRUP` **merges** `E_LIST`: to remove members, delete the group and put it again (or have the user
@@ -102,7 +107,10 @@ A write changes the user's open model at once, with no undo through the API.
 | `/db/RCHK` | 404 in the current GEN NX | Enter rebar in the GUI; read it back from the MCT export |
 | `/db/posl` | Usually empty | Seismic parameters from the MCT `*SEIS` block, checked against the base shear |
 | `/db/BMLD` with a case or load group that does not exist | `Error: Wrong Field` | `PUT /db/STLD` and `/db/LDGR` first |
-| `POST /ope/AUTOMESH` | The reply also lists split beams; a warning-only reply still makes the mesh; a used `DOMAIN_NAME` fails | Find new plates by diffing `ELEM` before and after; check `/db/MADO` for names (`06` §4) |
+| `POST /ope/AUTOMESH` | The reply also lists split beams; a warning-only reply still makes the mesh; a used `DOMAIN_NAME` fails | Find new plates by diffing `ELEM` before and after; check `/db/MADO` for names (`06` §4). Voids, interior nodes / lines (`"OPTION":"User"`), drop panels and `/db/RIGD`: `06` §4.1 |
+| `POST /ope/AUTOMESH` on a boundary line longer than the mesh size | The line is split again; plates already meshed beside it do not get the new node (no connection) | One mesh size for every zone of a floor; new lines end on existing nodes (`08` §5.2, §6.1) |
+| `DELETE /db/ELEM/<ids>`, `DELETE /db/NODE/<ids>` | Deletes exactly those IDs (body `{}`); without IDs it would wipe the table | Delete by ID only, 200 IDs per call; check the IDs first (`08` §8) |
+| `PUT /db/RIGD` | Keyed by the master node: `{"<master>":{"ITEMS":[{"ID":1,"GROUP_NAME":"","DOF":111111,"S_NODE":[…]}]}}` | Read back and compare; existing masters stay unchanged (`08` §4) |
 
 Commands the guides use that are not in the library list: `/ope/AUTOMESH`, `/db/MEMB`, `/db/STOR`, `/db/DCON`,
 `/db/MATD`.
@@ -111,8 +119,14 @@ Commands the guides use that are not in the library list: `/ope/AUTOMESH`, `/db/
 
 1. After each write, **read back** and print: counts written against expected, count by section, maximum length
    difference against the approved sheet (fire station ≤ 0.5 mm), all nodes at their level Z, group membership.
-2. Capture a plan and an isometric view (`POST /view/CAPTURE`) and show them beside the approved sheet.
+2. Capture a plan and an isometric view (`POST /view/CAPTURE`) and show them beside the approved sheet. On a large
+   model the whole-model capture hides a small or buried part (BANWA 2 tank under the roof): render the written part
+   from the read-back data as well.
 3. A summary message is not evidence: the read-back is. Report the read-back numbers.
+4. For a meshed floor, check the areas, the free and three-way plate edges, the beams on plate edges, orphan and
+   duplicate nodes, the boundary pieces not split, and that nothing outside the written part changed (`08` §7). A
+   check that fails on something legitimate is corrected in the check with its reason; the model is saved only after
+   every check passes.
 
 ## M7. Modelling from drawings: the gates
 
@@ -127,6 +141,16 @@ Work **one level at a time**, with four gates before each write (`05`):
 3. **The engineer says "Go"** for that level, after numbered questions with a recommendation each. Do not start the
    next level until asked.
 4. **Pre-write checks** on the live model (M4.1), then write, then read back (M6).
+
+5. **A floor too big for one write is built in zones** (`08` §2 – §3):
+   - each zone is a dry run, then the engineer's Go, then a write saved as its own revision with a snapshot after
+     it;
+   - the next zone starts only if the live model equals that snapshot;
+   - shared items belong to the first zone in the order;
+   - open edges are temporary seams;
+   - probe new request formats on a throwaway copy first (`automesh_probe.py`).
+
+   Zones may run in a chain on the engineer's word; the chain stops at the first failed check.
 
 Start from the intake (`01`): layers, panel origins, marks, SFL tags, displaced groups, the section table, and the
 decision list sent to the engineer **before** extracting geometry that depends on an answer.
@@ -146,6 +170,7 @@ its decision log (`DECISION_LOG_TEMPLATE.md`), since they are engineering decisi
 | Curved beam | Bulged LWPOLYLINE; chords on the centreline arc, sagitta ≤ b/8, chord ≈ 2 × mesh size; same points on every level | 04 |
 | Neglected members | Only by the engineer's decision (BX stair trimmers); re-attach dead ends, check connectivity | 03 §7 |
 | Mesh | 0.50 m, thick plates; openings under 1 m² ignored; cantilever vertices prepared on the whole level before meshing any panel | 06 |
+| Pile-supported ground slab (BANWA 2 answers) | FS200 + DP350 drops at the mid-plane; pile stubs 350 to −1.50 pinned; 8-node rigid zone at each pile and at each column with no ground beam; GB 400 × 900 CT; all supports pinned; one mesh size (0.40) for every zone | 08 |
 
 Drawing-reading lessons carried over from the drafting side: column size from **visible** dynamic-block entities only;
 grid lines and bubbles inside the grid xref; a plan may hold a displaced copy of a bay; Thai text in AR and regulation

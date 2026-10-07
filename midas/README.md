@@ -22,7 +22,7 @@ which now point inside this folder or, for parts left behind, to that commit on 
 | [`api/BEAM_LOAD_MAPPING.md`](api/BEAM_LOAD_MAPPING.md) | `pilot project/wind load generator/docs/MIDAS_MAPPING.md` | `/db/BMLD` beam loads verified on a live model: uniform, trapezoidal, partial, directions, signs |
 | [`api/ENDPOINT_REFERENCE.md`](api/ENDPOINT_REFERENCE.md), [`api/ENDPOINTS_CIVIL.csv`](api/ENDPOINTS_CIVIL.csv) | `MIDAS_CIVIL_NX_API_Reference.md`, `MIDAS_CIVIL_NX_endpoints.csv` | Endpoint codes grouped and explained (taken from the CIVIL library; GEN shares the codes) |
 | [`api/ENDPOINTS_GEN.csv`](api/ENDPOINTS_GEN.csv) | (new) | The 177 commands the GEN library itself uses, with the module that writes each and whether CIVIL has it |
-| [`modeling-guide/`](modeling-guide/README.md) | `modeling-guide/` | DXF + AR plan → live model, one level at a time: intake, grid and columns, beams, curved beams, verification gates, slab Auto-mesh, room functions and live load, decision-log template, figures |
+| [`modeling-guide/`](modeling-guide/README.md) | `modeling-guide/` | DXF + AR plan → live model, one level at a time: intake, grid and columns, beams, curved beams, verification gates, slab Auto-mesh, room functions and live load, decision-log template, figures; **08 (new)**: a pile-supported flat slab with drop panels and rigid zones, built zone by zone (BANWA 2) |
 | [`modeling-guide/scripts/fire_station/`](modeling-guide/scripts/fire_station/README.md) | same | The archived scripts of the Samut Songkhram fire station (Building B), by stage, with run order and which ones write to the live model |
 | [`calc-report/CALC_REPORT_GENERATION.md`](calc-report/CALC_REPORT_GENERATION.md) | `pilot project/wind load generator/docs/CALC_REPORT_GENERATION.md` | Calculation report (`.docx`) from a live model: data, figures, ELF seismic, storey drift, member design pages, gotchas |
 | [`plugins/PLUGIN_GUIDE.md`](plugins/PLUGIN_GUIDE.md) | `To midas/README.md` | Mandatory read before packaging a MIDAS plug-in: facts, file set, `manifest.json` schema, Do / Don't, gotchas, checklist |
@@ -57,6 +57,10 @@ optional key file, but the command line is the office rule.
 `jobs/steel_portal_frame` (2026-10-04): a live GEN NX model read with a read-only script (`pull_model.py`, key on
 the command line only), its connections designed from the model's design forces, and the A1 steel construction
 set drawn from the snapshot.
+
+`BANWA 2` (2026-10-07 / 08, project folder, not in this repository): the ground floor on 458 piles was built in a
+live GEN NX model zone by zone: flat slab, drops over piles and columns, rigid zones, gutter strip, lift pit, about
+34 000 plates, every zone verified by read-back. Method: `modeling-guide/08_PILE_SUPPORTED_FLAT_SLAB.md`.
 
 ## Relation to the drawing work
 

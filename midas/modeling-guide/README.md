@@ -47,6 +47,7 @@ review sheet over the original drawing, and (3) been accepted by the engineer.
 | 5 | [05_PRE_MODEL_VERIFICATION.md](05_PRE_MODEL_VERIFICATION.md) | The review sheet, the 5-check independent verification, pre-write and post-write checks, backups, the per-level loop |
 | 6 | [06_SLAB_AUTOMESH.md](06_SLAB_AUTOMESH.md) | Slab panels from the beam graph, openings, cantilevers without edge beams, Auto-mesh payload and pitfalls, slab verification, groups |
 | 7 | [07_AR_PLAN_ROOM_MAPPING.md](07_AR_PLAN_ROOM_MAPPING.md) | Mapping room functions from the architectural plan onto the slab plates, live load classification |
+| 8 | [08_PILE_SUPPORTED_FLAT_SLAB.md](08_PILE_SUPPORTED_FLAT_SLAB.md) | Ground floor on piles: flat slab with drop panels over piles and over columns with no ground beam, pile stubs, 8-node rigid zones, ground beams, gutter strip; zones, seams, one revision per zone; the verification; BANWA 2 example |
 | – | [DECISION_LOG_TEMPLATE.md](DECISION_LOG_TEMPLATE.md) | The questions every project has to answer before modelling, with the fire-station answers as an example |
 
 The analysis-and-report side (loads, combinations, results, docx report) is in
@@ -101,3 +102,9 @@ Add one line per new technique or pitfall, with the date and the guide it was fo
 | 2026-09-24 | Cantilever slab with no edge beam: temporary edge lines → mesh → delete the lines | 06 |
 | 2026-09-24 | `PUT /db/GRUP` merges `E_LIST`; delete and re-PUT to remove members | 06 |
 | 2026-09-24 | Thai text in the AR PDF does not extract; read the pages as images and key zones to the grid | 07 |
+| 2026-10-07 | Auto-mesh voids (inner loop, `MESH_INNER_DOMAIN` false), interior nodes / lines as `"OPTION":"User"`, drop panels meshed after the slab through the reserved nodes; `/db/RIGD` format | 06 §4.1 |
+| 2026-10-07 | A seam keeps its nodes only for the same (or a larger) mesh size: a 0.40 mesh split every 0.50 m seam piece | 08 §6.1 |
+| 2026-10-07 | Big floor in zones, one model revision each (`SAVEAS`), a snapshot after each as the next zone's reference; seams kept until both sides are meshed | 08 §2 – §3 |
+| 2026-10-08 | Snap new lines to the existing nodes of a meshed beam (set-back beam 1.25 → 1.20, gutter strip 1.6 → 2.0) | 08 §5.2 |
+| 2026-10-08 | Check every support type before the first zone: drops over columns with no ground beam were missed and the floor was rebuilt | 08 §8 |
+| 2026-10-08 | Opening by deleting the plates inside it, then its loose nodes by ID; checks exempt the beams beside it in every zone | 08 §5.3 |

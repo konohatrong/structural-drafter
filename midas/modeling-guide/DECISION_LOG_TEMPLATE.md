@@ -41,6 +41,24 @@ ones it depends on. Right-hand column: the fire-station (Building B) answers, 20
 | L5 | Slab organisation in the works tree | Structure groups `SLAB_<L>` + `SLAB_<L>-Pxx` (not domains) |
 | L6 | Modelling order | GB → 2F → 3F → RF → annex; engineer starts each level |
 
+## Pile-supported ground slab (08)
+
+Example answers from BANWA 2 (07 – 08/10/2026), not the fire station.
+
+| # | Question | BANWA 2 |
+|---|---|---|
+| P1 | Ground floor system | Pile-supported flat slab with drop panels; ground beams on the perimeter and chosen lines only |
+| P2 | Slab and drop | FS200; drops 1.2 × 1.2 × 0.35 (DP350); plates at the slab mid-plane, no offset |
+| P3 | Pile size, layout limit | 350 × 350; tributary ≤ 8.41 m² (2.90 × 2.90); no pile under a ground beam |
+| P4 | Pile in the model | Stub column 0.00 to −1.50 (the pier length), pinned at the foot |
+| P5 | Rigid zone | 8 nodes on the pile (or column) face, `RIGD` to the pile head / column node, DOF 111111 |
+| P6 | Columns with no ground beam | A drop over each, as over a pile |
+| P7 | Ground beams | GB 400 × 900, top at 0.00 (CT offset); rigid joints |
+| P8 | Column supports | Pinned |
+| P9 | Mesh size (one for all zones) | 0.40 m |
+| P10 | Zones and their order | Zones r3 from the engineer's sketches; one revision per zone; tank roof last |
+| P11 | Gutters, pits, walls | Gutter strip 2 000 × 500 at ground level on its piles; lift pit an opening; slab joins the tank wall top |
+
 ## Loads
 
 | # | Question | Fire station |

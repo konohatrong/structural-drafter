@@ -96,6 +96,75 @@ share nodes.
 | Domain tables (`MADO`, `SBDO`, `DOEL`) are **read-only** through the API | Organise panels with structure groups instead (below) |
 | Split pieces inherit the parent's groups and become members (`/db/MEMB`) | Beam groups stay complete; select beams by group, not ID range |
 
+## 4.1 Voids, interior nodes and lines, drop panels (probe, BANWA 2, 07/10/2026)
+
+The JSON manual (MIDAS support article 35736427971225, "Auto-Mesh Planar Area") gives the interior options as
+objects; a probe on a throwaway copy of a live model confirmed them and the drop-panel flow below.
+
+```json
+"MESHER":{"METHOD":"Line Elements","TARGETS":[…outer loop…, …inner loop…],"TYPE":"Quadrilateral",
+          "MESH_INNER_DOMAIN":false,
+          "INCLUDE_INTERIOR_NODES":{"OPT_CHECK":true,"OPTION":"User","VALUE":[…node ids…]},
+          "INCLUDE_INTERIOR_LINES":{"OPT_CHECK":true,"OPTION":"User","VALUE":[…line elem ids…]},
+          "INCLUDE_BOUNDARY_CONNECTIVITY":true}
+```
+
+| Option | What it does (probe result) |
+|---|---|
+| `TARGETS` with an outer loop **and** a closed inner loop, `MESH_INNER_DOMAIN: false` | The inner loop is a **void**: no plate inside it (0 of 168). The inner loop lines are subdivided at the mesh nodes like the outer ones |
+| `INCLUDE_INTERIOR_NODES` `"OPTION":"User"` + `VALUE` | Each listed node becomes a mesh node (a column node in the slab). Nodes not listed are ignored, also those inside a void. `"Auto"` detects every node inside the area: use `"User"` so nothing unplanned is taken in |
+| `INCLUDE_INTERIOR_LINES` `"OPTION":"User"` + `VALUE` | A listed beam inside the area (ends on the boundary) is subdivided at the mesh nodes and the plates follow it |
+| `TYPE` | The manual's example spells it `"Quadandtriangle"`, the specification `"Quad and Triangle"`; `"Quadrilateral"` was enough in every probe trial |
+
+**Drop panel flow** (a pile-supported flat slab; one bay 6 × 6 m, drop 1.2 × 1.2 m, pile 350 × 350):
+
+1. The pile stub as a beam element from the pile foot to the slab, pinned at the foot (`CONS` `"1110000"`).
+2. 8 reserved nodes on the pile face (3 per side: corners and mid-sides) at the slab level, for the rigid zone.
+3. The drop outline as 4 temporary line elements (a probe section), not meshed.
+4. Slab: `AUTOMESH` on the outer loop + the drop outline, `MESH_INNER_DOMAIN: false`, the slab thickness. The drop
+   is left void and its outline is subdivided at the slab mesh nodes.
+5. Drop: re-read `ELEM`, find the **subdivided** outline pieces geometrically (the first piece keeps the old ID, the
+   others are new), and `AUTOMESH` on them with the 8 nodes + the pile head as `"User"` interior nodes, the drop
+   thickness. The reply is a warning only ("Quadrilateral mesh elements will be switched to Quad+Triangle … minimum
+   edge size 0.4 m"), but the mesh is made: 14 quadrilaterals, the pile head patch 4 quads of 0.175 m.
+6. Conformity: the plate edges used by one plate only are all on the outer loop (48 of 48), none on the drop
+   outline, no edge used by three plates.
+7. Rigid link, master the pile head:
+   `PUT /db/RIGD {"Assign":{"<pile head>":{"ITEMS":[{"ID":1,"GROUP_NAME":"","DOF":111111,"S_NODE":[…8 nodes…]}]}}}`
+   (DOF digits DX DY DZ RX RY RZ, 1 = rigid). It reads back as written.
+8. Delete the temporary outline lines **by ID** (`DELETE /db/ELEM/<ids>` with `{}`, 200 IDs per call). The plates
+   and the subdivided ground beams stay; no orphan nodes.
+
+**IDs and replies.**
+- New nodes and elements continue from the highest ID in the model.
+- On a clean mesh the reply is `{"AUTOMESH": {…every new element…}}`: the plates and the split line pieces.
+- The target lines come back changed: they are shortened to the first piece.
+- Still diff `ELEM` before and after (§4).
+- A real ground beam can be part of the boundary: it is split at the mesh nodes and every piece stays on plate nodes.
+
+First zone (16 x 6 m, 8 drops, BANWA 2 r23):
+- The slab reply was a warning, "switched to Quad+Triangle": the 1.2 m drop sides split in 3 do not match the 0.5 m
+  grid. The result was 451 plates, 33 of them triangles, minimum angle 21.8°.
+- **One AUTOMESH call meshed all 8 drop loops** (90 lines, 72 interior nodes); every drop took its 9 nodes.
+- A zone edge with no beam is kept as a temporary seam line, so the next zone meshes against its nodes. The seam
+  pieces are deleted by ID once plates lie on both sides of them (08 §2).
+- **A seam keeps its nodes only when the next zone uses the same mesh size or a larger one.** A probe meshed a 0.40
+  zone against 0.50 m seam pieces: every piece was split in two, and none of the plate edges on the far side was
+  shared, so the two meshes did not connect.
+  - Choose the mesh size before the first zone.
+  - At 0.40 the 1.2 m drop sides (3 × 0.40) line up with the grid. On BANWA 2 Z1 (58 × 6 m, 29 drops) this gave a
+    regular mesh with about 3 % of the plates under 45°, all of them round the drops.
+- Proven later on the whole BANWA 2 ground floor (08/10/2026):
+  - all drop loops of a zone in **one** call (138 drops, 1 242 interior nodes);
+  - interior beams meeting at T-junctions as `INCLUDE_INTERIOR_LINES`;
+  - an opening made by deleting the plates inside it, **then its loose mesh nodes** (`DELETE /db/NODE/<ids>`);
+  - a slab joined to a wall top through temporary lines between the wall's nodes.
+- The full method (zones, seams, rigid zones, the verification and the lessons) is
+  [08 · Pile-supported flat slab](08_PILE_SUPPORTED_FLAT_SLAB.md).
+
+Plates inside the 8-node patch sit in the rigid zone, which is accepted. The slab quads next to the drop are
+paved, not mapped: check the element quality in the full layout.
+
 ## 5. Per-panel check (inside the loop)
 
 For the new plates of each panel: area equals the panel area (± 0.01 m²), all nodes at the
