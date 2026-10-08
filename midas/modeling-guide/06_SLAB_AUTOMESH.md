@@ -159,8 +159,16 @@ First zone (16 x 6 m, 8 drops, BANWA 2 r23):
   - interior beams meeting at T-junctions as `INCLUDE_INTERIOR_LINES`;
   - an opening made by deleting the plates inside it, **then its loose mesh nodes** (`DELETE /db/NODE/<ids>`);
   - a slab joined to a wall top through temporary lines between the wall's nodes.
-- The full method (zones, seams, rigid zones, the verification and the lessons) is
-  [08 · Pile-supported flat slab](08_PILE_SUPPORTED_FLAT_SLAB.md).
+- **Local refinement by pre-split outlines** (BANWA 2, 08/10/2026):
+  - split an inner loop (a drop) into pieces finer than the slab mesh (0.20 in a 0.40 slab), and the slab grades down
+    round it by itself;
+  - then mesh the loop at the fine size through its interior nodes;
+  - at 0.20 the drops had no plate under 45°, against 11 % with 0.40 pieces;
+  - a pre-split piece longer than the mesh size is split again, so divide with `ceil(L / size)`.
+- The full method is [08 · Pile-supported flat slab](08_PILE_SUPPORTED_FLAT_SLAB.md):
+  - the staged build (§2A);
+  - the zone method;
+  - rigid zones, verification and lessons.
 
 Plates inside the 8-node patch sit in the rigid zone, which is accepted. The slab quads next to the drop are
 paved, not mapped: check the element quality in the full layout.

@@ -47,7 +47,7 @@ review sheet over the original drawing, and (3) been accepted by the engineer.
 | 5 | [05_PRE_MODEL_VERIFICATION.md](05_PRE_MODEL_VERIFICATION.md) | The review sheet, the 5-check independent verification, pre-write and post-write checks, backups, the per-level loop |
 | 6 | [06_SLAB_AUTOMESH.md](06_SLAB_AUTOMESH.md) | Slab panels from the beam graph, openings, cantilevers without edge beams, Auto-mesh payload and pitfalls, slab verification, groups |
 | 7 | [07_AR_PLAN_ROOM_MAPPING.md](07_AR_PLAN_ROOM_MAPPING.md) | Mapping room functions from the architectural plan onto the slab plates, live load classification |
-| 8 | [08_PILE_SUPPORTED_FLAT_SLAB.md](08_PILE_SUPPORTED_FLAT_SLAB.md) | Ground floor on piles: flat slab with drop panels over piles and over columns with no ground beam, pile stubs, 8-node rigid zones, ground beams, gutter strip; zones, seams, one revision per zone; the verification; BANWA 2 example |
+| 8 | [08_PILE_SUPPORTED_FLAT_SLAB.md](08_PILE_SUPPORTED_FLAT_SLAB.md) | Ground floor on piles: flat slab with drop panels, pile stubs, 8-node rigid zones, ground beams, gutter strip. **Staged build** (beams → outlines → piles → slab → drops / strip, one revision each; §2A) and the zone method; the verification; BANWA 2 example |
 | – | [DECISION_LOG_TEMPLATE.md](DECISION_LOG_TEMPLATE.md) | The questions every project has to answer before modelling, with the fire-station answers as an example |
 
 The analysis-and-report side (loads, combinations, results, docx report) is in
@@ -108,3 +108,6 @@ Add one line per new technique or pitfall, with the date and the guide it was fo
 | 2026-10-08 | Snap new lines to the existing nodes of a meshed beam (set-back beam 1.25 → 1.20, gutter strip 1.6 → 2.0) | 08 §5.2 |
 | 2026-10-08 | Check every support type before the first zone: drops over columns with no ground beam were missed and the floor was rebuilt | 08 §8 |
 | 2026-10-08 | Opening by deleting the plates inside it, then its loose nodes by ID; checks exempt the beams beside it in every zone | 08 §5.3 |
+| 2026-10-08 | Staged build over the whole floor (beams → outlines → piles → slab by region → drops / strip → links); no seams | 08 §2A |
+| 2026-10-08 | Local refinement: pre-split the drop / strip outline at 0.20 in a 0.40 slab; drops 0 % under 45 deg (0.40: 11 %) | 08 §2A, 06 §4.1 |
+| 2026-10-08 | Pre-split with ceil(L / size); re-read NODE after each mesh call; compare coordinates at 4 decimals | 08 §2A |

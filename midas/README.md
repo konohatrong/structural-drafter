@@ -59,8 +59,12 @@ the command line only), its connections designed from the model's design forces,
 set drawn from the snapshot.
 
 `BANWA 2` (2026-10-07 / 08, project folder, not in this repository): the ground floor on 458 piles was built in a
-live GEN NX model zone by zone: flat slab, drops over piles and columns, rigid zones, gutter strip, lift pit, about
-34 000 plates, every zone verified by read-back. Method: `modeling-guide/08_PILE_SUPPORTED_FLAT_SLAB.md`.
+live GEN NX model, first zone by zone (r27 - r33), then rebuilt in stages from the client loads (r34 - r38):
+- ground beams, then outlines pre-split at 0.20, then 249 piles with rigid-zone nodes;
+- the slab at 0.40 by region, then the drops and gutter strip at 0.20;
+- 76 655 plates in all, every stage verified by read-back.
+
+Method: `modeling-guide/08_PILE_SUPPORTED_FLAT_SLAB.md` §2A.
 
 ## Relation to the drawing work
 

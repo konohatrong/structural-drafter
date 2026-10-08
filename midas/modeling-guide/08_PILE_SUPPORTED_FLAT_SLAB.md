@@ -1,4 +1,4 @@
-# 08 · Pile-supported flat slab with drop panels, zone by zone
+# 08 · Pile-supported flat slab with drop panels: staged build (and zone by zone)
 
 How a ground floor carried by piles is built in a live GEN NX model:
 - a flat slab with a drop panel over every pile and over every column that has no ground beam;
@@ -6,8 +6,21 @@ How a ground floor carried by piles is built in a live GEN NX model:
 - rigid zones at the pile heads;
 - a gutter strip foundation.
 
-The model is written one zone at a time, and every write is verified. The method was worked out on BANWA 2 (07 – 08/10/2026,
-70 × 62 m ground floor, 458 piles) and is written generically; BANWA 2 values are the worked example.
+Two methods were used on BANWA 2 (07 – 08/10/2026, 70 × 62 m ground floor). They are written generically, with BANWA 2
+values as the worked example.
+- **The staged build (current, §2A)** writes the whole floor one *kind of object* at a time:
+  1. beams;
+  2. outlines;
+  3. piles;
+  4. slab;
+  5. drops and strip.
+
+  The drop and strip outlines are pre-split finely so the slab refines around them. Used for the final model (layout r9,
+  249 piles, r34 – r38).
+- **The zone method (§2 – §3)** writes the floor one *area* at a time, each zone complete. Used for the first builds
+  (layout r7, 458 piles, r27 – r33). It is kept for very large floors, or when only part of a floor is modelled.
+
+Every write is verified the same way (§7).
 
 The auto-mesh request format (voids, interior nodes and lines) is in [06 §4.1](06_SLAB_AUTOMESH.md). This chapter
 is the method around it.
@@ -21,18 +34,69 @@ section "Pile-supported ground slab").
 |---|---|
 | Slab | Flat slab **FS200** (0.20), plates on the slab mid-plane at 0.00, no offset |
 | Drop panel | **1.2 × 1.2, DP350** (0.35 = 0.20 slab + 0.15 below), plates on the same mid-plane (no offset) |
-| Pile | 350 × 350, modelled as a **stub column** from 0.00 to −1.50 (the pier length, as the column pedestals), **pinned** at the foot (`CONS` `1110000`) |
-| Pile layout | Tributary area ≤ 8.41 m² per pile (2.90 × 2.90), checked by Voronoi cells; patterns per strip between grid rows; no pile under a ground beam; 454 piles with drops + 4 under the gutter |
-| Rigid zone | **8 nodes** on the pile face at the slab level (3 a side: corners and mid-sides), `RIGD` master = pile head, `DOF 111111` |
+| Pile | Modelled as a **stub column** from 0.00 to −1.50 (the pier length, as the column pedestals), **pinned** at the foot (`CONS` `1110000`). Layout r7: 350 × 350. Layout r9: **SPUN 300 as a solid round dia 300**, allowable 35 tonf |
+| Pile layout | r7: tributary area ≤ 8.41 m² per pile. **r9 (client loads):** each pile's load ≤ 95 % of 35 tonf on service DL + LL + SDL, from its Voronoi cell split by the load areas (LL 3.0 / 1.5 t/m²); pile panels near square (sides within 1 : 1.5); 244 drop piles + 5 under the gutter |
+| Rigid zone | **8 nodes** on the pile face at the slab level (3 a side: corners and mid-sides; ±0.15 for dia 300), `RIGD` master = pile head, `DOF 111111`, written after the plates have taken the nodes |
 | Column with no ground beam | A drop panel over it as over a pile: 1.2 × 1.2 DP350, 8 nodes on the **column face** (500 pedestal), master = the column node at 0.00 (engineer, 07/10: added after three zones were written, see §8) |
 | Ground beams | GB 400 × 900, top at 0.00: **CT section offset** like the floor beams, nodes at 0.00; column to column; members meet with rigid joints |
 | Supports | All column supports pinned (were fixed) |
 | Material | C280 for slab, drops, beams and piles |
-| Mesh | **0.40 m** everywhere (the 1.2 m drop side = 3 × 0.40; see §6.1 for why it must be one size) |
+| Mesh | Slab **0.40 m**; drops and gutter strip **0.20 m**, their outlines pre-split at 0.20 (staged build, §2A). The zone builds used 0.40 everywhere (§6.1) |
 | Gutter | A U-gutter (walls 200, clear 1 200 × 800, base 1 600 × 500) on 4 piles, modelled at ground level as a **2 000 × 500 strip** of plates (GS500), §5.4 |
 | Openings | Lift pit: no slab, an opening bounded by its beams (assumed, open with the engineer) |
 
-## 2. Zoning
+## 2A. The staged build (current method)
+
+The engineer's improvement (08/10/2026): *"make outline dummy for drop panel; mesh outline dummy making refine meshed size
+to drop panel - this will force meshed slab refine around drop panel; fill drop with finest mesh size (we can test first);
+keep column rigid zone same methodology"*. Then: *"start build ground beam first"*, and stage by stage after that.
+
+**Stages:** each stage is one script, one dry run, one model revision and one snapshot. The next stage checks the live
+model against that snapshot before it writes.
+
+| Stage | What it writes | BANWA 2 |
+|---|---|---|
+| 1. Ground beams (`ground_beams_r9.py`) | Every ground beam split at each column, pier and beam end on it; new piers (pedestal + pinned support); existing transfer-beam elements split where a ground beam lands between their nodes (the second piece copies the element and joins its member and groups); orphan nodes deleted | r34: 90 GB pieces, 499.00 m; 2 piers; TB split × 2 |
+| 2. Outlines (`outlines_r9.py`) | Dummy line elements, **pre-split at the refined size**: each drop square (6 × 0.20 a side); the gutter strip edges; and the beams under the strip ends, split at 0.20 over the strip width. Temporary sections and groups | r35: 5 856 + 130 pieces; 2 GB elements split |
+| 3. Piles (`piles_r9.py`) | Pile stubs (solid round dia 300, 0.00 to −1.50, pinned) and the **8 rigid-zone nodes** on each pile face (±0.15) at 0.00; no links yet | r36: 249 stubs, 2 490 nodes |
+| 4. Slab (`slab_r9.py`) | FS200 at 0.40, **region by region between the beams**. Each region's loop is its beam / TB / strip-edge pieces; its drop outlines are inner loops left void. Openings get no region; a wall top is closed by temporary lines between the wall's nodes | r37: 10 regions, 67 098 plates, 3 938.46 m² |
+| 5. Drops and strip (`drops_strip_r9.py`) | DP350 at 0.20 on each region's drop outlines through the pile heads + 8 nodes (one call per region); the strip GS500 at 0.20 through its piles' nodes; **rigid links** (head → 8 nodes); the outlines deleted once plates lie on both sides | r38: 8 784 drop + 773 strip plates, 249 links; 76 655 ground plates |
+
+**Why stage by stage instead of zone by zone:**
+- No seams: every region is closed by beams, so no temporary seam lines or ownership rules are needed.
+- The outline pre-split controls the mesh. A piece no longer than the mesh size is never re-split (§6.1). So:
+  - the slab refines around each drop and the strip by itself;
+  - the drops and the strip fill at the fine size;
+  - every interface shares its nodes.
+- Each stage is small to check and to undo: reopen the previous revision.
+
+**The refined size, by test** (a throwaway copy, slab 0.40):
+
+| Outline / fill size | Drop plates under 45° / over 135° | Slab ring under 45° | Plates (12 × 12 m bay, 9 drops) |
+|---|---|---|---|
+| 0.40 (the zone builds) | 11 % / 17 % | 5.5 % | 777 + 310 |
+| 0.30 | 17 % / 33 % | 0.7 % | 1 168 + 216 |
+| **0.20 (chosen)** | **0 % / 0 %** | 1.3 % | 2 024 + 324 |
+| 0.15 | 0 % / 0 % (exact 8 × 8 grid) | 0.6 % | 3 114 + 576 |
+
+For the gutter strip (2.0 m wide on 5 piles), 0.20 gave 0.3 % under 45°. At 0.25 more plates are stretched; at 0.10
+there are 3.4 × the plates. With piles about 3 m apart the refinement does not relax between drops, so the whole piled
+area becomes fine.
+
+**Rules learned in the staged build:**
+- **A pre-split piece must not be longer than the mesh size around it.** Divide with `ceil(L / size)`, never `round`:
+  13 m at 0.40 gave 0.406 m pieces, which the slab mesh split again, and the strip then failed to mesh.
+- **A beam meets a support or another beam only at a node.** Split every beam at each column, pier and beam end on it
+  before writing. An existing element (the engineer's transfer beam) is split explicitly, and its member list and
+  groups are updated.
+- **Re-read the node table after every mesh call** before checking plates: the mesh creates nodes. A stale table
+  stopped the first r38 run; the unsaved revision was set aside, the previous one reopened, and the stage re-run.
+- **Compare coordinates at the precision they were written** (4 decimals). Half-millimetre positions (43.7895) round
+  differently at 3 decimals.
+- **Probe on a throwaway copy without losing the live state.** `SAVEAS` the open model to a probe file (it holds the
+  exact live state), test there, then `OPEN` the saved revision and compare it with its snapshot.
+
+## 2. Zoning (the zone method)
 
 A whole ground floor is too big to write and check in one go, so it is divided into zones. Each zone is written as
 **one model revision**.
@@ -247,6 +311,8 @@ None of these was a model error.
 
 ## 8. Lessons (BANWA 2)
 
+The staged build's own rules are in §2A. The lessons below come from the zone builds and still hold.
+
 1. **Probe first, on a throwaway copy.** Save the open model as `…_probe.mgbx`, build one bay away from the building,
    try the request variants, then `POST /doc/OPEN` the real file again. The void, interior-node, rigid-link and
    delete-by-ID behaviour were proven this way (06 §4.1), and the seam test of §6.1.
@@ -279,6 +345,24 @@ None of these was a model error.
 Totals: FS200 22 829 plates (3 593.46 m²), DP350 11 278 plates (696.96 m², 454 pile drops + 30 column drops),
 GS500 187 plates (26.00 m²), 488 rigid links, 563 supports all pinned, no seam left. Z8 (tank roof) is still to do.
 
+### 9.1 The staged build (layout r9, 08/10/2026): the current model
+
+| Stage | Revision | Result |
+|---|---|---|
+| Ground beams | r34 `BANWA2_ground_beams_r34` | 90 GB pieces, 499.00 m; piers (52, 12.5), (64, 38.65); TB split at Y 1.25 and 40.6 |
+| Outlines 0.20 | r35 `BANWA2_outlines_r35` | 244 drop squares (5 856 pieces); strip edges 130 pieces; row F / E beams split over the strip |
+| Piles | r36 `BANWA2_piles_r36` | 249 SPUN 300 stubs, 2 490 nodes; 357 supports, all pinned |
+| Slab 0.40 | r37 `BANWA2_slab_r37` | 10 regions, 67 098 plates, 3 938.46 m², drops void |
+| Drops + strip 0.20 | r38 `BANWA2_drops_strip_r38` | 8 784 drop plates (36 a drop, 351.36 m²), 773 strip plates (26.00 m²), 249 rigid links, outlines deleted |
+
+The ground floor has 76 655 plates. The read-back of every stage passed:
+- areas;
+- unconnected edges only on beams;
+- no three-way edges;
+- no stray nodes;
+- beam lengths kept;
+- nothing outside the stage changed.
+
 ## 10. Scripts (in the project folder `Drafter\scripts\`)
 
 | Script | Role |
@@ -288,3 +372,7 @@ GS500 187 plates (26.00 m²), 488 rigid links, 563 supports all pinned, no seam 
 | `automesh_probe.py`, `automesh_seam_test.py` | Probes on a throwaway copy: drop flow, seam splitting |
 | `ground_model.py` | `build` / `write` per zone: plan, payload, checks, write, read-back, save, snapshot; `write_strip` for the gutter |
 | `gutter_strip_plan.py` | Gutter strip plan and sections, actual and as modelled |
+| `ground_load_map.py`, `ground_load_map_r2.py` | Live-load map by area from the AR uses, for the engineer's comments |
+| `ground_slab_layout_r8.py`, `ground_slab_layout_r9.py` | Pile layout from the client loads: each pile ≤ 95 % of capacity (Voronoi load), panels near square |
+| `automesh_drop_refine_test.py`, `automesh_gutter_strip_test.py` | Tests of the outline division (drops, gutter strip) on a throwaway copy |
+| `ground_beams_r9.py`, `outlines_r9.py`, `piles_r9.py`, `slab_r9.py`, `drops_strip_r9.py` | **The staged build**, `build` (dry run) / `write <key>` each (§2A) |

@@ -12,7 +12,7 @@ quoted are examples, not defaults.
 | First contact with the API, or any endpoint question | `api/MAPI_GUIDE.md` §0 – §12, `api/ENDPOINTS_GEN.csv`, `api/ENDPOINT_REFERENCE.md` |
 | Writing a script or tool that talks to GEN NX | M1 – M6 below, `api/CONVENTIONS.md`, `tools/connection.py` |
 | Model a building from the structural DXF and AR plan | M7 – M9, then `modeling-guide/README.md` and 01 – 07 in order |
-| Ground floor on piles (flat slab, drop panels, rigid zones, zones and seams) | M7.5, M8, `modeling-guide/08_PILE_SUPPORTED_FLAT_SLAB.md`, `06` §4.1 |
+| Ground floor on piles (flat slab, drop panels, rigid zones; staged build or zones) | M7.5 - M7.6, M8, `modeling-guide/08_PILE_SUPPORTED_FLAT_SLAB.md` (§2A staged), `06` §4.1 |
 | Beam loads (line, trapezoidal, partial, local / global) | `api/BEAM_LOAD_MAPPING.md` |
 | Plate loads, live load from room functions | `modeling-guide/07_AR_PLAN_ROOM_MAPPING.md`, M10 |
 | Run the analysis, read results, write the calculation report | M10, `calc-report/CALC_REPORT_GENERATION.md`, `examples/` |
@@ -108,7 +108,8 @@ A write changes the user's open model at once, with no undo through the API.
 | `/db/posl` | Usually empty | Seismic parameters from the MCT `*SEIS` block, checked against the base shear |
 | `/db/BMLD` with a case or load group that does not exist | `Error: Wrong Field` | `PUT /db/STLD` and `/db/LDGR` first |
 | `POST /ope/AUTOMESH` | The reply also lists split beams; a warning-only reply still makes the mesh; a used `DOMAIN_NAME` fails | Find new plates by diffing `ELEM` before and after; check `/db/MADO` for names (`06` §4). Voids, interior nodes / lines (`"OPTION":"User"`), drop panels and `/db/RIGD`: `06` §4.1 |
-| `POST /ope/AUTOMESH` on a boundary line longer than the mesh size | The line is split again; plates already meshed beside it do not get the new node (no connection) | One mesh size for every zone of a floor; new lines end on existing nodes (`08` §5.2, §6.1) |
+| `POST /ope/AUTOMESH` on a boundary line longer than the mesh size | The line is split again; plates already meshed beside it do not get the new node (no connection) | One mesh size for every zone of a floor; new lines end on existing nodes (`08` §5.2, §6.1). Pre-split pieces: `ceil(L / size)`, never `round` (13 m at 0.40 → 0.406 m pieces, split again, the next mesh failed) |
+| `POST /ope/AUTOMESH` creates nodes | A node table read before the call misses them | Re-read `NODE` after every mesh call before checking plates (`08` §2A) |
 | `DELETE /db/ELEM/<ids>`, `DELETE /db/NODE/<ids>` | Deletes exactly those IDs (body `{}`); without IDs it would wipe the table | Delete by ID only, 200 IDs per call; check the IDs first (`08` §8) |
 | `PUT /db/RIGD` | Keyed by the master node: `{"<master>":{"ITEMS":[{"ID":1,"GROUP_NAME":"","DOF":111111,"S_NODE":[…]}]}}` | Read back and compare; existing masters stay unchanged (`08` §4) |
 
@@ -152,6 +153,16 @@ Work **one level at a time**, with four gates before each write (`05`):
 
    Zones may run in a chain on the engineer's word; the chain stops at the first failed check.
 
+6. **Or build in stages, one kind of object at a time over the whole floor** (`08` §2A, BANWA 2 r34 - r38):
+   1. beams;
+   2. outlines pre-split at the refined size;
+   3. piles and rigid-zone nodes;
+   4. slab region by region between the beams;
+   5. drops / strips at the refined size, then rigid links, then the outlines deleted.
+
+   Each stage is its own revision and snapshot, and the next stage checks the live model against that snapshot. This
+   is the current method: no seams, and the mesh refinement is controlled by the pre-split outlines.
+
 Start from the intake (`01`): layers, panel origins, marks, SFL tags, displaced groups, the section table, and the
 decision list sent to the engineer **before** extracting geometry that depends on an answer.
 
@@ -170,7 +181,7 @@ its decision log (`DECISION_LOG_TEMPLATE.md`), since they are engineering decisi
 | Curved beam | Bulged LWPOLYLINE; chords on the centreline arc, sagitta ≤ b/8, chord ≈ 2 × mesh size; same points on every level | 04 |
 | Neglected members | Only by the engineer's decision (BX stair trimmers); re-attach dead ends, check connectivity | 03 §7 |
 | Mesh | 0.50 m, thick plates; openings under 1 m² ignored; cantilever vertices prepared on the whole level before meshing any panel | 06 |
-| Pile-supported ground slab (BANWA 2 answers) | FS200 + DP350 drops at the mid-plane; pile stubs 350 to −1.50 pinned; 8-node rigid zone at each pile and at each column with no ground beam; GB 400 × 900 CT; all supports pinned; one mesh size (0.40) for every zone | 08 |
+| Pile-supported ground slab (BANWA 2 answers) | FS200 + DP350 drops at the mid-plane; pile stubs to −1.50 pinned (r9: SPUN 300 as solid round dia 300); 8-node rigid zone at each pile (and at a column with no ground beam); GB 400 × 900 CT; all supports pinned; slab 0.40, drops and gutter strip 0.20 by pre-split outlines | 08 |
 
 Drawing-reading lessons carried over from the drafting side: column size from **visible** dynamic-block entities only;
 grid lines and bubbles inside the grid xref; a plan may hold a displaced copy of a bay; Thai text in AR and regulation

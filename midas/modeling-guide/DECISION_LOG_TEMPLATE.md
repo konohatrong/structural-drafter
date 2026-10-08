@@ -58,6 +58,9 @@ Example answers from BANWA 2 (07 – 08/10/2026), not the fire station.
 | P9 | Mesh size (one for all zones) | 0.40 m |
 | P10 | Zones and their order | Zones r3 from the engineer's sketches; one revision per zone; tank roof last |
 | P11 | Gutters, pits, walls | Gutter strip 2 000 × 500 at ground level on its piles; lift pit an opening; slab joins the tank wall top |
+| P12 | Refined size round drops / strips | 0.20 (outlines pre-split; drops and strip meshed at 0.20), slab 0.40 |
+| P13 | Build method | Staged over the whole floor: beams, outlines, piles, slab, drops / strip (one revision each) |
+| P14 | Pile check basis (layout) | Service DL + LL + SDL ≤ 95 % of the allowable load (SPUN 300, 35 tonf); LL from the client's load map |
 
 ## Loads
 
