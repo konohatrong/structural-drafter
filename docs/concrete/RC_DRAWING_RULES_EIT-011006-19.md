@@ -180,6 +180,23 @@ Details must be clear, complete, and consistent with the plans (Ch. 5).
 - Note: cover 50 mm.
 - An alternative section is given for footings **not** tied by a ground beam.
 
+**Office additions (user corrections of 09/10/2026 on BANWA2 S-303, pile caps):**
+- **Every cap section has a numbered cutting plane on its cap plan** ("add clear section symbol on plan"): heavy end
+  strokes outside the cap, viewing arrows, the section number clear of the arrow tip (check the whole numeral, not
+  only its baseline). A cut through an off-centre pile row shows an offset trace through the pile row and the pier,
+  or the uncut pier is drawn as projected, never silently as cut.
+- **The section shows the exact number of cut bars** of the set seen end-on, as scheduled ("correct amount of rebar
+  show at section refer to plan and direction of section"): the bars along the cut are one representative bar with
+  the full set callout; the bars across it are every bar, equally spaced. Count the circles in the delivered drawing.
+- **The outer cut bars sit at the centres of the hook bends** of the bars they lie on ("longitudinal rebar start at
+  center of hook fillet"): x = bar end ∓ R, y = bar centre + R (R = 3.5 db for a 90° hook), the others equally
+  spaced between them. Dots are drawn at a declared size - true size was asked first ("size of longitudinal rebar
+  show as actual diameter rebar"), then a 30 mm presentation dot was tried ("try dot size 30 mm. for present
+  rebar", BANWA2 S-303 R10 - R12) - and a sheet note states the size used; the bar callouts govern. Open: the office
+  default (19.4 gives true size with a 1.1 mm minimum).
+- Changing a cap's depth or bars on the drawing is a drawing revision, not a strength check: state on the sheet that
+  the revised caps are not rechecked until they are.
+
 ### 15.2 Columns [STD §6.3, FIG 6.3–6.4]
 Provide a **full-height elevation** (typical: bars and laps) plus a **column schedule**.
 
@@ -380,6 +397,16 @@ Plan required. One plan is enough unless bars change with height.
 - **Plain dowels** (slab-on-ground joints) are plain RB, half greased. Deformed bars lock the joint.
 - Transverse bar sets are placed in alternate planes (shown in a bar-plane view).
 - At small scale, dots are drawn clear of other bars, and bars at bends sit inside the bend.
+- **Reinforcement of an adjoining element is grey dashed** (user correction, 2026-10-09, BANWA2 tank-wall section:
+  "slab and foundation reinforcement must be grey dashed"): the subject's bars solid black, the adjoining slab or base
+  mats grey dashed (0.25, 50 % screen) with grey dots, and no size callouts on them. This refines the focus rule
+  (`nf_hatch`, grey bars) for adjoining mats.
+- **Hooks are drawn with their full straight tail**: a 90° main-bar hook has Lext = 12 db straight after the bend
+  tangency (DB12: 144 mm after a 42 mm centreline radius). Lext is not the development length ldh; never shorten a
+  tail to clear other bars, and check bend and tail inside the concrete. Hooks from opposite faces or mats never
+  overlap: stagger them or end them at equal levels clear of the adjoining mats (user, 2026-10-09: "top and bottom
+  hook ends must be clear"). At an internal continuous support the adjoining bars run through; no end hook is
+  invented there. A hook moved for clearance is not proof of anchorage.
 - Spacing is written in mm (`DB12@200`, §3.7.3). Bar marks go in Ø4 bubbles.
 
 ### 19.7 Bar ends and lap splices (office rule, user 2026-09-30)

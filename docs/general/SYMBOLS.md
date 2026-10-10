@@ -83,7 +83,7 @@ Full rules: `FLOOR_PLAN_DRAWING_INSTRUCTION.md`. Office blocks from the SSK stru
 | **One-way / precast slab (plank)** | Span arrow 9.88 mm, half heads on opposite sides; mark over (`HC1`), level under (`SFL+5.95`); one per panel | text 2 → 0.35, 2.0 mm | `Plank_sym` (office); BANWA2 `bw_plans.plank_sym` | FP10.3a |
 | **Step in a slab** | Step line with the step height and `UPPER FLOOR` / `LOWER FLOOR` | `S-EDGE_SLAB` | `Sym-Step` | FP9.5 |
 | **Footing + column tag** | `F4,C1` at the footing's lower right | text 2 → 0.35 | – | FP10.4 |
-| **Pile** | Office pile symbols, explained in the legend | `S_Pile_I` 8 → grey 0.18 | `hexagonal_pile`, `I-Pile` | FP13.1 |
+| **Pile** | Office pile symbols, explained in the legend; under a pile cap the pile is **hidden** (user, 2026-10-08) | `S_Pile_I` 8 → grey 0.18; under a cap `S-PILE-I` HIDDEN2 | `hexagonal_pile`, `I-Pile` | FP13.1, FP13.2 |
 | **Opening / void** | Outline plus X, labelled | `S-EDGE_SLAB` | – | FP9.4 |
 | **Existing structure** | Outline, grey ANSI31 hatch, label | `S-HATCH` 8 | – | FP9.7 |
 | **View title** | Thai (and English) title 4.0 underlined, `มาตราส่วน` / `1:100` below | `S-T200` 1, `S-TH` 7 | dynamic title block on `S-40Txt` | FP1.4 |

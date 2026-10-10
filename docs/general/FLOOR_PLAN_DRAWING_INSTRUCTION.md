@@ -285,6 +285,18 @@ above is continuous; what lies below the slab is hidden.
 
 - Column size drawn true; the column mark beside it (FP10).
 - On the foundation plan the column stub is shown in its footing with the column mark (FP13.2).
+- **Classify every vertical member by comparing below and above the cut** (user correction, 2026-10-09, BANWA2 ground
+  plan R01, which showed only the columns rising above the floor and left out 13 lower-only supports, 11 of them under
+  the grid 1 transfer beams): continuing = solid; lower-only (stopping under) = hidden outline with an X; upper-only
+  (starting on a beam) = half filled. A change of section at the same centre (pier 500 to column 450) is a continuing
+  column, not a lower-only support. Piles are not columns. Transfer-beam spans and their dimensions follow the lower
+  supports, not the upper columns loading the beam. Reconcile the symbol counts with the model coordinates.
+- **RC walls in plan** (user, 2026-10-09: "finer wall hatch"; BANWA2 S-106 R08): the wall strip, at its true
+  thickness, carries a **fine grey diagonal hatch** (ANSI31, about 0.35 mm plotted spacing through `pscale`, pen 0.10,
+  grey screened) so it reads as a wall, not as two beam faces. Hatch only the wall strip: subtract the column
+  footprints, respect openings, never hatch a beam strip or a whole slab or tank area. The wall outline keeps its own
+  pen and linetype and stays stronger than the hatch; if the plotted strip looks solid, change the hatch spacing or
+  pen, never the outline.
 - **Steel columns and posts are drawn as their actual section** (user, 2026-10-06: "show as actual section for steel
   post"): the projected outline at true size (SHS 200 x 200: a 200 mm square), no wall thickness; where a member above
   covers part of it, that part is left out. Worked example: BANWA2 S-103 / S-104, posts on the column tops.
@@ -327,6 +339,11 @@ above is continuous; what lies below the slab is hidden.
 
 ### FP9.3 Slabs
 - Slab edges, cantilever edges and the edges of openings: continuous (`S-EDGE_SLAB`).
+- **The slab edge is the formwork outline at the physical faces of the outermost columns and beams**, not the edge of
+  the analysis mesh (which sits on the member centre lines) (user correction, 2026-10-09, BANWA2 ground plan R01 / R02:
+  the edge was moved to the outer member faces, including the south-east set-back and the return round the corner
+  column). Build it from the projected member widths, keep set-backs and openings, close orthogonal corners without
+  nibs, and do not draw a hidden beam face on top of it.
 - Each slab panel carries a slab tag (FP10.3). Cantilevers and canopies are slab panels with their own tag.
 
 ### FP9.4 Openings and voids
@@ -368,15 +385,38 @@ above is continuous; what lies below the slab is hidden.
 ### FP10.2 Beams
 - Mark (and size `(b×h)` when the project shows sizes on plan, RC §14.3) **along the beam**, centred in its span,
   inside the bay, above a horizontal beam and left of a vertical one, reading from the bottom or the right.
-- Never on the beam line, a grid line or another tag; never at a column. A beam that changes type changes mark at the
-  column.
+- Never on the beam line or another tag; never at a column. A beam that changes type changes mark at the column.
+- **The mark stays at the midpoint of its reference span** (user correction, 2026-10-09, BANWA2 S-106 R08): the span
+  between the two physical supports, found from the supports and the connectivity, not from the analysis elements
+  (several mesh elements make one span). It is not moved to 40 % or 60 % of the span to clear something else. Where
+  the midpoint falls on a grid line, the grid line is interrupted locally under the text.
 - **A main beam is one member from column to column**, even where secondary beams frame into it and the analysis model
   splits it at every joint. It is marked **once, with a bracket over its length** and the mark at the middle of the
   bracket (user, 2026-10-06: "this is main beam use bracket to present length of main beam avoid misunderstanding").
   An edge beam has its bracket on the outside of the slab. A beam with no beam framing into it keeps the plain mark at
   mid-span - a split of the beam in the analysis model (mesh nodes) is not a beam framing in (BANWA2 secondaries B1,
-  B2, B3, B5, RB5 lost their brackets, 07/10/2026; `beam_marks` tests the beam directions at the inner nodes). If a
-  secondary beam frames in at the middle, the mark moves to the middle of the nearest clear segment.
+  B2, B3, B5, RB5 lost their brackets, 07/10/2026; `beam_marks` tests the beam directions at the inner nodes).
+- **Which spans get a bracket** (user correction, 2026-10-09, superseding a ground-plan revision that bracketed every
+  beam and wall): only
+  1. a **main beam receiving a beam that frames in between its ends** (a beam meeting it only at a span end does not
+     count), and
+  2. a **transfer beam carrying a column that starts on it** (CX) between its supports: its span runs between the
+     **lower** supports and the bracket continues past the carried column (the model node there is not a support).
+  A designation alone (TB1, TB2) does not decide it: check each span. Ordinary beams and **walls never get a
+  bracket**; a bracket is not a placement aid.
+- **Anchors and offsets** (same correction):
+
+  | Mark | Text anchor | Offset |
+  |---|---|---|
+  | Bracketed beam mark | **MIDDLE_CENTER**, in the gap of the bracket, at the reference-span midpoint | anchor **one plotted text height from the physical member edge** (2.0 mm: 400 mm at 1:200), i.e. b/2 + h·S from the centre line |
+  | Plain beam or wall mark | **BOTTOM_CENTER** above / left of the member, **TOP_CENTER** below / right (the text grows away from it); vertical members rotated 90° | a small visible gap from the member face (BANWA2 R08: 0.4 h = 0.8 mm) |
+
+  Walls are marked at the midpoint of each reference wall span; a type mark is repeated per span where needed.
+- **Collisions**: first take the other permitted side (or another column corner, FP10.4); keep the midpoint, the
+  bracket decision, the anchor and the bracket offset. Never increase a bracket offset, change an anchor or clip a
+  member to make a check pass; genuinely unresolved crowding goes to an enlarged view or a review item. A secondary
+  beam framing in at the middle of a main beam is cleared by putting the bracket on the other side (this replaces the
+  earlier "middle of the nearest clear segment").
 - **The bracket** (user, 2026-10-06, second review): a **solid grey line** (colour 8, layer `S-BRACKET`) parallel to
   the member; **both ends a 45° diagonal** whose size is the **text height** (dx = dy = 2.0 mm plotted) for a beam
   mark, or the **mark circle's diameter** for a circled (truss) mark; the diagonals **end on the member's start and end
@@ -393,6 +433,9 @@ above is continuous; what lies below the slab is hidden.
   slab panel, the AR tag to a room, and the two seldom coincide. A slab at a different level (toilet, balcony, step)
   has its own tag.
 - Text 2.0 mm (FP6.2).
+- **Slab tags are transparent** (user, 2026-10-09: "remove the white background from slab tags and make them
+  transparent"): border and text only; no wipeout, no white fill and no clipping of the geometry under the tag (the
+  drop-panel outlines clipped round a tag made it look opaque). The lines under a tag stay drawn.
 
 ### FP10.3a One-way and precast slabs: the plank symbol
 - A one-way slab, hollow core or plank floor carries the office block **`Plank_sym`** (K.Nat plan legend "Plank No."):
@@ -413,6 +456,11 @@ above is continuous; what lies below the slab is hidden.
 
 ### FP10.4 Columns and footings
 - Floor plans: column mark beside each column, outside the slab tag area, consistent position (lower right) [REC].
+- **The column mark sits at a corner of the column symbol** (user correction, 2026-10-09, BANWA2 S-106 R08): above
+  right = BOTTOM_LEFT, above left = BOTTOM_RIGHT, below right = TOP_LEFT, below left = TOP_RIGHT, with the same
+  clearance. Take the first clear corner of the four, checking the whole text box against brackets, wall marks, grid
+  lines, dimensions and the neighbouring marks; never a free-floating label in the bay. The mark does not change the
+  symbol's state (continuing, lower-only, CX).
 - Foundation plan: footing and column together at the footing's lower right, `F4,C1` [OFFICE; EIT §14.2].
 - Every footing has its column, or a note of what it carries (SSK S1-01: an F2 in bay 12 – 13 with no column).
 
@@ -477,6 +525,17 @@ hidden for reference; pile positions dimensioned from the grid; **pile cut-off l
 or in the notes); pile type, size and capacity in the notes.
 
 ### FP13.2 Foundation plan [RC §14.2; OFFICE]
+- **Piles under a pile cap are hidden** (user correction, 2026-10-08, BANWA2 SG02): a thin hidden pen (`S-PILE-I`,
+  HIDDEN2) under the continuous, heavier cap outline, on the foundation plan and on the cap plan details. Check the
+  plotted dashes on the small circles at 1:200 and on the details at 1:25 / 1:50; a layer named HIDDEN is not proof.
+- **Pile arrangements in caps** follow the standard patterns (user, 2026-10-08, with the CRSI Design Guide for Pile Caps
+  Fig. 4.4): 2 in a row; 3 in a clipped triangle with a flat head; 4 at square corners; 5 at four corners plus the
+  centre; 6 in two rows of three; 7 staggered 2-3-2 and 8 staggered 3-2-3 in a rectangular cap; 9 in a 3 x 3 grid.
+  Not a compact polygon chosen to reduce the cap area. Spacing and edge distance are project values (BANWA2: 3D and
+  the engineer's edge distance). Reconcile cap areas and quantities across plan, details and schedules.
+- **Every support is classified once**, beam, wall and slab connectivity checked (BANWA2: 17 tank-wall supports were
+  missed by a column-only test); a wall load already in a support reaction is not added again.
+
 Grid; footings (outline continuous, `S-Footing`) with piles inside; footing + column mark `F4,C1` at the lower right;
 column stubs solid; **tie beams / ground beams** (mark `FB1`, `GB1`) where they are at this level; **lift pit**,
 sumps and pits; top-of-footing level by note or tag; water-tank and equipment foundations (SSK: two 3 m³ tanks
@@ -578,6 +637,12 @@ North arrow on every plan sheet, same size and place; the plan always drawn in t
 - [ ] Steel framing plans: double lines at projected width, posts as actual section trimming the chords, tie rods one
   line each on `S-ROD`, purlins beside the posts, truss marks per support span with brackets (FP9.2, FP10.5)
 - [ ] Tables: every steel section followed by its weight per length (FP10.5)
+- [ ] Every vertical member classified below / above the cut; lower-only supports shown (FP9.1); walls hatched fine grey
+- [ ] Slab edge at the physical member faces, not the mesh edge (FP9.3); slab tags transparent (FP10.3)
+- [ ] Brackets only on receiving main beams and CX-carrying transfer beams; marks at span midpoints with the FP10.2
+  anchors and offsets; column marks at symbol corners (FP10.4)
+- [ ] Foundation plans: piles under caps hidden, standard pile patterns, every support in one cap (FP13.2); cap
+  sections numbered on the cap plans with the exact cut-bar counts (RC §15.1)
 
 **Coordination**
 - [ ] Overlay check run against the current AR; every finding fixed or answered
@@ -613,3 +678,4 @@ North arrow on every plan sheet, same size and place; the plan always drawn in t
 | 2026-10-06 | Second BANWA2 review (user): the bracket solid grey with 45° ends of the text height / mark diameter, ending on the member's start and end lines (FP10.2, `S-BRACKET`); chords trimmed by the posts on every roof plan; tie rods one line each on the grid linetype (FP9.2, `S-ROD`); layers added to FP5 |
 | 2026-10-06 | BANWA2: purlins on post rows beside the post (FP9.2, steel S7.8); steel roof plan set described (FP13.5) |
 | 2026-10-07 | Weight per length after every steel section in tables (FP10.5, steel S3.8); FP17 steel items |
+| 2026-10-10 | From the user's corrections of 08 - 09/10 recorded in the BANWA2 work transfer R01 of 09/10/2026, `instructions/PLAN_ANNOTATION_IMPROVEMENT.md` and `DRAWING_QUALITY_LESSONS.md`: vertical members classified below / above the cut, RC walls with a fine grey hatch (FP9.1); slab edge at the physical member faces (FP9.3); mark at the reference-span midpoint, bracket only for receiving main beams and transfer beams carrying CX columns, MIDDLE_CENTER bracketed / BOTTOM-TOP_CENTER plain anchors, collision order (FP10.2); transparent slab tags (FP10.3); column marks at symbol corners (FP10.4); piles under caps hidden, standard pile patterns, every support classified once (FP13.2) |

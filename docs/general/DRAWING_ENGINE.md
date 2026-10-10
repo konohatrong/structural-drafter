@@ -205,7 +205,18 @@ or an area gets one horizontal leader at its height; a target on a horizontal li
   geometry. Widening the note column is the cheapest fix; shorten lengths next; move notes or tables to a
   continuation sheet last.
 - **Wipeouts do not plot** in AutoCAD's PDF of these sets (BANWA2): a mark over a member is cleared by cutting the
-  member geometry round it, not by a wipeout.
+  member geometry round it, not by a wipeout. Slab tags are the exception the other way: they stay transparent and
+  nothing under them is cut (FLOOR_PLAN FP10.3).
+- **Dimension pens are fixed when the dimension is rendered**: `render()` writes the anonymous block with the style's
+  colours at that moment; changing the DIMSTYLE colours later (at `finish()` or plot) leaves the cached lines on the
+  old, heavier pen (BANWA2 SG02, 08/10/2026). Set the dimension colours before the first `dim()`, and check the stroke
+  widths in the PDF, not only the style.
+- **Full-size model space** (user instruction for BANWA2 CAD deliverables, 08/10/2026: "DWG model space is drawn at
+  1:1"): one unit = one mm and every plan or detail inserted at scale 1, with paper-space layouts and locked viewports
+  at the view scales. The engine's composed sheets do not do this (a 1:200 plan is a block inserted at SC / 200 in
+  model space, section 2); the BANWA2 transfer converted its merged DWGs separately. Open: an engine option for
+  full-size model space with viewports. Check a known dimension in the saved DWG and that no two views overlap in
+  model space.
 - **`place_tag` samples 9 points of the tag box**: a thin member (a CHS web at 1:50) can cross the box between them.
   Where members are thin and dense, check the clearance on the exact geometry (BANWA2 `truss_details.best_spot`).
 - **Text that is known only after the layout** (the sheet number of a detail drawn on a later sheet, inside a view
