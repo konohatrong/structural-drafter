@@ -27,7 +27,7 @@ footings, slab) is by others; the base reactions are on SPF-ST-1001.
 | Canopies | 400 x 200 x 6 x 10: 3.3 m at grid A, 4.2 m at grid B |
 | Roof monitor | H 100 x 100 posts at 1.0 m each side of the ridge, rafters to 10.75 m |
 | Gable frames | Corner columns as C1; posts H 400 x 150 x 6 x 10 at 4.5 / 8.5 / 13 / 17.5 / 21.5 m; continuous rafter 400 x 200 x 6 x 10; eave ties H 200 x 100 |
-| Bracing | Roof X-bracing PG 165.2 x 4.5 in bays 1 - 2 and 9 - 10; struts PG 165.2 (braced bays), PG 190.7 (eaves, ridge); eave beams H 400 x 200 x 8 x 13 in the end bays (no wall bracing) |
+| Bracing | Roof X-bracing PG 165.2 x 4.5 in bays 1 - 2 and 9 - 10 in the model (drawn as L 90 x 90 x 6 tension-only angles, engineer's markup 10/10/2026: model to re-run); struts PG 165.2 (braced bays), PG 190.7 (eaves, ridge); eave beams H 400 x 200 x 8 x 13 in the end bays (no wall bracing) |
 | Material | SM520 for every member (JIS); E 205 000 |
 | Loads | DL (self-weight), SDL 0.20 kPa, LL 0.50 kPa, ASCE 7 wind (cases 1 - 4, roof and wall pressures as beam loads); 35 factored static cases NU* = the active steel-design combinations; P-Delta on DL + SDL |
 
@@ -44,8 +44,9 @@ footings, slab) is by others; the base reactions are on SPF-ST-1001.
 | GS1 / GS2 | Gable rafter splices (6.5 m, ridge post) | 8-M20 10.9, PL 20 |
 | EB1 | Eave beam end-plate splice on a stub welded to the column web | 8-M20 10.9, PL 20 |
 | BP1 / BP2 | Pinned bases | PL 20, 4-M24 / 4-M20 rods, plate washers site-welded |
-| BR1 / ST1 / ST2 | Slotted CHS on knife plates, field-bolted to gussets GU1 | 2 / 2 / 3-M20 8.8 |
-| PU1, GT1, GT2, SR1, FB1, FB2 | **Proposed** (not in the model): H 175 x 90 purlins at 1.17 m, H 175 x 90 side girts and H 125 x 60 gable girts at 1.5 m, sag rods Ø12 at third points, fly braces L 50 x 50 x 5 | TBC |
+| BR1 | L 90 x 90 x 6 tension-only, one leg bolted straight to the gusset GU1 (one brace of each X on top of the gussets, the other below; back to back at the crossing through a PL 12 packing) - engineer's markup, 10/10/2026 | 4-M20 8.8 (block shear on the angle governs, 0.82), T 158 kN = T + \|C\| of the CHS model; L/r 312 over half the length (D1 recommends 300); GU1 PL 12 x 480 x 440 |
+| ST1 / ST2 | Slotted CHS on knife plates, field-bolted to gussets GU1 | 2 / 3-M20 8.8 |
+| PU1, GT1, GT2, SR1, FB1, FB2 | **Proposed** (not in the model): H 175 x 90 purlins at 1.17 m, H 175 x 90 side girts and H 125 x 60 gable girts at 1.5 m, sag rods Ø12 at third points, fly braces L 50 x 50 x 5 on cleats PL 10 each side of the web at the inside flange (engineer's markup 10/10/2026, S9A.3), 1-M16 8.8/S each end | TBC |
 
 Basis: AISC DG4 (2nd ed.) 4E thick-plate with the column side, DG16 range checks and knee panel zone, DG29 / DG24 for
 the bracing ends, DG25 for the tapered members (digests: `docs/steel/reference/SOURCES_STEEL_DETAILING.md` Parts F -
@@ -82,9 +83,9 @@ I). Bolts: ISO 898 10.9 pretensioned at moment end plates, 8.8 elsewhere (user, 
 |---|---|
 | SPF-ST-0001 | General notes, design criteria, materials, fabrication, erection, weld key; TABLE 1 connection summary, TABLE 2 open items, TABLE 3 drawing list |
 | SPF-ST-1001 | Anchor bolt and column layout plan 1:200; BP1 / BP2 plans 1:10; TABLE 4 base reactions |
-| SPF-ST-1002 | Roof framing plan 1:200; TABLE 9 secondary framing |
+| SPF-ST-1002 | Roof framing plan 1:200 (members at projected width, S4.11; sag rods on the chain linetype; tags on the members); TABLE 9 secondary framing with kg/m |
 | SPF-ST-2001 | Side-wall elevation 1:200, gable elevation 1:100 |
-| SPF-ST-3001 | Typical frame (grids 2 - 9) 1:50; TABLE 5 member schedule, TABLE 6 tapered plates |
+| SPF-ST-3001 | Typical frame (grids 2 - 9) 1:50; TABLE 5 member schedule and bill of all the structural steel (frames, gables, secondary; kg/m per section, weight per roof plan area), TABLE 6 tapered plates |
 | SPF-ST-5001 | Knee + canopy root with the column head and splice CS1, rafter splice, ridge + monitor bases, views on the end plates (A - D), 1:10 |
 | SPF-ST-5002 | Base elevations, gable corner, gable splice, post top, eave beam, 1:10 |
 | SPF-ST-5003 | Braced-bay node, section at a fly-braced purlin 1:10; TABLE 7 end plates, TABLE 8 field bolts |

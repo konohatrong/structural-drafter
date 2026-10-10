@@ -37,7 +37,7 @@ TABLES.update({
     "OPEN": (2, "ASSUMPTIONS AND OPEN ITEMS (TBC)"),
     "DWGS": (3, "DRAWING LIST"),
     "REAC": (4, "BASE REACTIONS (FACTORED, FROM THE MIDAS MODEL)"),
-    "MEMB": (5, "MEMBER SCHEDULE - ONE FRAME / ONE GABLE"),
+    "MEMB": (5, "MEMBER SCHEDULE AND BILL - ALL STRUCTURAL STEEL"),
     "PLATE": (6, "TAPERED MEMBER PLATES"),
     "EP": (7, "END PLATE CONNECTIONS"),
     "BOLT": (8, "FIELD BOLTS"),
@@ -48,6 +48,15 @@ from drafter.steel import *                                        # noqa: E402,
 
 for _s in (15, 200):
     DS[_s] = td_engine.dimstyle(f"EIT-{_s}", _s)
+for _s in (100, 200):                              # grid chains: dot terminators (EIT 8.2, FP7)
+    _g = doc.dimstyles.duplicate_entry(f"EIT-{_s}", f"EIT-{_s}-GRID")
+    _g.dxf.dimblk = "DOT"
+    _g.dxf.dimasz = 1.2
+    DS[f"G{_s}"] = f"EIT-{_s}-GRID"
+# tie / sag rods in plan and elevation: one line each on the grid linetype, their own pen (steel S4.11, FP9.2)
+_rod = doc.layers.add("S-ROD", color=5, linetype="EIT_GRID")   # the pen of steel seen beyond (0.25), chain
+_rod.dxf.lineweight = PEN[5][0]
+LAYER_LW["S-ROD"] = PEN[5][0]
 
 D = C.design()
 T = C.TAPER

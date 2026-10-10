@@ -124,15 +124,16 @@ def gable_corner(ox, oy):
              c[1] + GR.tf / COS + 30), "S-CENT")
         sp.add_circle(P(c[0], c[1] - tp / COS / 2), GK["db"] * 0.85, dxfattribs=A("S-BOLT"))
     line(sp, P(0, z0 + 100), P(0, top(0) + 300), "S-GRID")
-    note_cfg(xR=P(xb + 150, 0)[0])
+    note_cfg(xR=P(xb + 150, 0)[0], xL=P(xa - 150, 0)[0], yT=P(0, top(xb) + 450)[1])
     leader(sp, P(pb, bot(pb) - tp / COS / 2), (0, 0),
            f"COLUMN END PL {tp} x {GK['bp']:.0f} x {pb - pa:.0f} (ALONG THE SLOPE) SM520B, {GK['n_bolts']}-M{GK['db']} "
            f"GR 10.9 PRETENSIONED", S, side="R", width=56)
-    leader(sp, P(dtop / 2 - 8, (bot(dtop / 2) + top(dtop / 2)) / 2), (0, 0),
-           f"PAIR RAFTER WEB STIFFENERS PL {GK['column']['ts']} OVER EACH COLUMN FLANGE", S, side="R", width=56)
+    xs_ = dtop / 2 - T["C"]["tf"] / 2 + 8
+    leader(sp, P(xs_, top(xs_) - GR.tf / COS - 40), (0, 0),
+           f"PAIR RAFTER WEB STIFFENERS PL {GK['column']['ts']} OVER EACH COLUMN FLANGE", S, side="T", width=56)
     leader(sp, P(-dtop / 2 - 200, bot(-dtop / 2 - 200) + GR.tf / 2 / COS), (0, 0),
-           f"RAFTER BOTTOM FLANGE PL {GK['column']['tf_used']:g} x {GR.bf:.0f} OVER THE COLUMN (TBC)", S, side="R",
-           width=56)
+           f"RAFTER BOTTOM FLANGE PL {GK['column']['tf_used']:g} x {GR.bf:.0f} OVER THE COLUMN (TBC)", S, side="L",
+           width=50)
     mtag(sp, P, (-650, top(-650) + 260), "GR1", S)
     mtag(sp, P, (-dtop / 2 - 300, z0 + 250), "C2", S)
 
@@ -159,8 +160,9 @@ def gable_splice(ox, oy):
     for r in rows:
         bolt_h(sp, P, vb + r, -tpl, tpl, ep["db"], S)
     line(sp, P(-900, 0), P(900, 0), "S-GRID")
-    weld(sp, P(tpl + 80, d / 2), (P(tpl + 80, d / 2)[0] + 12 * S, P(tpl + 80, d / 2)[1] + 20 * S), S,
-         ep["flange_weld"], side="both", tail="BOTH FLANGES, BOTH PLATES")
+    tw_ = P(-tpl - 80, d / 2)                                       # lower side: the slope falls away under the text
+    weld(sp, tw_, (tw_[0] - 6 * S, tw_[1] + 24 * S), S, ep["flange_weld"], side="both", left=True,
+         tail="BOTH FLANGES, BOTH PLATES")
     note_cfg(xL=P(-800, 0)[0] - 4 * S)
     leader(sp, P(-tpl, vb + L - 20), (0, 0), f"2 END PLATES PL {tpl} x {ep['bp']:.0f} x {L:.0f} SM520B", S,
            side="L", width=46)
@@ -266,10 +268,13 @@ def bolt_h_y(sp, P, x, y_nut, y_head, d, S):
 # --------------------------------------------------------------------------- 1/5003: brace node (roof plane)
 def brace_node(ox, oy):
     """plan in the roof plane at a braced-bay rafter node (frame 2, x = 4.5 m): the rafter, gusset GU1 welded to
-    the web below the top flange with a full-depth stiffener, two braces BR1 and the strut ST1 on knife plates"""
+    the web below the top flange with a full-depth stiffener, the two angle braces BR1 bolted straight to the gusset
+    (one on top of it, leg up; one below it, leg down - engineer's markup 10/10/2026) and the strut ST1 on its knife
+    plate; geometry from the calc (D["GU1"]["geo"])"""
     S = 10
     sp = msp
     P = lambda x, y: (ox + x, oy + y)                                            # noqa: E731
+    geo = GU["geo"]
     bf = T["H"]["bf"]
     L = 1_400.0
     for x in (-bf / 2, bf / 2):                                               # rafter top flange (plan, along x)
@@ -277,63 +282,99 @@ def brace_node(ox, oy):
     line(sp, P(-L, 0), P(L, 0), "S-GRID")
     zbreak(sp, P(-L, -bf / 2 - 60), P(-L, bf / 2 + 60), S)
     zbreak(sp, P(L, -bf / 2 - 60), P(L, bf / 2 + 60), S)
-    tg = GU["tg"]
-    gy0 = 3.0                                                                 # gusset from the web face (below flange)
-    gus = [(-260.0, gy0), (260.0, gy0), (420.0, 420.0), (-420.0, 420.0)]
-    q = [P(*v) for v in gus]
-    pline(sp, q, "S-STL-HIDN", close=True)                                    # below the top flange where covered
-    for a_, b_ in ((gus[1], gus[2]), (gus[2], gus[3]), (gus[3], gus[0])):
-        pass
-    line(sp, P(-bf / 2 * 0, bf / 2), P(0, bf / 2), "S-STL")
-    # members: strut along +y (bay direction), braces at +/- angle
-    ang = math.atan2(BAY, 4_500.0)                                            # brace angle from the rafter (plan)
-    mems = [("ST1", (0.0, 1.0), C.BRACE.D, ST1), ("BR1", (math.cos(ang), math.sin(ang)), C.BRACE.D, BR),
-            ("BR1", (-math.cos(ang), math.sin(ang)), C.BRACE.D, BR)]
-    for mk, u, D_, rr in mems:
-        n = (-u[1], u[0])
-        s0 = 420.0 / u[1] + 40                                                # tube end beyond the gusset edge
-        s1 = s0 + 900
-        c0, c1 = (u[0] * s0, u[1] * s0), (u[0] * s1, u[1] * s1)
-        for sg in (-1, 1):
-            line(sp, P(c0[0] + sg * n[0] * D_ / 2, c0[1] + sg * n[1] * D_ / 2),
-                 P(c1[0] + sg * n[0] * D_ / 2, c1[1] + sg * n[1] * D_ / 2), "S-STL")
-        line(sp, P(c0[0] - n[0] * D_ / 2, c0[1] - n[1] * D_ / 2), P(c0[0] + n[0] * D_ / 2, c0[1] + n[1] * D_ / 2), "S-STL")
-        chs_break(sp, P(*c1), u, D_, C.BRACE.t, S)
-        # knife plate: lap inside the slotted tube, out over the gusset to the bolts (gap 10 to the tube end)
-        s_k = s0 - rr["gap"] - (rr["n"] - 1) * rr["p"] - 2 * rr["e1"]
-        kb = rr["bk"] / 2
+    from shapely.geometry import LineString, Polygon
+    gus = Polygon(geo["poly"])
+    flange = Polygon([(-L, -bf / 2), (L, -bf / 2), (L, bf / 2), (-L, bf / 2)])
+    top = [b for b in geo["braces"] if b["face"] == "TOP"][0]
+    cover = flange.union(top["foot"])                                         # the gusset is seen outside these
+    edge = gus.exterior
+    for g_, lay in ((edge.difference(cover), "S-STL"), (edge.intersection(cover), "S-STL-HIDN")):
+        for seg in getattr(g_, "geoms", [g_]):
+            if not seg.is_empty and seg.length > 1:
+                pline(sp, [P(*q) for q in seg.coords], lay)
+    ax = BR["ang"]
+    heel, toe = BR["g"], ax.b - BR["g"]
+    for b in geo["braces"]:
+        u, n = b["u"], b["n"]
         S_ = lambda s, w: (u[0] * s + n[0] * w, u[1] * s + n[1] * w)            # noqa: E731
-        pline(sp, [P(*S_(s_k, kb)), P(*S_(s0, kb))], "S-STL-VIS")
-        pline(sp, [P(*S_(s_k, -kb)), P(*S_(s0, -kb))], "S-STL-VIS")
-        line(sp, P(*S_(s_k, kb)), P(*S_(s_k, -kb)), "S-STL-VIS")
-        for w in (kb, -kb):
-            line(sp, P(*S_(s0, w)), P(*S_(s0 + rr["lap"], w)), "S-STL-HIDN")
-        line(sp, P(*S_(s0 + rr["lap"], kb)), P(*S_(s0 + rr["lap"], -kb)), "S-STL-HIDN")
-        for k in range(rr["n"]):
-            s_b = s_k + rr["e1"] + k * rr["p"]
-            hole(sp, P(u[0] * s_b, u[1] * s_b), rr["hole"], S)
-        rr["_bolt0"] = (u[0] * (s_k + rr["e1"]), u[1] * (s_k + rr["e1"]))
-        line(sp, P(0, 0), P(*c1), "S-GRID")
+        s1 = b["s_lap"] + 650.0
+        hidden = gus if b["face"] == "BOTTOM" else None
+        edges = [((b["s_end"], -heel), (s1, -heel)), ((b["s_end"], toe), (s1, toe)),
+                 ((b["s_end"], -heel), (b["s_end"], toe))]
+        # outstanding leg at the heel: seen (top brace, leg up) or behind the horizontal leg (bottom brace)
+        leg = ((b["s_end"], -heel + ax.t), (s1, -heel + ax.t))
+        for (a_, b_) in edges + [leg]:
+            ls = LineString([S_(*a_), S_(*b_)])
+            if (a_, b_) == leg and b["face"] == "BOTTOM":
+                pline(sp, [P(*q) for q in ls.coords], "S-STL-HIDN")
+                continue
+            if hidden is None:
+                pline(sp, [P(*q) for q in ls.coords], "S-STL")
+                continue
+            for g_, lay in ((ls.difference(hidden), "S-STL"), (ls.intersection(hidden), "S-STL-HIDN")):
+                for seg in getattr(g_, "geoms", [g_]):
+                    if not seg.is_empty and seg.length > 1:
+                        pline(sp, [P(*q) for q in seg.coords], lay)
+        zbreak(sp, P(*S_(s1, -heel - 50)), P(*S_(s1, toe + 50)), S)
+        for sb in b["bolts"]:
+            hole(sp, P(*S_(sb, 0.0)), BR["hole"], S)
+        line(sp, P(0, 0), P(*S_(s1 + 200, 0)), "S-GRID")
+        b["_bolt0"] = S_(b["bolts"][0], 0.0)
+        b["_mid"] = S_(b["s_lap"] + 350, toe)
+    # ST1: tube beyond the gusset, knife plate lapped on the gusset (visible over it), slot lap hidden in the tube
+    kx0, ky0, kx1, ky1 = geo["knife"].bounds
+    y_t = max(q[1] for q in geo["poly"]) + 40.0
+    D_ = C.BRACE.D
+    for sg in (-1, 1):
+        line(sp, P(sg * D_ / 2, y_t), P(sg * D_ / 2, y_t + 700), "S-STL")
+    line(sp, P(-D_ / 2, y_t), P(D_ / 2, y_t), "S-STL")
+    chs_break(sp, P(0, y_t + 700), (0.0, 1.0), D_, C.BRACE.t, S)
+    pline(sp, [P(kx0, y_t), P(kx0, ky0), P(kx1, ky0), P(kx1, y_t)], "S-STL-VIS")
+    for x_ in (kx0, kx1):
+        line(sp, P(x_, y_t), P(x_, y_t + ST1["lap"]), "S-STL-HIDN")
+    line(sp, P(kx0, y_t + ST1["lap"]), P(kx1, y_t + ST1["lap"]), "S-STL-HIDN")
+    for yb in geo["st_bolts"]:
+        hole(sp, P(0, yb), ST1["hole"], S)
+    line(sp, P(0, 0), P(0, y_t + 900), "S-GRID")
+    # dimensions: gusset from the web face and the work point; bolt line of the top brace
+    xs = [q[0] for q in geo["poly"]]
+    ys = [q[1] for q in geo["poly"]]
+    dim(sp, P(min(xs), geo["gy0"]), P(max(xs), geo["gy0"]), P(0, -bf / 2 - 120), S)
+    # notes
     note_cfg(xR=P(L + 150, 0)[0], xL=P(-L - 150, 0)[0])
-    leader(sp, P(*ST1["_bolt0"]), (0, 0), f"{ST1['n']}-M{ST1['db']} 8.8 (BEARING) PER MEMBER, HOLES "
-           f"Ø{ST1['hole']}", S, side="R", width=48, bolt=ST1["hole"])
-    leader(sp, P(420, 420), (0, 0), f"GUSSET GU1 PL {tg:.0f} SM400B IN THE ROOF PLANE, {GU['weld']:.0f} mm FILLETS "
-           f"BOTH SIDES TO THE RAFTER WEB, FULL-DEPTH WEB STIFFENER PL {GU['stiffener']['t']:.0f} OPPOSITE", S,
-           side="R", width=48)
-    leader(sp, P(-260, gy0 + 30), (0, 0), f"KNIFE PL {BR['tk']:.0f} x {BR['bk']:.0f} SHOP-WELDED IN THE TUBE SLOT, "
-           f"4 x {BR['weld']:.0f} mm FILLETS x {BR['lap']:.0f} LONG (SLOT {BR['slot']:.0f} WIDE)", S, side="L",
-           width=48)
+    bot = [b for b in geo["braces"] if b["face"] == "BOTTOM"][0]
+    u_ = top["u"]
+    leader(sp, P(u_[0] * top["bolts"][-1], u_[1] * top["bolts"][-1]), (0, 0),
+           f"{BR['n']}-M{BR['db']} 8.8 (BEARING) PER BRACE, HOLES Ø{BR['hole']}: PITCH {BR['p']:.0f}, END "
+           f"{BR['e1']:.0f} (ANGLE), {40:.0f} (GUSSET), ON THE GAUGE LINE {BR['g']:.0f} FROM THE HEEL", S, side="R",
+           width=48, bolt=BR["hole"])
+    leader(sp, P(*top["_mid"]), (0, 0), f"BR1 {ax.name} ON TOP OF GU1, OUTSTANDING LEG UP", S, side="R", width=48)
+    leader(sp, P(*bot["_mid"]), (0, 0), f"BR1 {ax.name} BELOW GU1, OUTSTANDING LEG DOWN", S, side="L", width=48)
+    leader(sp, P(0, geo["st_bolts"][0]), (0, 0), f"{ST1['n']}-M{ST1['db']} 8.8 (BEARING), HOLES Ø{ST1['hole']}",
+           S, side="L", width=44, bolt=ST1["hole"])
+    top_r = sorted((q for q in geo["poly"] if q[0] >= 0 and q[1] > geo["gy0"] + 1), key=lambda q: q[0])
+    tv = ((top_r[0][0] + top_r[1][0]) / 2, (top_r[0][1] + top_r[1][1]) / 2)          # on the top edge (S4)
+    leader(sp, P(*tv), (0, 0),
+           f"GUSSET GU1 PL {GU['tg']:.0f} x {max(xs) - min(xs):.0f} x {max(ys):.0f} (FROM THE RAFTER CENTRE LINE) "
+           f"SM400B IN THE ROOF PLANE, {GU['weld']:.0f} mm FILLETS BOTH SIDES TO THE "
+           f"RAFTER WEB, FULL-DEPTH WEB STIFFENER PL {GU['stiffener']['t']:.0f} OPPOSITE", S, side="R", width=48)
+    leader(sp, P(kx0, (ky0 + y_t) / 2), (0, 0), f"ST1 KNIFE PL {ST1['tk']:.0f} x {ST1['bk']:.0f} SHOP-WELDED IN THE "
+           f"TUBE SLOT, 4 x {ST1['weld']:.0f} mm FILLETS x {ST1['lap']:.0f} LONG (SLOT {ST1['slot']:.0f} WIDE)", S,
+           side="L", width=48)
     mtag(sp, P, (-L + 300, -bf / 2 - 160), "R1A", S)
-    for mk, u, D_, rr in mems:
-        s = 420.0 / u[1] + 700
-        mtag(sp, P, (u[0] * s + 140 * (1 if u[0] >= 0 else -1), u[1] * s), mk, S)
+    mtag(sp, P, (D_ / 2 + 120, y_t + 450), "ST1", S)
+    for b in geo["braces"]:
+        u, n = b["u"], b["n"]
+        s = b["s_lap"] + 520
+        mtag(sp, P, (u[0] * s - n[0] * (heel + 120), u[1] * s - n[1] * (heel + 120)), "BR1", S)
 
 
 # --------------------------------------------------------------------------- 2/5003: section at a purlin: cleat, sag rod, fly brace
 def purlin_section(ox, oy):
     """section across the rafter (prismatic, 350 deep) at a fly-braced purlin, 1:10, looking along the rafter: the
     rafter cut, the purlin seen along its length on the rafter top flange, the cleat face-on with 2 bolts, the sag
-    rod hole, the two fly braces FB1 (45 deg) from the purlin web to the lug under the rafter bottom flange"""
+    rod hole, the two fly braces FB1 (45 deg) from the purlin web to the cleats each side of the web at the bottom
+    flange (engineer's markup, 10/10/2026)"""
     S = 10
     sp = msp
     P = lambda x, y: (ox + x, oy + y)                                            # noqa: E731
@@ -353,20 +394,44 @@ def purlin_section(ox, oy):
     for y in (ch * 0.35, ch * 0.75):
         hole(sp, P(r.bf / 2 - cw / 2, y), 18, S)
     hole(sp, P(-Lp + 250, pu.d / 2), SR["d"] + 2, S)                           # sag rod hole (third point side)
-    # fly braces: both sides, gauge line from the purlin web (near its bottom flange) to the lug, F = 45 deg
-    yb = -r.d - 50.0
+    # fly braces (engineer's markup of 2/5003, 10/10/2026; Beca SE-1505 cleat "B"): a cleat plate each side of the
+    # web at the inside (bottom) flange; each angle bolted flat on its cleat; gauge lines meet on the centre line at
+    # the outer face of the flange; F = 45 deg; the angle is in front of the cleat (the cleat hidden behind it)
+    from shapely.geometry import LineString, Polygon
+    cl = FB1["cleat"]
+    c_, s_ = math.cos(math.radians(cl["F"])), math.sin(math.radians(cl["F"]))
+    y_wp = -r.d
     ytop = pu.tf + 40
-    dx = ytop - yb                                                             # 45 deg: run = rise
+    s_top = (ytop - y_wp) / s_
+    yf = y_wp + r.tf                                                          # top of the bottom flange
     for sg in (-1, 1):
-        a, b_ = (sg * dx, ytop), (0.0, yb)
-        u = ((b_[0] - a[0]) / math.hypot(dx, ytop - yb), (b_[1] - a[1]) / math.hypot(dx, ytop - yb))
-        n = (-u[1] * sg, u[0] * sg)
-        for w in (-25.0, 25.0):
-            line(sp, P(a[0] + n[0] * w, a[1] + n[1] * w), P(b_[0] + n[0] * w + u[0] * -30, b_[1] + n[1] * w - u[1] * 30),
-                 "S-STL-VIS")
-        line(sp, P(*a), P(*b_), "S-GRID")
-        hole(sp, P(a[0] + u[0] * 30, a[1] + u[1] * 30), 18, S)
-    plate(sp, P, [(-40, -r.d), (40, -r.d), (40, yb - 60), (-40, yb - 60)])  # lug under the bottom flange
+        cle = Polygon([(sg * (r.tw / 2 + cl["clip"]), yf), (sg * r.bf / 2, yf), (sg * r.bf / 2, yf + cl["h"] - cl["cham"]),
+                       (sg * (r.bf / 2 - cl["cham"]), yf + cl["h"]), (sg * r.tw / 2, yf + cl["h"]),
+                       (sg * r.tw / 2, yf + cl["clip"])])
+        u = (sg * c_, s_)
+        n = (-sg * s_, c_)
+        S_ = lambda s, w: (u[0] * s + n[0] * w, y_wp + u[1] * s + n[1] * w)    # noqa: E731
+        s1 = s_top + 30.0
+        foot = Polygon([S_(cl["s_end"], -cl["heel"]), S_(s1, -cl["heel"]), S_(s1, cl["toe"]), S_(cl["s_end"], cl["toe"])])
+        edge = cle.exterior
+        for g_, lay in ((edge.difference(foot), "S-STL"), (edge.intersection(foot), "S-STL-HIDN")):
+            for seg in getattr(g_, "geoms", [g_]):
+                if not seg.is_empty and seg.length > 1:
+                    pline(sp, [P(*q) for q in seg.coords], lay)
+        for a_, b_ in (((cl["s_end"], -cl["heel"]), (s1, -cl["heel"])), ((cl["s_end"], cl["toe"]), (s1, cl["toe"])),
+                       ((cl["s_end"], -cl["heel"]), (cl["s_end"], cl["toe"])), ((s1, -cl["heel"]), (s1, cl["toe"]))):
+            line(sp, P(*S_(*a_)), P(*S_(*b_)), "S-STL-VIS")
+        line(sp, P(*S_(cl["s_end"], -cl["heel"] + cl["angle_t"])), P(*S_(s1, -cl["heel"] + cl["angle_t"])),
+             "S-STL-VIS")                                                    # outstanding leg at the heel
+        line(sp, P(0, y_wp), P(*S_(s1 + 40, 0)), "S-GRID")                  # gauge line to the work point
+        hole(sp, P(*S_(cl["s_bolt"], 0)), cl["hole"], S)
+        hole(sp, P(*S_(s_top, 0)), cl["hole"], S)
+        if sg > 0:
+            tip_cleat = (r.bf / 2, yf + (cl["h"] - cl["cham"]) / 2)
+            tip_bolt = S_(cl["s_bolt"], 0)
+        else:
+            tip_angle = S_((cl["s_end"] + s1) / 2 + 60, cl["toe"])
+    yb = y_wp
     line(sp, P(0, yb - 120), P(0, pu.d + 150), "S-GRID")
     note_cfg(xR=P(Lp + 150, 0)[0], xL=P(-Lp - 150, 0)[0])
     leader(sp, P(Lp - 200, pu.d), (0, 0), f"PU1 {pu.name} (TBC)", S, side="R", width=44)
@@ -374,8 +439,11 @@ def purlin_section(ox, oy):
            "2-M16 8.8 TO THE PURLIN WEB", S, side="R", width=44)
     leader(sp, P(-Lp + 250, pu.d / 2), (0, 0), f"SAG ROD Ø{SR['d']} IN HOLE Ø{SR['d'] + 2} (THIRD POINTS)", S,
            side="L", width=40, bolt=SR["d"] + 2)
-    leader(sp, P(-dx * 0.55, ytop - (ytop - yb) * 0.55), (0, 0),
-           f"FB1 {FB1['angle']} BOTH SIDES AT 45 deg, {FB1['bolts']} (TBC)", S, side="L", width=40)
-    leader(sp, P(40, yb - 30), (0, 0), "LUG PL 10 x 80 x 100 UNDER THE BOTTOM FLANGE, 5 mm FILLETS", S, side="R",
-           width=44)
-    mtag(sp, P, (-160, yb - 40), "R2", S)
+    leader(sp, P(*tip_angle), (0, 0),
+           f"FB1 {FB1['angle']} BOTH SIDES AT F = {cl['F']:.0f} deg, {FB1['bolts']} (TBC)", S, side="L", width=40)
+    leader(sp, P(*tip_cleat), (0, 0), f"CLEAT PL {cl['t']:.0f} x {cl['w']:.0f} x {cl['h']:.0f} SM400B EACH SIDE OF "
+           f"THE WEB AT THE INSIDE FLANGE, {cl['weld']:.0f} mm FILLETS BOTH FACES TO THE WEB AND THE FLANGE, CORNER "
+           f"CLIP {cl['clip']:.0f}", S, side="R", width=44)
+    leader(sp, P(*tip_bolt), (0, 0), f"1-M{cl['db']} 8.8/S PER BRACE, HOLE Ø{cl['hole']}, END {cl['e']:.0f}", S,
+           side="R", width=44, bolt=cl["hole"])
+    mtag(sp, P, (-200, y_wp - 90), "R2", S)

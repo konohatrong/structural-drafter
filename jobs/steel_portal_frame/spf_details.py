@@ -200,7 +200,7 @@ def knee_detail(ox, oy):
     (cp_, ct_), cn = face_plate(sp, P, xo, cg["bot"], cg["top"], TP_C, -1)
     xce = cg["xt"] - 1_200.0
     xe_ = K["xt"] + 1_600.0
-    note_cfg(xL=P(xce - 150, 0)[0], xR=P(xe_ + 150, 0)[0])
+    note_cfg(xL=P(xce - 150, 0)[0], xR=P(xe_ + 150, 0)[0], yT=P(0, K["plate_top"] + 750)[1])
     for zf, d_ in ((F.zt, -1), (lambda x: F.zt(x) - CAN.d / COS, 1)):
         p0 = (cg["xt"], zf(cg["xt"]))
         u, _ = unit(p0, (xce, zf(xce)))
@@ -239,14 +239,14 @@ def knee_detail(ox, oy):
     plen = K["plate_len"]
     leader(sp, P(*off((xi(ztop - 30), ztop - 30), kn, TP_K)), (0, 0),
            f"KNEE END PLATE PL {TP_K} x {KJ['bp']:.0f} x {plen:.0f} SM520B, SQUARE TO THE COLUMN FLANGE", S,
-           side="R", width=62)
-    leader(sp, P(*off((xi(rows[2]), rows[2]), kn, TP_K + 0.65 * KJ["db"])), (0, 0),
+           side="T", width=54)
+    leader(sp, P(*off((xi(rows[0]), rows[0]), kn, -TF_IN - 0.85 * KJ["db"])), (0, 0),
            f"{KJ['n_bolts']}-M{KJ['db']} GR 10.9 PRETENSIONED, HOLES Ø{KJ['hole']}, SQUARE TO THE PLATE", S,
-           side="R", width=62)
+           side="T", width=54)
     zc = (zh + zbot) / 2
-    leader(sp, P(xi(zc), zc), (0, 0),
-           f"COLUMN HEAD CH1: BOTH FLANGES PL {TF_IN:g} x {F.bf_c:.0f}, WEB PL {F.tw_c:g} (TBC)", S, side="R",
-           width=62)
+    leader(sp, P(xo(zc), zc), (0, 0),
+           f"COLUMN HEAD CH1: BOTH FLANGES PL {TF_IN:g} x {F.bf_c:.0f}, WEB PL {F.tw_c:g} (TBC)", S, side="L",
+           width=58)
     leader(sp, P(Lh, zs + tps / 2), (0, 0),
            f"COLUMN SPLICE CS1 AT {fmt_level(zs)}: 2 END PLATES PL {tps} x {CS['bp']:.0f} x {CS['length']:.0f} "
            f"SM520B, {CS['n_bolts']}-M{CS['db']} GR 10.9 PRETENSIONED, NUTS BELOW", S, side="R", width=62)
@@ -262,8 +262,7 @@ def knee_detail(ox, oy):
                       (K["xt"] + 1_200, F.zb(K["xt"] + 1_200) - 170, "R1"),
                       (xce + 300, F.zt(xce + 300) - CAN.d / COS - 170, "CN1")):
         mtag(sp, P, (x, z), s, S)
-    # dimension: plate thickness (bolt rows: on views A, B, D)
-    dim(sp, P(xi(ztop), ztop), P(*off((xi(ztop), ztop), kn, TP_K)), P(0, ztop + 160), S, tside="R")
+    # plate thickness: in the plate note (bolt rows: on views A, B, D)
 
 
 def splice_plan(ox, oy):
@@ -354,10 +353,11 @@ def splice_detail(ox, oy):
     for r in rows:
         bolt_h(sp, P, vb + r, -tpl, tpl, SP["db"], S)
     line(sp, P(-1_000, 0), P(1_000, 0), "S-GRID")
-    weld(sp, P(tpl + 80, d / 2), (P(tpl + 80, d / 2)[0] + 14 * S, P(tpl + 80, d / 2)[1] + 22 * S), S,
-         SP["flange_weld"], side="both", tail="TYP. BOTH FLANGES, BOTH PLATES")
-    weld(sp, P(tpl, 40), (P(tpl, 40)[0] + 30 * S, P(tpl, 40)[1] - 4 * S), S, SP["web_weld"], side="both",
-         tail="WEB")
+    tw_ = P(-tpl - 80, d / 2)                                       # haunch side: the slope falls away under the text
+    weld(sp, tw_, (tw_[0] - 6 * S, tw_[1] + 26 * S), S, SP["flange_weld"], side="both", left=True,
+         tail="TYP. BOTH FLANGES, BOTH PLATES")
+    tw2 = P(tpl, -d / 4)                                            # web weld: symbol below the rafter, clear of it
+    weld(sp, tw2, (tw2[0] + 10 * S, P(tpl, -d / 2)[1] - 16 * S), S, SP["web_weld"], side="both", tail="WEB")
     note_cfg(xL=P(-900, 0)[0] - 4 * S)
     leader(sp, P(-tpl, vb + L - 20), (0, 0),
            f"2 END PLATES PL {tpl} x {SP['bp']:.0f} x {L:.0f} SM520B, SQUARE TO THE RAFTER", S, side="L", width=56)

@@ -138,8 +138,26 @@ GPOST = sec_from_model(102)         # gable post 400 x 150 x 6 x 10
 GTIE = sec_from_model(301)          # gable eave tie 200 x 100 x 4 x 6
 EAVEB = jis("H 400x200x8/13")       # eave beam, end bays (302)
 MON = jis("H 100x100x6/8")          # monitor posts (401) and rafters (402)
-BRACE = Pipe("PG 165.2x4.5")        # roof X-bracing (902) and braced-bay struts (901)
+BRACE = Pipe("PG 165.2x4.5")        # braced-bay struts (901); the model's roof X-bracing (902) too
 STRUT = Pipe("PG 190.7x4.5")        # eave and ridge struts (903)
+
+
+class Angle:
+    """equal-leg angle, JIS G 3192: b, t, A (mm2), c (centroid from the heel, mm), rx, rz (mm), kg/m"""
+    TABLE = {"L 90x90x6": (90.0, 6.0, 1055.0, 24.2, 27.7, 17.8, 8.28),
+             "L 90x90x7": (90.0, 7.0, 1222.0, 24.6, 27.6, 17.8, 9.59),
+             "L 100x100x7": (100.0, 7.0, 1362.0, 27.1, 30.8, 19.8, 10.7)}
+
+    def __init__(self, name):
+        self.name = name
+        self.b, self.t, self.A, self.c, self.rx, self.rz, self.kg_m = self.TABLE[name]
+
+
+# roof X-bracing BR1 (engineer, 10/10/2026, markup of 1/5003: "try roof brace as this detail"): single angles
+# L 90 x 90 x 6 bolted straight to an enlarged gusset GU1, no knife plates; one brace of each X on top of the gussets,
+# the other below them, bolted back to back at the crossing through a packing the gusset's thickness
+BRACE_L = Angle("L 90x90x6")
+GAUGE = {90: 50.0, 100: 55.0}       # bolt gauge from the heel (JIS standard gauge g1)
 
 
 def taper_d(kind, s):
@@ -753,25 +771,127 @@ def strut_check(name, pipe, Pt, Pc, L, mat=STK):
     return dict(KLr=KLr, phiPn=phiPn)
 
 
+def angle_end(name, ang, Pt, *, db=20, tg=12.0, mat=SS400):
+    """single angle, one leg bolted to the gusset (tension only), bolts 8.8 bearing type in single shear;
+    360-16 D2 (yield, rupture with U from Table D3.1 case 2 / case 8), J3.6 bolts, J3.10 bearing / tear-out
+    on the angle and the gusset, J4.3 block shear on the angle"""
+    Pu = Pt * 1e3
+    Ab = math.pi * db * db / 4
+    phi_b = 0.75 * BOLT[BOLT_GRADE_SHEAR]["Fnv"] * Ab
+    hole = HOLE[db]
+    e1, p = ceil5(max(EDGE_MIN[db] + 5, 1.5 * db)), ceil5(3 * db)
+    g = GAUGE[int(ang.b)]
+    t = ang.t
+    for n in range(2, 7):
+        l = (n - 1) * p
+        U = max(1 - ang.c / l, 0.80 if n >= 4 else (0.60 if n == 3 else 0.0))
+        An = ang.A - (hole + 2) * t
+        rn_end = min(1.2 * (e1 - hole / 2) * t * mat["Fu"], 2.4 * db * t * mat["Fu"])
+        rn_int = min(1.2 * (p - hole) * t * mat["Fu"], 2.4 * db * t * mat["Fu"])
+        Agv = (e1 + l) * t
+        Anv = Agv - (n - 0.5) * (hole + 2) * t
+        Ant = (ang.b - g - (hole + 2) / 2) * t
+        bs = min(0.6 * mat["Fu"] * Anv, 0.6 * mat["Fy"] * Agv) + mat["Fu"] * Ant
+        caps = [n * phi_b, 0.75 * (rn_end + (n - 1) * rn_int), 0.75 * mat["Fu"] * An * U, 0.75 * bs]
+        if min(caps) >= Pu:
+            break
+    check(name, f"{n}-M{db} {BOLT_GRADE_SHEAR} single shear", Pt, n * phi_b / 1e3, unit="kN")
+    check(name, f"bearing / tear-out on the angle (t {t:g})", Pt, caps[1] / 1e3, unit="kN")
+    check(name, f"angle tension yield ({ang.name})", Pt, 0.9 * mat["Fy"] * ang.A / 1e3, unit="kN")
+    check(name, f"angle net-section rupture (U {U:.2f})", Pt, caps[2] / 1e3, unit="kN")
+    check(name, "block shear on the angle", Pt, caps[3] / 1e3, unit="kN")
+    # gusset: bearing / tear-out (edge 40 beyond the last bolt) and Whitmore section, 30 deg from the first bolt
+    rg_end = min(1.2 * (40.0 - hole / 2) * tg * SM400["Fu"], 2.4 * db * tg * SM400["Fu"])
+    rg_int = min(1.2 * (p - hole) * tg * SM400["Fu"], 2.4 * db * tg * SM400["Fu"])
+    check(name, f"bearing / tear-out on the gusset (PL {tg:g})", Pt, 0.75 * (rg_end + (n - 1) * rg_int) / 1e3,
+          unit="kN")
+    Lw = 2 * (n - 1) * p * math.tan(math.radians(30))
+    check(name, "gusset Whitmore section, tension yield", Pt, 0.9 * SM400["Fy"] * Lw * tg / 1e3, unit="kN")
+    return dict(name=name, sec=ang.name, ang=ang, Pt=Pt, Pc=0.0, n=n, db=db, hole=hole, e1=e1, p=p, g=g, U=U,
+                tk=ang.t, grip=ang.t + tg)
+
+
+def brace_node_geometry(D, BRr, STr, tg):
+    """plan of the braced-bay node in the roof plane (work point at the rafter centre line, x along the rafter,
+    y along the bay): angle ends clear of the top flange, bolts on the gauge line, the ST1 knife plate beyond the
+    angles; the gusset = hull of the bolt groups (40 mm edges, the angle legs over the lap) and the knife plate,
+    cut at the web face, vertices to 5 mm"""
+    from shapely.geometry import LineString, Polygon, MultiPoint, box
+    bf = TAPER["H"]["bf"]
+    ang = math.atan2(BAY, 4_500.0)
+    ax = BRr["ang"]
+    heel, toe = BRr["g"], ax.b - BRr["g"]            # from the bolt line: heel on the near side, toe outside
+    side = {}
+    brs = []
+    for sgn in (1, -1):                              # +x brace on top of the gusset, -x brace below it
+        u = (sgn * math.cos(ang), math.sin(ang))
+        nrm = (-math.sin(ang), math.cos(ang)) if sgn > 0 else (math.sin(ang), math.cos(ang))   # toward the strut
+        # angle end: every corner of the leg footprint beyond the flange edge + 20
+        s_end = 0.0
+        while True:
+            corners = [(u[0] * s_end + nrm[0] * w, u[1] * s_end + nrm[1] * w) for w in (-heel, toe)]
+            if min(c[1] for c in corners) >= bf / 2 + 20:
+                break
+            s_end += 5.0
+        bolts = [s_end + BRr["e1"] + k * BRr["p"] for k in range(BRr["n"])]
+        s_lap = bolts[-1] + 40.0                     # the gusset edge: 40 beyond the last bolt
+        foot = Polygon([(u[0] * s + nrm[0] * w, u[1] * s + nrm[1] * w)
+                        for s, w in ((s_end, -heel), (s_lap, -heel), (s_lap, toe), (s_end, toe))])
+        brs.append(dict(sgn=sgn, u=u, n=nrm, s_end=s_end, bolts=bolts, s_lap=s_lap, foot=foot,
+                        face="TOP" if sgn > 0 else "BOTTOM"))
+    # ST1 knife plate along +y, its bolts beyond the angle footprints (60 clear)
+    kb = STr["bk"] / 2
+    y0 = max(b["foot"].bounds[3] for b in brs)
+    y_k = 0.0
+    while any(b["foot"].buffer(30).intersects(box(-kb - 10, y_k - STr["e1"], kb + 10, y_k + 400)) for b in brs):
+        y_k += 5.0
+    st_bolts = [y_k + k * STr["p"] for k in range(STr["n"])]
+    knife = box(-kb, y_k - STr["e1"], kb, st_bolts[-1] + STr["e1"])
+    gy0 = TAPER["H"]["tw"] / 2
+    pts = []
+    for b in brs:
+        pts += list(b["foot"].buffer(10, join_style=2).exterior.coords)
+    pts += list(knife.buffer(15, join_style=2).exterior.coords)
+    xs = [q[0] for q in pts]
+    pts += [(min(xs), gy0), (max(xs), gy0)]
+    hull = MultiPoint(pts).convex_hull.intersection(box(-5_000, gy0, 5_000, 5_000))
+    poly = [(round(x / 5) * 5, gy0 if y < gy0 + 2.5 else round(y / 5) * 5)
+            for x, y in list(hull.simplify(4.0).exterior.coords)[:-1]]
+    base = [x for x, y in poly if y == gy0]
+    return dict(braces=brs, st_bolts=st_bolts, y_k=y_k, knife=knife, poly=poly, gy0=gy0,
+                web_len=max(base) - min(base))
+
+
 def design_bracing(D):
     t2, c2 = member_axial((902,))
     t1, c1 = member_axial((901,))
     t3, c3 = member_axial((903,))
-    D["BR1"] = knife_end("BR1 roof brace end", BRACE, t2, c2)
-    D["BR1"]["member"] = strut_check("BR1 roof brace (CHS 165.2)", BRACE, t2, c2,
-                                     math.hypot(BAY, 4_500.0) / math.cos(THETA * 0.5))
+    # BR1: tension-only angles. The model's braces are CHS acting in tension and compression; with the compression
+    # brace neglected the tension brace of the X takes the panel shear of both: bounded here by T + |C| of the
+    # envelope (same geometry both ways) until the model is re-run with tension-only braces.
+    Tbr = t2 - c2
+    D["BR1"] = angle_end("BR1 roof brace end", BRACE_L, Tbr)
+    Lbr = math.hypot(BAY, 4_500.0) / math.cos(THETA * 0.5)
+    D["BR1"]["member"] = dict(L=Lbr, LrX=Lbr / 2 / BRACE_L.rz, Lr=Lbr / BRACE_L.rz)
+    check("BR1 roof brace (L 90x90x6)", "slenderness L/r, half length (crossing) / rz <= 300 (D1 user note)",
+          Lbr / 2 / BRACE_L.rz, 300.0, note="MODEL MEMBER")             # the engineer's member (markup)
+    OPEN.append(f"BR1 changed to {BRACE_L.name} tension-only (engineer's markup, 10/10/2026): designed for "
+                f"T {Tbr:.0f} kN = T {t2:.0f} + |C| {-c2:.0f} kN of the CHS model; re-run the model with tension-only "
+                f"angle braces and recheck; L/r {Lbr / 2 / BRACE_L.rz:.0f} over half the length (D1 recommends 300); "
+                f"install the braces taut")
     D["ST1"] = knife_end("ST1 braced-bay strut end", BRACE, t1, c1)
     D["ST1"]["member"] = strut_check("ST1 strut (CHS 165.2)", BRACE, t1, c1, BAY)
     D["ST2"] = knife_end("ST2 eave / ridge strut end", STRUT, t3, c3)
     D["ST2"]["member"] = strut_check("ST2 eave / ridge strut (CHS 190.7)", STRUT, t3, c3, BAY)
     # gusset on the rafter web, in the roof plane, with a full-depth web stiffener taking the force normal to the web
-    Pmax = max(t2, -c2, t1, -c1, t3, -c3)
+    Pmax = max(Tbr, t1, -c1, t3, -c3)
     tg = 12.0
-    Lw = 250.0
+    geo = brace_node_geometry(D, D["BR1"], D["ST1"], tg)
+    Lw = geo["web_len"]
     w_g = pick(LEGS, max(5.0, Pmax * 1e3 / (2 * Lw * 0.75 * 0.6 * FEXX * 0.707)))
     check("GU1 brace gusset", "gusset-to-web welds (two fillets)", Pmax, 2 * Lw * 0.75 * 0.6 * FEXX * 0.707 * w_g / 1e3,
           unit="kN")
-    D["GU1"] = dict(tg=tg, L=Lw, weld=w_g, P=Pmax, stiffener=dict(t=10.0, weld=5.0))
+    D["GU1"] = dict(tg=tg, L=Lw, weld=w_g, P=Pmax, stiffener=dict(t=10.0, weld=5.0), geo=geo)
 
 
 # =========================================================================== secondary framing (PROPOSED, TBC)
@@ -893,17 +1013,18 @@ def design_secondary(D):
     D["SR1"] = dict(d=dr, T=T)
     # fly braces: angle from the purlin / girt to the inside flange at 45 deg; App. 6 nodal brace force and stiffness
     D["FB1"] = fly_brace("FB1 rafter fly brace (PROPOSED)", d_member=TAPER["H"]["d0"],
-                         Mr=abs(D["KJ1"]["forces"]["M_neg"]), Lbr=2 * pl["spacing_slope"], purlin_d=D["PU1"]["sec"].d)
+                         Mr=abs(D["KJ1"]["forces"]["M_neg"]), Lbr=2 * pl["spacing_slope"], purlin_d=D["PU1"]["sec"].d,
+                         member=(RAF.bf, RAF.tw, RAF.tf))
     D["FB2"] = fly_brace("FB2 column fly brace (PROPOSED)", d_member=TAPER["C"]["d1"],
                          Mr=abs(D["KJ1"]["column_forces"]["M_neg"]), Lbr=girt_z[1] - girt_z[0],
-                         purlin_d=D["GT1"]["sec"].d)
+                         purlin_d=D["GT1"]["sec"].d, member=(TAPER["C"]["bf"], TAPER["C"]["tw"], TAPER["C"]["tf"]))
 
 
 ANGLES = {"L 50x50x5": (50, 5, 9.8, 4.80), "L 60x60x5": (60, 5, 11.7, 5.80), "L 65x65x6": (65, 6, 12.7, 7.53),
           "L 75x75x6": (75, 6, 14.6, 8.73)}                              # b, t, rz (mm), A (cm2)
 
 
-def fly_brace(name, d_member, Mr, Lbr, purlin_d, F=45.0):
+def fly_brace(name, d_member, Mr, Lbr, purlin_d, F=45.0, member=None):
     """360-16 App. 6.3.2a nodal beam brace on the compression flange (S9A): Pbr = 0.02 Mr Cd / ho, Cd = 1;
     stiffness beta = (1/0.75) 10 Mr Cd / (Lbr ho) against EA/L cos^2 F of one angle; KL/rz <= 200"""
     ho = d_member - 12.0
@@ -921,7 +1042,53 @@ def fly_brace(name, d_member, Mr, Lbr, purlin_d, F=45.0):
     check(name, f"{nm} strength (App. 6, along the brace)", Pbr / math.cos(math.radians(F)), phiPn, unit="kN")
     check(name, f"{nm} stiffness (App. 6, one angle)", beta, k, unit="N/mm")
     check(name, f"{nm} slenderness KL/rz <= 200", KLr, 200.0, unit="")
-    return dict(angle=nm, L=Lfb, Pbr=Pbr, KLr=KLr, F=F, bolts=f"1-M16 {BOLT_GRADE_SHEAR}/S EACH END")
+    out = dict(angle=nm, L=Lfb, Pbr=Pbr, KLr=KLr, F=F, bolts=f"1-M16 {BOLT_GRADE_SHEAR}/S EACH END")
+    out["cleat"] = fly_cleat(name, nm, Pbr / math.cos(math.radians(F)), F, member)
+    return out
+
+
+def fly_cleat(name, ang_name, Pa, F, member, db=16, tc=10.0, h=100.0):
+    """member end of the fly brace (engineer's markup of 2/5003, 10/10/2026; Beca SE-1505 cleat "B"): a cleat
+    plate each side of the web at the inside flange, welded to the web and the flange, the angle bolted flat on it.
+    Work point of the two gauge lines on the member centre line at the outer face of the inside flange (just beyond
+    the flange); the angle end square, clear of the web and the flange by 10; 1 bolt, end distance 25.
+    Coordinates in the section: x from the web centre line, y from the outer face of the inside flange (into the
+    member). Returns the geometry for the drawing and checks the bolt, bearing / tear-out and the welds."""
+    b, ta, rz, A = ANGLES[ang_name]
+    bf, tw, tf = member
+    g = 28.0 if b <= 50 else GAUGE.get(int(b), b / 2 + 5)            # gauge from the heel
+    heel, toe = g, b - g
+    c, s_ = math.cos(math.radians(F)), math.sin(math.radians(F))
+    s_end = 0.0
+    while True:                                                       # every corner of the angle clear by 10
+        pts = [((s_end - w) * c if False else s_end * c - w * s_, s_end * s_ + w * c) for w in (-heel, toe)]
+        if all(x >= tw / 2 + 10 and y >= tf + 10 for x, y in pts):
+            break
+        s_end += 5.0
+    e = 25.0
+    s_b = s_end + e
+    xb, yb = s_b * c, s_b * s_
+    w_c = (bf - tw) / 2
+    clip = 15.0
+    cham = ceil5(max(0.0, 0.3 * w_c))
+    edge_top = tf + h - yb
+    edge_out = bf / 2 - xb
+    hole = HOLE[db]
+    Ab = math.pi * db * db / 4
+    check(name + " cleat", f"1-M{db} {BOLT_GRADE_SHEAR} single shear", Pa, 0.75 * BOLT[BOLT_GRADE_SHEAR]["Fnv"] * Ab / 1e3,
+          unit="kN")
+    check(name + " cleat", f"tear-out on the angle (t {ta:g}, e {e:g})", Pa,
+          0.75 * min(1.2 * (e - hole / 2), 2.4 * db) * ta * SS400["Fu"] / 1e3, unit="kN")
+    lc = min(edge_top, edge_out) * 1.41 - hole / 2                    # along the brace towards the cleat corner
+    check(name + " cleat", f"tear-out on the cleat PL {tc:g}", Pa,
+          0.75 * min(1.2 * max(lc, 0.0), 2.4 * db) * tc * SM400["Fu"] / 1e3, unit="kN")
+    check(name + " cleat", "edge distances on the cleat (top / outer)", EDGE_MIN[db], min(edge_top, edge_out),
+          unit="mm")
+    wl = (h - clip) + (w_c - clip)                                    # web + flange welds, both faces 5 mm
+    check(name + " cleat", "cleat welds 5 mm both faces (web + flange)", Pa,
+          2 * wl * 0.75 * 0.6 * FEXX * 0.707 * 5.0 / 1e3, unit="kN")
+    return dict(t=tc, h=h, w=w_c, clip=clip, cham=cham, weld=5.0, db=db, hole=hole, g=g, heel=heel, toe=toe,
+                s_end=s_end, s_bolt=s_b, e=e, F=F, member=member, angle_t=ta, b=b)
 
 
 def design():
@@ -986,7 +1153,11 @@ def report(D):
         b = D[k]
         print(f"  {k}: PL {b['tp']} x {b['B']} x {b['W']}, {b['rods']}-M{b['db']} rods, Pu {b['Pu']:.0f} "
               f"Tu {b['Tu']:.0f} Vu {b['Vu']:.0f} kN, weld {b['weld']}")
-    for k in ("BR1", "ST1", "ST2"):
+    b = D["BR1"]
+    print(f"  BR1: {b['sec']} tension-only T {b['Pt']:.0f} kN -> {b['n']}-M{b['db']} at {b['p']:g} (e {b['e1']:g}, "
+          f"g {b['g']:g}), U {b['U']:.2f}; gusset GU1 PL {D['GU1']['tg']:g}, web weld length {D['GU1']['L']:.0f}, "
+          f"outline {D['GU1']['geo']['poly']}")
+    for k in ("ST1", "ST2"):
         b = D[k]
         print(f"  {k}: {b['pipe']} T {b['Pt']:.0f} C {b['Pc']:.0f} kN -> {b['n']}-M{b['db']}, knife PL {b['tk']:g} x "
               f"{b['bk']:g}, lap {b['lap']:g}, slot welds {b['weld']:g}")

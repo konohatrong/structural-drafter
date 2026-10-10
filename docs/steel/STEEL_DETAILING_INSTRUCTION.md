@@ -431,8 +431,17 @@ Applied on SRT-ST-5004.
      otherwise F = 45°.
    - Draw the work point, both gauge lines (grey chain) and the F dimension.
 3. **Connections** (Beca schedule):
-   - **Member end**: a lug or cleat plate ("B") with one bolt per brace. On a CHS the lug is one transverse plate
-     under the chord, its top profiled to the tube and welded both sides.
+   - **Member end on an I-section**: a **cleat plate ("B") each side of the web at the inside flange**, welded to the
+     web and the flange (5 mm fillets both faces, the web-flange corner clipped), each brace bolted flat on its cleat
+     with one bolt; not a lug under the flange (user, 2026-10-10, markup of SPF 2/5003: "improve fry bracing detail").
+     - The gauge lines meet on the member centre line at the outer face of the inside flange.
+     - The angle's end is square and clear of the web and the flange by 10 mm; the bolt sits at 25 mm end distance,
+       with the cleat edge distances checked.
+     - The cleat is in front of the web in the section, hidden where the angle covers it.
+     - Calc: `calc_spf.fly_cleat` (bolt shear, tear-out on the angle and the cleat, edges, welds). Worked example:
+       SPF 2/5003 (rafter 350 x 200, L 50 x 50 x 5, cleats PL 10 x 97 x 100, 1-M16 8.8/S).
+   - **Member end on a CHS**: a lug, one transverse plate under the chord, its top profiled to the tube and welded
+     both sides.
    - **Purlin end**: 2 bolts through the purlin web; in the lapped zone, 1 bolt plus the lap bolt.
    - Bolts are 8.8/S (snug); M16 for light members, M20 for heavy rafters or trusses (Beca schedule rows).
    - Confirm the brace holes with the purlin supplier.

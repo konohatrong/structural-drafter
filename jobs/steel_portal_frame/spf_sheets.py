@@ -34,6 +34,9 @@ GS1, GS2, EB = D["GS1"], D["GS2"], D["EB1"]
 BP1, BP2 = D["BP1"], D["BP2"]
 BR, ST1, ST2, GU = D["BR1"], D["ST1"], D["ST2"], D["GU1"]
 PU, PU2, GT, GT2, SR, FB1, FB2 = D["PU1"], D["PU2"], D["GT1"], D["GT2"], D["SR1"], D["FB1"], D["FB2"]
+F = SE.Frame
+POSTS = C.GABLE_POSTS
+LONG = C.FRAMES_Y[-1]
 
 
 def bolt_txt(r, n=None):
@@ -57,8 +60,9 @@ CRIT = [
             "CASES 1 - 4), COMBINATIONS 1.4D; 1.2D + 1.6L; 1.2D + 1.6L + 0.5W; 1.2D + 1.0W + 0.5L; 0.9D + 1.0W."),
     ("2.2", "CONNECTIONS: DESIGNED FOR THE FACTORED FORCES OF THE MODEL (TABLE 1). MOMENT END PLATES TO AISC "
             "DESIGN GUIDE 4 (2nd ED.) FOUR-BOLT EXTENDED, THICK-PLATE METHOD, WITH THE COLUMN-SIDE CHECKS; "
-            "RANGE CHECKS TO DESIGN GUIDE 16; KNEE PANEL ZONE TO DG16 CH. 5. BRACING CONNECTIONS TO DESIGN "
-            "GUIDE 29 / 24. TAPERED MEMBERS: DESIGN GUIDE 25."),
+            "RANGE CHECKS TO DESIGN GUIDE 16; KNEE PANEL ZONE TO DG16 CH. 5. STRUT CONNECTIONS TO DESIGN "
+            "GUIDE 29 / 24; ROOF BRACES BR1 SINGLE ANGLES, TENSION ONLY (AISC 360-16 D, J3, J4.3). TAPERED MEMBERS: "
+            "DESIGN GUIDE 25."),
     ("2.3", "PURLINS, GIRTS, SAG RODS AND FLY BRACES ARE NOT IN THE ANALYSIS MODEL: THEIR SIZES ARE PROPOSED "
             "(TBC), SEE TABLE 9 ON SPF-ST-5003."),
 ]
@@ -133,7 +137,10 @@ def design_rows():
         b = D[k]
         rows.append([k, b["name"].split(" ", 1)[1].upper(), f"N {b['Pu']:.0f} / T {b['Tu']:.0f}", f"{b['Vu']:.0f}",
                      f"{b['rods']}-M{b['db']} RODS, PL {b['tp']}", f"{util[k]:.2f}"])
-    for k in ("BR1", "ST1", "ST2"):
+    b = D["BR1"]
+    rows.append(["BR1", b["name"].split(" ", 1)[1].upper(), f"T {b['Pt']:.0f} (TENSION ONLY)", "-",
+                 f"{b['n']}-M{b['db']} 8.8, {b['sec']} ON GU1", f"{util['BR1']:.2f}"])
+    for k in ("ST1", "ST2"):
         b = D[k]
         rows.append([k, b["name"].split(" ", 1)[1].upper(), f"T {b['Pt']:.0f} / C {-b['Pc']:.0f}", "-",
                      f"{b['n']}-M{b['db']} 8.8, PL {b['tk']:g}", f"{util[k]:.2f}"])
@@ -310,14 +317,15 @@ def frame_elev(ox, oy):
     frame_half(sp, P1, 1, S, CAN_B)
     # grids
     for x, lab in ((0.0, "A"), (SPAN, "B")):
-        gridline(sp, P0, (x, F.zt(0) + 2_200), (x, -1_400), lab, S, at="b")
+        gridline(sp, P0, (x, F.zt(0) + 2_200), (x, -2_600), lab, S, at="b")     # bubble below the dimension rows
     # levels
     level(sp, ox - CAN_A + 300, oy + 0, fmt_level(0), "U/S BASE PLATE", S, ext=(-6, 26))
     level(sp, ox - CAN_A + 300, oy + EAVE, fmt_level(EAVE), "EAVE (WORK POINT)", S, ext=(-6, 26))
-    level(sp, ox + 1_000, oy + CS["z"], fmt_level(CS["z"]), "COLUMN SPLICE CS1", S, ext=(-6, 26))
-    level(sp, ox + RIDGE + 1_600, oy + C.roof_z(RIDGE), fmt_level(C.roof_z(RIDGE)), "RIDGE (WORK POINT)", S, ext=(-36, 8))
+    level(sp, ox + 2_200, oy + CS["z"], fmt_level(CS["z"]), "COLUMN SPLICE CS1", S, ext=(-38, 26))   # clear of the callout
+    level(sp, ox - CAN_A + 300, oy + C.roof_z(RIDGE), fmt_level(C.roof_z(RIDGE)), "RIDGE (WORK POINT)", S,
+          ext=(-6, 26))                                             # outside the view, as the other levels
     # dimensions
-    yd = -2_300
+    yd = -1_700
     dim(sp, P0(-CAN_A, 0), P0(0, 0), P0(0, yd), S)
     dim(sp, P0(0, 0), P0(SPAN, 0), P0(0, yd), S)
     dim(sp, P0(SPAN, 0), P0(SPAN + CAN_B, 0), P0(0, yd), S)
@@ -344,7 +352,7 @@ def frame_elev(ox, oy):
     call = [((300, F.zt(0) - 300), 1_500, "1", "5001", "KNEE AND CANOPY ROOT", 90, (300, 9_300)),
             ((X_SPL, C.roof_z(X_SPL)), 700, "2", "5001", "RAFTER SPLICE SP1", 90, (X_SPL, 9_900)),
             ((RIDGE, C.roof_z(RIDGE)), 800, "3", "5001", "RIDGE RJ1 AND MONITOR", 0, (RIDGE + 1_600, 11_700)),
-            ((0, 0), 700, "1", "5002", "BASE BP1", 0, (1_500, -900))]
+            ((0, 0), 700, "1", "5002", "BASE BP1", 0, (1_500, 1_100))]          # note inside the frame, above the dimensions
     for c, r, n_, sh, what, at_, kn in call:
         tip = detail_callout(sp, P0, c, r, S, at=at_)
         leader(sp, P0(*tip), P0(*kn), f"DETAIL {n_}/{sh} - {what}", S, width=64)
@@ -402,6 +410,36 @@ EXT_KEYS = {}
 
 
 # ======================================================================= schedules
+def kgm_i(d, bf, tw, tf):
+    """kg/m of a welded / rolled I (flanges + web, root radii ignored)"""
+    return (2 * bf * tf + (d - 2 * tf) * tw) * 7.85e-3
+
+
+def w_txt(kg):
+    return f"({kg:.2f} kg/m)"
+
+
+def sec_w(sec, label=None):
+    """'SECTION (xx.xx kg/m)': the weight per length after every section in the tables (steel S3.8)"""
+    nm = label or getattr(sec, "name", str(sec))
+    if hasattr(sec, "kg_m"):
+        return f"{nm} {w_txt(sec.kg_m)}"
+    return nm
+
+
+def taper_w(d0, d1, bf, tw, tf):
+    return f"{d0:.0f}-{d1:.0f} x {bf:.0f} x {tw:.0f} x {tf:.0f} ({kgm_i(d0, bf, tw, tf):.2f}-{kgm_i(d1, bf, tw, tf):.2f} kg/m)"
+
+
+def angle_kgm(name):
+    b, t_, rz, A = C.ANGLES[name]
+    return A * 100 * 7.85e-3
+
+
+def bar_kgm(d):
+    return 3.14159 * d * d / 4 * 7.85e-3
+
+
 def girder_kg(L, d0, d1, bf, tw, tf):
     """mass of a welded tapered I-member: two flanges + the web at the mean depth (kg)"""
     dm = (d0 + d1) / 2
@@ -420,45 +458,109 @@ def pieces():
     Lc_d1 = col_d(Lc)
     out = [
         ("C1", "COLUMN, FRAMES 2 - 9 (+ SPLICE PLATE CS1)",
-         f"{c0['d0']:.0f}-{Lc_d1:.0f} x {c0['bf']:.0f} x {c0['tw']:.0f} x {c0['tf']:.0f}",
+         taper_w(c0["d0"], Lc_d1, c0["bf"], c0["tw"], c0["tf"]),
          Lc, 16, girder_kg(Lc, c0["d0"], Lc_d1, c0["bf"], c0["tw"], c0["tf"])),
         ("CH1", "COLUMN HEAD, FRAMES 3 - 8 (KNEE, CANOPY ROOT)",
-         f"{CH['d0']:.0f}-{CH['d1']:.0f} x {CH['bf']:.0f} x {CH['tw']:.0f} x {CH['tf']:.0f}", Lh, 12,
+         taper_w(CH["d0"], CH["d1"], CH["bf"], CH["tw"], CH["tf"]), Lh, 12,
          girder_kg(Lh, CH["d0"], CH["d1"], CH["bf"], CH["tw"], CH["tf"])),
         ("CH1A", "COLUMN HEAD, FRAMES 2 AND 9 (+ EAVE-BEAM STUB, GUSSET)", "AS CH1", Lh, 4,
          girder_kg(Lh, CH["d0"], CH["d1"], CH["bf"], CH["tw"], CH["tf"])),
-        ("R1", "RAFTER HAUNCH, FRAMES 3 - 8", f"{haunch_d(k['xt']):.0f}-{h['d1']:.0f} x {h['bf']:.0f} x {h['tw']:.0f} "
-         f"x {h['tf']:.0f}", LR1, 12, girder_kg(LR1, haunch_d(k["xt"]), h["d1"], h["bf"], h["tw"], h["tf"])),
+        ("R1", "RAFTER HAUNCH, FRAMES 3 - 8", taper_w(haunch_d(k["xt"]), h["d1"], h["bf"], h["tw"], h["tf"]),
+         LR1, 12, girder_kg(LR1, haunch_d(k["xt"]), h["d1"], h["bf"], h["tw"], h["tf"])),
         ("R1A", "RAFTER HAUNCH, FRAMES 2 AND 9 (+ GUSSETS GU1)", "AS R1", LR1, 4,
          girder_kg(LR1, haunch_d(k["xt"]), h["d1"], h["bf"], h["tw"], h["tf"])),
-        ("R2", "RAFTER, FRAMES 3 - 8", f"{RAF.d:.0f} x {RAF.bf:.0f} x {RAF.tw:.0f} x {RAF.tf:.0f}", LR2, 12,
+        ("R2", "RAFTER, FRAMES 3 - 8", sec_w(RAF, f"{RAF.d:.0f} x {RAF.bf:.0f} x {RAF.tw:.0f} x {RAF.tf:.0f}"), LR2,
+         12,
          RAF.kg_m * LR2 / 1e3),
         ("R2A", "RAFTER, FRAMES 2 AND 9 (+ GUSSETS GU1)", "AS R2", LR2, 4, RAF.kg_m * LR2 / 1e3),
-        ("CN1", "CANOPY, GRID A, FRAMES 2 - 9", f"{CAN.d:.0f} x {CAN.bf:.0f} x {CAN.tw:.0f} x {CAN.tf:.0f}",
+        ("CN1", "CANOPY, GRID A, FRAMES 2 - 9", sec_w(CAN, f"{CAN.d:.0f} x {CAN.bf:.0f} x {CAN.tw:.0f} x {CAN.tf:.0f}"),
          CAN_A / COS, 8, CAN.kg_m * CAN_A / COS / 1e3),
-        ("CN2", "CANOPY, GRID B, FRAMES 2 - 9", f"{CAN.d:.0f} x {CAN.bf:.0f} x {CAN.tw:.0f} x {CAN.tf:.0f}",
+        ("CN2", "CANOPY, GRID B, FRAMES 2 - 9", sec_w(CAN, f"{CAN.d:.0f} x {CAN.bf:.0f} x {CAN.tw:.0f} x {CAN.tf:.0f}"),
          CAN_B / COS, 8, CAN.kg_m * CAN_B / COS / 1e3),
-        ("MP1", "MONITOR POST, FRAMES 1 - 10", "H 100 x 100 x 6 x 8", 10_950 - 9_899, 20,
-         C.MON.kg_m * 1.05),
-        ("MR1", "MONITOR RAFTER, FRAMES 1 - 10", "H 100 x 100 x 6 x 8", (RIDGE - 10_750) / COS, 20,
+        ("MP1", "MONITOR POST, FRAMES 1 - 10", sec_w(C.MON, "H 100 x 100 x 6 x 8"), 10_950 - 9_899, 20,
+         C.MON.kg_m * (10_950 - 9_899) / 1e3),
+        ("MR1", "MONITOR RAFTER, FRAMES 1 - 10", sec_w(C.MON, "H 100 x 100 x 6 x 8"), (RIDGE - 10_750) / COS, 20,
          C.MON.kg_m * (RIDGE - 10_750) / COS / 1e3),
-        ("EB1", "EAVE BEAM, BAYS 1 - 2 AND 9 - 10", "H 400 x 200 x 8 x 13", BAY - 800, 4,
+        ("EB1", "EAVE BEAM, BAYS 1 - 2 AND 9 - 10", sec_w(C.EAVEB, "H 400 x 200 x 8 x 13"), BAY - 800, 4,
          C.EAVEB.kg_m * (BAY - 800) / 1e3),
-        ("ST1", "STRUT, BRACED BAYS", C.BRACE.name, BAY - 300, 8, C.BRACE.kg_m * (BAY - 300) / 1e3),
-        ("ST2", "EAVE AND RIDGE STRUT", C.STRUT.name, BAY - 300, 27, C.STRUT.kg_m * (BAY - 300) / 1e3),
-        ("BR1", "ROOF BRACING (X)", C.BRACE.name, math.hypot(BAY, 4_500 / COS) - 300, 24,
-         C.BRACE.kg_m * (math.hypot(BAY, 4_500 / COS) - 300) / 1e3),
+        ("ST1", "STRUT, BRACED BAYS", sec_w(C.BRACE), BAY - 300, 8, C.BRACE.kg_m * (BAY - 300) / 1e3),
+        ("ST2", "EAVE AND RIDGE STRUT", sec_w(C.STRUT), BAY - 300, 27, C.STRUT.kg_m * (BAY - 300) / 1e3),
+        ("BR1", "ROOF BRACING (X), TENSION ONLY", sec_w(C.BRACE_L, C.BRACE_L.name.replace("x", " x ")), LBR1, 24,
+         C.BRACE_L.kg_m * LBR1 / 1e3),
     ]
     return out
 
 
+def gable_pieces():
+    """gable frames, grids 1 and 10 (two gables): corner columns, continuous rafter, posts, eave ties"""
+    g, gp, gt = C.GRAF, C.GPOST, C.GTIE
+    zc = F.zt(0.0) - g.d / COS
+    L_raf = (CAN_A + SPAN + CAN_B) / COS
+    out = [("C2", "GABLE CORNER COLUMN, GRIDS 1 AND 10", taper_w(T["C"]["d0"], col_d(zc), T["C"]["bf"], T["C"]["tw"],
+                                                                 T["C"]["tf"]), zc, 4,
+            girder_kg(zc, T["C"]["d0"], col_d(zc), T["C"]["bf"], T["C"]["tw"], T["C"]["tf"])),
+           ("GR1 / GR2", "GABLE RAFTER, CANOPY TO CANOPY (SPLICES GS1 / GS2)",
+            sec_w(g, f"{g.d:.0f} x {g.bf:.0f} x {g.tw:.0f} x {g.tf:.0f}"), L_raf, 2, g.kg_m * L_raf / 1e3)]
+    for mk, xs in (("GP1", (POSTS[0], POSTS[4])), ("GP2", (POSTS[1], POSTS[3])), ("GP3", (POSTS[2],))):
+        L_ = F.zt(xs[0]) - g.d / COS
+        out.append((mk, f"GABLE POST AT {xs[0] / 1e3:g} m" + (f" / {xs[1] / 1e3:g} m" if len(xs) > 1 else ""),
+                    sec_w(gp, f"{gp.d:.0f} x {gp.bf:.0f} x {gp.tw:.0f} x {gp.tf:.0f}"), L_, 2 * len(xs),
+                    gp.kg_m * L_ / 1e3))
+    for Lb, n in ((4_500.0, 4), (4_000.0, 4)):
+        L_ = Lb - gp.bf
+        out.append(("ET1", f"EAVE TIE, {Lb / 1e3:g} m POST BAYS", sec_w(gt, f"{gt.d:.0f} x {gt.bf:.0f} x {gt.tw:.0f} "
+                                                                       f"x {gt.tf:.0f}"), L_, n, gt.kg_m * L_ / 1e3))
+    return out
+
+
+def secondary_pieces():
+    """purlins, girts, sag rods and fly braces (PROPOSED, TBC): numbers from the layouts on 1002 / 2001 / 3001"""
+    pl = D["purlin_layout"]["main"]
+    can = int((CAN_A - 600) // 1_100) + 1 + int((CAN_B - 600) // 1_100) + 1
+    nz = len(D["girt_z"])
+    out = [("PU1", "ROOF PURLIN, 10 m SPANS", sec_w(PU["sec"]), BAY, 2 * len(pl) * NBAY, PU["sec"].kg_m * BAY / 1e3),
+           ("PU2", "CANOPY PURLIN, 10 m SPANS", sec_w(PU2["sec"]), BAY, can * NBAY, PU2["sec"].kg_m * BAY / 1e3),
+           ("GT1", "SIDE-WALL GIRT, 10 m SPANS", sec_w(GT["sec"]), BAY, 2 * nz * NBAY, GT["sec"].kg_m * BAY / 1e3)]
+    pb = [b - a - C.GPOST.bf for a, b in zip((0.0,) + POSTS, POSTS + (SPAN,))]
+    Lg = sum(pb) / len(pb)
+    out.append(("GT2", "GABLE GIRT BETWEEN POSTS (MEAN LENGTH)", sec_w(GT2["sec"]), Lg, 2 * nz * len(pb),
+                GT2["sec"].kg_m * Lg / 1e3))
+    Lr = (PURL_X[-1] - PURL_X[0]) / COS
+    Lw = EAVE - D["girt_z"][0]
+    ws = bar_kgm(SR["d"])
+    out.append(("SR1", "SAG ROD, ROOF (THIRD POINTS)", f"ROUND BAR Ø{SR['d']} {w_txt(ws)}", Lr, 2 * 2 * NBAY,
+                ws * Lr / 1e3))
+    out.append(("SR1", "SAG ROD, SIDE WALLS (THIRD POINTS)", f"ROUND BAR Ø{SR['d']} {w_txt(ws)}", Lw, 2 * 2 * NBAY,
+                ws * Lw / 1e3))
+    for mk, fb, n in (("FB1", FB1, len(FB_X) * 2 * 2 * (NBAY - 1)), ("FB2", FB2, nz * 2 * 2 * (NBAY - 1))):
+        wa = angle_kgm(fb["angle"])
+        out.append((mk, "FLY BRACE, " + ("RAFTER" if mk == "FB1" else "COLUMN") + " (BOTH SIDES)",
+                    f"{fb['angle'].replace('x', ' x ')} {w_txt(wa)}", fb["L"], n, wa * fb["L"] / 1e3))
+    return out
+
+
+LBR1 = math.hypot(BAY, 4_500 / COS) - 2 * D["GU1"]["geo"]["braces"][0]["s_end"]   # angle: end to end
+
+
+ROOF_AREA = LONG * (CAN_A + SPAN + CAN_B)                                 # plan area covered by the roof (mm2)
+
+
 def member_rows():
-    rows, tot = [], 0.0
-    for mk, desc, sec, L, n, kg in pieces():
-        rows.append([mk, desc, sec, f"{L:.0f}", f"{n}", f"{kg:.0f}", f"{n * kg:.0f}"])
-        tot += n * kg
-    rows.append(["", "TOTAL MAIN FRAMING (WITHOUT GABLE FRAMES, CONNECTIONS + 5 %)", "", "", "", "",
-                 f"{tot * 1.05:.0f}"])
+    """TABLE 5: every structural steel member of the building (steel S1.6), net lengths, no laps; connections, plates
+    and bolts as 5 % on the frames; weight per plan area of the roof"""
+    rows, tot = [], {}
+    for grp, items in (("FRAMES", pieces()), ("GABLES", gable_pieces()), ("SECONDARY (PROPOSED - TBC)", secondary_pieces())):
+        rows.append(["", grp, "", "", "", "", ""])
+        s = 0.0
+        for mk, desc, sec, L, n, kg in items:
+            rows.append([mk, desc, sec, f"{L:.0f}", f"{n}", f"{kg:.1f}", f"{n * kg:.0f}"])
+            s += n * kg
+        tot[grp] = s
+    main = tot["FRAMES"] + tot["GABLES"]
+    rows.append(["", "CONNECTIONS, PLATES, BOLTS: 5 % OF THE FRAMES AND GABLES", "", "", "", "", f"{0.05 * main:.0f}"])
+    total = 1.05 * main + tot["SECONDARY (PROPOSED - TBC)"]
+    rows.append(["", f"TOTAL STRUCTURAL STEEL: {total / 1e3:,.1f} t = {total / (ROOF_AREA / 1e6):.1f} kg/m2 OF ROOF "
+                     f"PLAN ({ROOF_AREA / 1e6:,.0f} m2)", "", "", "", "", f"{total:.0f}"])
     return rows
 
 
@@ -487,10 +589,10 @@ def sheet_3001():
                note="FRAMES 2 AND 9: MARKS CH1A, R1A, R2A (BRACED BAYS); OPPOSITE HAND AT GRID B EXCEPT CN2.",
                note_w=200)
     y = top - ph - 28
-    y1 = tbl(ps, FX0 + 4, y, [14, 92, 62, 18, 10, 16, 20],
+    y1 = tbl(ps, FX0 + 4, y, [18, 96, 82, 18, 10, 16, 20],
              ["MARK", "MEMBER", "SECTION (mm)", "LENGTH mm", "No.", "kg EACH", "kg TOTAL"], member_rows(),
              "LLLCCCC", title=TABT("MEMB"))
-    tbl(ps, FX0 + 250, y, [18, 32, 18, 26, 14, 24, 24, 110],
+    tbl(ps, FX0 + 278, y, [18, 32, 18, 26, 14, 24, 24, 110],
         ["MARK", "SEGMENT", "LENGTH mm", "DEPTH mm", "WEB", "OUTER FLANGE", "INNER FLANGE", "REMARKS"],
         plate_rows(), "LLCCCCCL", title=TABT("PLATE"))
 
@@ -563,7 +665,8 @@ def sheet_1002():
     top = FY1 - 10
     px, pw, ph = viewport(ps, "RPLAN", 200, FX0 + 2, top)
     view_title(ps, None, top - ph - 6, "ROOF FRAMING PLAN", "1:200", ("1", "1002"),
-               note="PHANTOM LINES = ROOF BRACING AND STRUTS; DASHED = SAG RODS; HIDDEN = MONITOR ROOF EDGE ABOVE.",
+               note="MEMBERS AT THEIR PROJECTED WIDTH; PURLINS OVER THE RAFTERS, STRUTS AND BRACES (LEFT OUT WHERE "
+                    "COVERED); CHAIN LINES = SAG RODS; HIDDEN = MONITOR ROOF EDGE ABOVE.",
                note_w=220)
     y = top - ph - 34
     tbl(ps, FX0 + 4, y, [16, 80, 52, 56],
@@ -572,14 +675,16 @@ def sheet_1002():
 
 def roof_rows():
     pl = D["purlin_layout"]
-    return [["PU1", "ROOF PURLIN, SIMPLE SPAN 10 m", PU["sec"].name, f"AT {pl['spacing_slope']:.0f} mm ON SLOPE - TBC"],
-            ["PU2", "CANOPY PURLIN", PU2["sec"].name, "AT ABOUT 1100 mm - TBC"],
-            ["GT1", "SIDE-WALL GIRT, SIMPLE SPAN 10 m", GT["sec"].name, "AT 1500 mm - TBC"],
-            ["GT2", "GABLE GIRT, BETWEEN POSTS", GT2["sec"].name, "AT 1500 mm - TBC"],
-            ["SR1", "SAG ROD AT THIRD POINTS", f"ROUND BAR Ø{SR['d']}", "THREADED BOTH ENDS - TBC"],
-            ["FB1 / FB2", "FLY BRACE, RAFTER / COLUMN", f"{FB1['angle']} / {FB2['angle']}", "SEE 5003 - TBC"],
-            ["BR1", "ROOF X-BRACING", C.BRACE.name, "BAYS 1 - 2 AND 9 - 10"],
-            ["ST1 / ST2", "STRUTS: BRACED BAYS / EAVE AND RIDGE", f"{C.BRACE.name} / {C.STRUT.name}", ""]]
+    return [["PU1", "ROOF PURLIN, SIMPLE SPAN 10 m", sec_w(PU["sec"]), f"AT {pl['spacing_slope']:.0f} mm ON SLOPE - TBC"],
+            ["PU2", "CANOPY PURLIN", sec_w(PU2["sec"]), "AT ABOUT 1100 mm - TBC"],
+            ["GT1", "SIDE-WALL GIRT, SIMPLE SPAN 10 m", sec_w(GT["sec"]), "AT 1500 mm - TBC"],
+            ["GT2", "GABLE GIRT, BETWEEN POSTS", sec_w(GT2["sec"]), "AT 1500 mm - TBC"],
+            ["SR1", "SAG ROD AT THIRD POINTS", f"ROUND BAR Ø{SR['d']} {w_txt(bar_kgm(SR['d']))}", "THREADED BOTH ENDS - TBC"],
+            ["FB1 / FB2", "FLY BRACE, RAFTER / COLUMN", f"{FB1['angle']} {w_txt(angle_kgm(FB1['angle']))}", "SEE 5003 - TBC"],
+            ["BR1", "ROOF X-BRACING, TENSION ONLY", sec_w(C.BRACE_L, C.BRACE_L.name.replace("x", " x ")),
+             "BAYS 1 - 2 AND 9 - 10; BACK TO BACK AT THE CROSSING"],
+            ["ST1", "STRUT, BRACED BAYS", sec_w(C.BRACE), ""],
+            ["ST2", "STRUT, EAVE AND RIDGE", sec_w(C.STRUT), ""]]
 
 
 def sheet_2001():
@@ -642,6 +747,9 @@ def bolt_rows():
         r = D[k]
         rows.append([k, f"M{r['db']} x {bolt_len(r['db'], r['tk'] + D['GU1']['tg'])}", "8.8 / NUT 8 / 1 WASHER",
                      f"{r['n'] * n}", f"{r['hole']}", "SNUG TIGHT"])
+    r = D["BR1"]
+    rows.append(["BR1 X", f"M{r['db']} x {bolt_len(r['db'], 2 * r['tk'] + D['GU1']['tg'])}", "8.8 / NUT 8 / 1 WASHER",
+                 "12", f"{r['hole']}", "SNUG TIGHT"])
     rows.append(["MB1", f"M{D['MB1']['db']} x {bolt_len(D['MB1']['db'], D['MB1']['tp'] + C.RAF.tf)}",
                  "8.8 / NUT 8 / 1 WASHER", f"{4 * 20}", "18", "SNUG TIGHT"])
     rows.append(["POST TOP", f"M16 x {bolt_len(16, 12 + C.GRAF.tf)}", "8.8 / NUT 8 / 1 WASHER", "40", "18", "SNUG TIGHT"])
@@ -673,8 +781,10 @@ def sheet_5003():
     top = FY1 - 10
     px, pw, ph = viewport(ps, "BRN", 10, FX0 + 2, top)
     view_title(ps, None, top - ph - 6, "BRACED-BAY NODE: BR1 / ST1 ON GUSSET GU1 (ROOF PLANE)", "1:10", ("1", "5003"),
-               note="ST2 (EAVE AND RIDGE STRUTS) SIMILAR: 3 BOLTS, KNIFE PL AS TABLE 8; AT THE EAVE ON A FIN PL "
-                    "WELDED TO THE COLUMN WEB.", note_w=150)
+               note="BR1: ONE BRACE OF EACH X ON TOP OF THE GUSSETS, THE OTHER BELOW; AT THE CROSSING BACK TO BACK, "
+                    f"1-M20 THROUGH A PACKING PL {D['GU1']['tg']:.0f}; TENSION ONLY, INSTALL TAUT. ST2 (EAVE AND RIDGE "
+                    "STRUTS) SIMILAR TO ST1: 3 BOLTS, KNIFE PL AS TABLE 8; AT THE EAVE ON A FIN PL WELDED TO THE "
+                    "COLUMN WEB.", note_w=150)
     y2 = top - ph - 36
     qx, qw, qh = viewport(ps, "PSEC", 10, FX0 + 2, y2)
     view_title(ps, None, y2 - qh - 6, "SECTION AT A FLY-BRACED PURLIN (GIRTS AND FB2 SIMILAR)", "1:10",
