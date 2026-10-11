@@ -11,6 +11,10 @@ made.
 
 Every set is a script, and its drawings are rebuilt from it. Nothing is drawn by hand in CAD.
 
+On a project (`PROJECT_WORKFLOW.md`) the job lives in the project's `04 Code\drawings`, reads its values from
+`04 Code\project.py` and the calc outputs in `05 Calculation`, builds into `06 CAD\out`, and each review print is
+copied, dated, to `07 Review`. The examples in `jobs/` keep everything in the job folder.
+
 | Step | File (pattern) | Rule |
 |---|---|---|
 | 1. **Design / data** | `calc_*.py` or a member catalogue (`members.py`) | The **single source** of every size, length, force, weld and bolt. The drawings never retype a number; notes and tables quote the calc |
@@ -21,6 +25,7 @@ Every set is a script, and its drawings are rebuilt from it. Nothing is drawn by
 | 6. **Plot** | `plot.py` | AutoCAD Core Console to PDF and DWG, plus one DWG per detail block. Finishes with `font check OK` |
 | 7. **Test** | `pytest -q` at the repository root | Builds every job without AutoCAD; fails on any `!!`, a non-zero exit or a DXF audit error |
 | 8. **Review** | The user reviews the PDF | Every correction is fixed in the job **and** written into the rules (see `AGENTS.md`, "How the rules grow") |
+| 9. **Issue** (projects) | Copy to a new `09 Publish\YYYYMMDD - <set> Rev <R> - <purpose>\` folder | Only when the engineer decides; register and transmittal; never edited afterwards (`PROJECT_WORKFLOW.md` W4, stage S8) |
 | 9. **Issue** (standard sets) | `standard_drawings/publish.py <set> [--issue]` | Review copies go to `standard_drawings/developing/`; an official issue (the user's decision) to `standard_drawings/issued/` with the register (`standard_drawings/README.md`) |
 
 ## 2. How the drawings are built (engine `drafter/td_engine.py`)
@@ -146,7 +151,7 @@ it even when AutoCAD is there. For a quick look at any single DXF, run
   `encoding="utf-8", newline="\n"`.
 - Use a Python that has `ezdxf` installed (a venv with `requirements.txt`), not a bare system interpreter.
 - The PDF may be open in a viewer while you rebuild. Write review copies under another name instead of fighting the
-  file lock.
+  file lock: on a project, the dated copy in `07 Review` is the one the engineer opens.
 - Give a job's `plot.py` an **absolute** output folder: the Core Console script is written there and a relative path
   is not found ("_plot.scr can't find", BANWA2).
 - The ezdxf plot draws viewport linetypes solid: judge dashed, hidden and chain lines on the AutoCAD plot.

@@ -123,7 +123,8 @@ A whole ground floor is too big to write and check in one go, so it is divided i
 
 ## 3. The flow of one zone
 
-Script: `<project>\Drafter\scripts\ground_model.py` (project folder, rule M9); `build <zone>` is the dry run,
+Script: `<project>\Drafter\scripts\ground_model.py` (BANWA 2 project folder, rule M9; in a project made from the
+office template: `04 Code\model\`); `build <zone>` is the dry run,
 `write <zone> "<key>"` the write. Inputs: the pile layout (`ground/layout_r7.json`), the zones
 (`ground/zones_r3.json`) and a snapshot of the live model.
 
@@ -364,6 +365,10 @@ The ground floor has 76 655 plates. The read-back of every stage passed:
 - nothing outside the stage changed.
 
 ## 10. Scripts (in the project folder `Drafter\scripts\`)
+
+BANWA 2 was started before the office project template. In a new project these scripts belong in `04 Code\model\`,
+the snapshots in `03 FEA\snapshots\rNN\` and the zone or stage revisions in `03 FEA\MODEL_LOG.md`
+(`docs/general/PROJECT_WORKFLOW.md`).
 
 | Script | Role |
 |---|---|

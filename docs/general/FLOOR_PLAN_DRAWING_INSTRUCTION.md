@@ -29,7 +29,8 @@ Samutsongkram Building Office\Drafter`). Its review of 04/10/2026 is the source 
 
 ## FP0. Project settings: decide first, keep in one place
 
-Every value below is **project data**: it lives in the job's `project.py` (SSK: `Drafter\project.py`) and nothing
+Every value below is **project data**: it lives in the project's `04 Code\project.py` and is summarised in
+`PROJECT.md` §3 (`PROJECT_WORKFLOW.md`; SSK, started before the template: `Drafter\project.py`), and nothing
 else retypes it. Ask the engineer for any value the project has not fixed.
 
 | Setting | SSK value | Rule |

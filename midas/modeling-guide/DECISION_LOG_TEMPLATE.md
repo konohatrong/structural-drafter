@@ -1,6 +1,6 @@
 # Decision Log Template
 
-Copy this file into the project folder at the start of modelling. Every answer here is a
+Copy this file into the project's `03 FEA\` folder (`docs/general/PROJECT_WORKFLOW.md`) at the start of modelling. Every answer here is a
 modelling rule; the scripts should read or quote it, and each review sheet should list the
 ones it depends on. Right-hand column: the fire-station (Building B) answers, 2026-09.
 

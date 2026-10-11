@@ -78,6 +78,8 @@ A write changes the user's open model at once, with no undo through the API.
    and the open model continues in it, so the earlier file keeps the state before the write; `POST /doc/SAVE` after
    the read-back stores the change (user rule, 2026-10-07: "save model as new RXX (XX - revision)"; BANWA 2
    `..._r21` -> `BANWA2_underground_tank_walls_r22.mgbx` before the tank walls). Never overwrite an existing file.
+   In a project folder the revision is `<CODE>_rNN_<what>.mgbx` in the GEN NX working folder (`paths.FEA_RUN`),
+   with its row in `03 FEA\MODEL_LOG.md` (M9).
 3. **Never blind-`PUT` or `DELETE` a table you do not wholly own.** Read, merge your own items, write back:
    - `PUT /db/BMLD` **replaces** an element's whole `ITEMS` list: read-merge or you delete the user's other loads;
    - `PUT /db/GRUP` **merges** `E_LIST`: to remove members, delete the group and put it again (or have the user
@@ -189,10 +191,16 @@ PDFs does not extract cleanly, so render the pages and read them as images (`01`
 
 ## M9. Where project data lives
 
-- New projects use the office project structure (`docs/general/PROJECT_WORKFLOW.md`): milestone models, read-back
-  snapshots and exported results by model revision in `03 FEA`, GEN NX runs in a local folder (`paths.FEA_RUN`).
-- Project inputs, intermediate JSON, review sheets, backups and reports belong to the **project folder** (as the SSK
-  drafting job lives in `<project>\Drafter\`), not to this repository. Set `MG_WORKDIR` for the archived scripts.
+- Project inputs, intermediate JSON, review sheets, backups and reports belong to the **project folder**, not to
+  this repository. New projects use the office structure (`docs/general/PROJECT_WORKFLOW.md`):
+  - model scripts in `04 Code\model\`, taking the model revision as an argument;
+  - GEN NX runs in a local folder (`paths.FEA_RUN`): the result files reach several GB per run;
+  - one row per revision in `03 FEA\MODEL_LOG.md`; the milestone `.mgbx` copied to `03 FEA\models\`;
+  - read-back snapshots in `03 FEA\snapshots\rNN\`, the JSON backups before a write in the snapshot folder of
+    the revision they protect, exported results in `03 FEA\results\rNN\`;
+  - the decision log (`modeling-guide/DECISION_LOG_TEMPLATE.md`) in `03 FEA\`.
+- Projects started before the template keep their folders (SSK and BANWA 2: `<project>\Drafter\`). Set
+  `MG_WORKDIR` for the archived scripts.
 - MIDAS model files (`.mgb`, `.mcb`), exported MCT text and result dumps are not committed.
 - A reusable tool graduates into this folder (`midas/tools/`) with tests that run without GEN NX (a dry run that
   builds the payloads, `CONVENTIONS.md` A6).

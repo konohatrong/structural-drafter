@@ -21,6 +21,10 @@ Reference jobs:
 
 ## Before you start
 
+- **A real project** has its folder from the office template (`project_template\new_project.py`,
+  `docs/general/PROJECT_WORKFLOW.md`): read its `STATUS.md` and `PROJECT.md` first. The drawing job goes in
+  `04 Code\drawings`, the project data in `04 Code\project.py`, review prints in `07 Review`.
+
 1. Read `AGENTS.md`, then `docs/general/` (drawing standard, annotation guide, symbols, production).
 2. Read `docs/concrete/README.md`, which describes the RC presentation approach, then
    `docs/concrete/RC_DRAWING_RULES_EIT-011006-19.md` (bar graphics and notation §12, required content §14 – §15,

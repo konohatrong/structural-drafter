@@ -70,6 +70,10 @@ Fix the disagreement in the documents, not only in one drawing.
 
 ## 2. Workflow
 
+0. **Project folder.** A real project has its own folder, created from the office template
+   (`python project_template\new_project.py`, `docs/general/PROJECT_WORKFLOW.md`). Read its `STATUS.md` first and
+   update it at the end. Its code lives in `04 Code` (the drawing job in `04 Code\drawings`), its outputs in the
+   numbered folders. New projects are not added to this repository; `jobs/` holds the worked examples.
 1. **Data first.**
    - Every size, length, force, weld and bolt comes from one source: the design calc (`calc_*.py`) or the member
      catalogue.
@@ -88,7 +92,8 @@ Fix the disagreement in the documents, not only in one drawing.
    - The checks do not see readability.
 6. **Plot** with AutoCAD (`plot.py`) and confirm `font check OK`.
 7. **Test.** Run `pytest -q` at the repository root.
-8. **Report** honestly: what changed, what was verified, what is still assumed or open. Send the review PDF.
+8. **Report** honestly: what changed, what was verified, what is still assumed or open. Send the review PDF (on a
+   project, a dated copy in `07 Review`).
 
 ## 3. How the rules grow
 
@@ -129,6 +134,10 @@ The rules come from the user's reviews of real sets. When the user corrects a dr
 - **Official issue of a standard drawing is the engineer's decision.** Publish review copies to
   `standard_drawings/developing/` freely; run `publish.py <set> --issue` only when the user asks for the issue.
   Never edit, replace or delete anything in `standard_drawings/issued/`.
+- **Project folders** follow `docs/general/PROJECT_WORKFLOW.md`: `01 Transfer in` and `09 Publish` are never edited;
+  design values are typed once in `04 Code\project.py` after the engineer approves the design basis; every output
+  names its model revision. An issue to `09 Publish` is the engineer's decision, as for the standard sets. Projects
+  started before the template (SSK, BANWA 2, SPF) keep their folders.
 - **Shared code is in `drafter/`.** `td_engine.py` (the engine), `pens.py` and `steel.py` are imported by every
   current set, so a change there is a change to all of them. Job folders hold only the job's own data, views and
   sheets.
@@ -148,6 +157,7 @@ From the repository root, in PowerShell:
 
 ```powershell
 pip install -r requirements.txt                       # ezdxf, fonttools, pymupdf, matplotlib, numpy
+python project_template\new_project.py "<name>" --code <PPPP> --root "G:\My Drive\Works\##2026" --fea-local D:\Workspace
 $env:PYTHONIOENCODING = "utf-8"
 python jobs\steel_roof_truss\build.py                 # these write to the job's own out folder
 python jobs\steel_roof_truss\plot.py --ezdxf

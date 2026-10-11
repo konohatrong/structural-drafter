@@ -20,6 +20,11 @@ frame - roof plans, key sections, typical elevations, welded joints, posts throu
 
 ## Before you start
 
+- **A real project** has its folder from the office template (`project_template\new_project.py`,
+  `docs/general/PROJECT_WORKFLOW.md`): read its `STATUS.md` and `PROJECT.md` first. The calc goes in
+  `04 Code\calc`, the drawing job in `04 Code\drawings`, model results come from `03 FEA\results\rNN`, and every
+  output names the model revision it used.
+
 0. Read `AGENTS.md`, `docs/general/` (drawing standard, annotation guide, symbols, production) and
    `docs/steel/README.md`, which describes the steel presentation approach.
 1. Read `docs/steel/STEEL_DETAILING_INSTRUCTION.md`. Its rules S1-S11 (with S9A fly bracing) say what the drawings must
@@ -59,7 +64,8 @@ frame - roof plans, key sections, typical elevations, welded joints, posts throu
    - Then plot with AutoCAD.
    - Fix every `!!` warning; do not suppress them.
 5. **Tests**: run `python -m pytest -q` at the repo root (`tests/test_build.py` builds every set).
-6. If the job is shared, save review PDFs as scratch copies (the user may have `out\*.pdf` open in a viewer).
+6. Review PDFs: on a project, a dated copy in `07 Review` (`docs/general/PROJECT_WORKFLOW.md`); never overwrite the
+   build output the user may have open (`out\*.pdf` in a viewer).
 
 ## Office drawing rules (user, 2026-10-03)
 

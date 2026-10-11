@@ -66,6 +66,11 @@ live GEN NX model, first zone by zone (r27 - r33), then rebuilt in stages from t
 
 Method: `modeling-guide/08_PILE_SUPPORTED_FLAT_SLAB.md` §2A.
 
+## Project folders
+
+A project's model scripts, models, snapshots and results live in its project folder, not here: the office structure
+is `docs/general/PROJECT_WORKFLOW.md` (`03 FEA` by model revision, scripts in `04 Code\model`), rule M9.
+
 ## Relation to the drawing work
 
 The same drawings feed both sides. The floor-plan work (`docs/general/FLOOR_PLAN_DRAWING_INSTRUCTION.md`, job SSK)
