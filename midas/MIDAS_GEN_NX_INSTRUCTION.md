@@ -189,6 +189,8 @@ PDFs does not extract cleanly, so render the pages and read them as images (`01`
 
 ## M9. Where project data lives
 
+- New projects use the office project structure (`docs/general/PROJECT_WORKFLOW.md`): milestone models, read-back
+  snapshots and exported results by model revision in `03 FEA`, GEN NX runs in a local folder (`paths.FEA_RUN`).
 - Project inputs, intermediate JSON, review sheets, backups and reports belong to the **project folder** (as the SSK
   drafting job lives in `<project>\Drafter\`), not to this repository. Set `MG_WORKDIR` for the archived scripts.
 - MIDAS model files (`.mgb`, `.mcb`), exported MCT text and result dumps are not committed.

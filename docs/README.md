@@ -26,6 +26,7 @@ the documents rather than in one drawing.
 | `general/FLOOR_PLAN_DRAWING_INSTRUCTION.md` | Structural plans (pile, foundation, floor, roof, steel roof framing) on A1 project sheets: project settings, plan set and sheets, plot style and pens, linetypes and LTSCALE, layers, text (font per project), dimension style, grid, what a plan shows (beam brackets, steel double lines, posts, tie rods, purlins beside posts), marks and tags, levels, dimensions, AR background and overlay check, checklist, open decisions |
 | `general/DRAWING_ENGINE.md` | The shared engine (`drafter/td_engine.py`): model space and blocks, title block, linetypes and pens, the functions a job calls, opt-in options, checks, working in AutoCAD, pitfalls |
 | `general/DRAWING_PRODUCTION.md` | The pipeline (calc → engine → views → build → look → plot → test → review), the engine, the `!!` checks, requirements, commands, plotting without AutoCAD, environment pitfalls |
+| `general/PROJECT_WORKFLOW.md` | A project as a whole: the project folder structure (template `project_template/`, created by `new_project.py`), the three revision counters, the stages from received drawings to issue and calculation note, sessions, handover |
 
 ### concrete/
 

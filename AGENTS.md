@@ -9,6 +9,7 @@ to the Thai drafting standard EIT 011006-19 and the office conventions. It has t
 | **Toolkit** | `drafter/` | The drafting engine (`td_engine.py`), pens (`pens.py`), steel helpers (`steel.py`), font metrics, plotting |
 | **Worked examples** | `jobs/` | Complete sets built with the rules, and the record of how the rules were developed. Catalogue: `jobs/README.md` |
 | **Standard drawings** | `standard_drawings/` | The office standard sets (general notes, typical details) as plotted output: `developing/` review copies (local) and `issued/` official revisions (in git), with the issue register. Rules: `standard_drawings/README.md` |
+| **Project template** | `project_template/` | The folder structure of a new project (Transfer in, design basis, FEA, code, calculation, CAD, review, report, publish) and `new_project.py`, which creates it. Workflow: `docs/general/PROJECT_WORKFLOW.md` |
 | **MIDAS GEN NX** | `midas/` | Driving the analysis program through its API (MAPI): building the model from the structural DXF, loads, analysis, results, calculation report, plug-ins. Not used by the drawing toolkit. Start: `midas/MIDAS_GEN_NX_INSTRUCTION.md` |
 
 ## 1. Reading order for any drawing task
@@ -39,6 +40,7 @@ Fix the disagreement in the documents, not only in one drawing.
 
 | Task | Read |
 |---|---|
+| Start a new project (folders, stages, revisions, handover) | `docs/general/PROJECT_WORKFLOW.md`; create it with `project_template/new_project.py` |
 | Start a new set or job | `jobs/README.md` §3, the closest job's README, `DRAWING_PRODUCTION.md` §1, `DRAWING_ENGINE.md` §1 |
 | Engine functions, blocks, title block, AutoCAD workflow | `DRAWING_ENGINE.md` |
 | Sheet, title block, revision, drawing number | EIT §3, §13, §19.1 |

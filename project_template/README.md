@@ -1,0 +1,16 @@
+# Project template
+
+The office folder structure for a new structural project, and the script that creates it. The workflow that goes with
+it is `docs/general/PROJECT_WORKFLOW.md`.
+
+```powershell
+python project_template\new_project.py "BANWA 3" --code BW3 --root "G:\My Drive\Works\##2026" --fea-local D:\Workspace
+```
+
+| File | What it is |
+|---|---|
+| `new_project.py` | Copies `tree\` to `<root>\YYYYMMDD - <name>\`, fills the placeholders, creates the empty folders, makes `04 Code` a git repository. Never writes into an existing folder |
+| `tree\` | The template. Edit it here to change every future project |
+
+Placeholders in the template files: `{{PROJECT}}`, `{{CODE}}`, `{{DATE}}`, `{{DATE_TEXT}}`, `{{DRAFTER}}` (this
+repository), `{{FEA_RUN}}` (the GEN NX working folder). `04 Code\gitignore.txt` becomes `.gitignore`.

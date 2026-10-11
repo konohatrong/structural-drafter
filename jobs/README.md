@@ -53,6 +53,10 @@ not in the repository. Rebuild it with the commands in
 
 ## 3. Starting a new job
 
+A real project starts with its project folder (`python project_template/new_project.py`, workflow in
+`docs/general/PROJECT_WORKFLOW.md`); the drawing job then lives in its `04 Code\drawings\`. The steps below set up
+the job itself.
+
 1. Pick the closest job above and copy its structure: `calc_*.py` (if there is a design), `*_engine.py`,
    `*_sheets.py`, `build.py`, `plot.py`.
 2. Import the engine from `drafter/` (`td_engine`, and `steel` for steel) as `srt_engine.py` does; never copy it.

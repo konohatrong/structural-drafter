@@ -1,0 +1,22 @@
+# Code only: outputs live in the numbered project folders
+__pycache__/
+*.pyc
+.pytest_cache/
+.venv/
+out/
+*.dxf
+*.dwg
+*.pdf
+*.png
+*.bak
+*.log
+*.scr
+*.mgb
+*.mgbx
+*.GAX1
+*.XOUT
+
+# Never store the MAPI key
+*.key
+mapi_key*
+.env
