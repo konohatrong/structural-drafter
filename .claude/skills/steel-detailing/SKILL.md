@@ -104,6 +104,10 @@ The rules and their reasons are written in `docs/steel/STEEL_DETAILING_INSTRUCTI
 
 ## Environment pitfalls
 
+- Python run from the Bash tool loses backslashes even in a quoted heredoc (`\\2026` became `\x82`): write the
+  patch script to a file and run it, or use `chr(92)`; scan edited files for control characters.
+- A project drawn by several sessions: rebuild every set before a merged print, the drawing list S0-01 last (read
+  from the title blocks); issue step by step (`docs/general/PROJECT_WORKFLOW.md` W4.1).
 - **Do not edit source files with PowerShell `Get-Content` / `Set-Content`.** Windows PowerShell 5.1 reads them in
   the Thai ANSI codepage (cp874) and corrupts ≥ ° Ø Ψ µ. Edit with the Edit tool or a Python script that uses
   `encoding="utf-8", newline="\n"`.

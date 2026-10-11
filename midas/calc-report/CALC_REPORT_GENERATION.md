@@ -372,6 +372,9 @@ Reference scripts (scratchpad, 2026-09):
 **Word output**
 - **Complex-script font:** set the `w:cs` font on runs, or Thai falls back to another font.
 - **Section loss:** keep the final `sectPr`; it holds the header reference.
+- **Blank pages:** start each main section with `page_break_before` on its Heading 1, never a page-break paragraph: when the page before is full, the break paragraph lands on its own page (FSK note A2, engineer's review 11/10/2026: "BLANK PAGE??? DELETE").
+- **Content in a cover-sheet box:** a vertically merged cell with exact row heights clips everything past its first row, and switching the rows to "at least" doubles the box and pushes the sheet onto a second page. Un-merge the rows (inner borders `nil`), put one line per row, and add a picture as a floating `wp:anchor` (FSK note A5, engineer's stamp in SPECIALIST STAMP, 11/10/2026).
+- **No placeholders in a review copy:** a value still missing goes to the project's `STATUS.md`, not as highlighted text in the note (same review: "delete highlighted").
 
 **Loads**
 - **Factored gravity is 1.4D + 1.7L** (Ministerial Regulation B.E. 2566, Clause 7), not

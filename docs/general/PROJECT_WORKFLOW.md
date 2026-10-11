@@ -33,7 +33,7 @@ YYYYMMDD - <name>\
 ├─ 00 Admin\             proposal, contract, scope, minutes, correspondence
 ├─ 01 Transfer in\       everything received, dated folders, RECEIVED.md          (never edited)
 ├─ 02 Design basis\      DESIGN_BASIS.md, load maps, soil data, approvals
-├─ 03 FEA\               MODEL_LOG.md; models\ snapshots\rNN\ results\rNN\
+├─ 03 FEA\               MODEL_LOG.md, DECISION_LOG.md; input\ models\ snapshots\rNN\ results\rNN\
 ├─ 04 Code\              git: project.py, paths.py, model\ calc\ drawings\ report\  (no outputs)
 ├─ 05 Calculation\       calc outputs, check sheets data, spreadsheets, hand checks
 ├─ 06 CAD\               xref\ working\ out\
@@ -88,6 +88,27 @@ Every calc output, review print, report and issue names its **basis**: the model
 Stages overlap in practice (foundations drawn while the roof is still being designed). The gates do not: nothing is
 issued on a basis the engineer has not approved, and engineering decisions are the engineer's (AGENTS.md §4).
 
+### W4.1 Issue (stage S8) step by step
+
+User, 2026-10-12 (CHATAM: "publish this revision", answered "A, 12/10/26, FOR REVIEW", "PDF only"). An issued folder
+is frozen, so everything printed on the sheets is settled **before** the copy:
+
+1. **Ask what the revision row says**: revision, date, purpose (FOR REVIEW / FOR APPROVAL / FOR CONSTRUCTION) and the
+   contents (PDF only, or PDF + DWG with fonts and CTB). The row is set once in the project's engine (CHATAM
+   `ch_engine.REV`), dated the **issue** day, not the day the set was started.
+2. Rebuild and plot **every** set with that row, the drawing list last (`DRAWING_PRODUCTION.md` §1.1); a clean build
+   (no `!!`) and the AutoCAD plot.
+3. Check each page before copying: the revision row and date on every sheet, the drawing list against the sheets.
+4. Create `09 Publish\YYYYMMDD - <set> Rev <R> - <purpose>\PDF\`: the merged set (bookmarked) and one PDF per sheet
+   named `<CODE>-ST <No.> Rev <R> - <title>.pdf`. The script refuses to run when the folder exists.
+5. `TRANSMITTAL.md`: date, issue and purpose, **to whom ("not sent yet" until the engineer sends it)**, the basis (model
+   revision and the date of the inputs), the sheet list, the open items still TBC on the sheets.
+6. One row per sheet in `ISSUE_REGISTER.csv` the same day; a log row in `STATUS.md`.
+7. From then on the next changes are internal revisions (`B1`, `B2` … review prints) and the next issue is `B`.
+
+If the copy fails half way within the same minute, the half-written files are yours: remove them and rerun the
+script (CHATAM: a "/" in a sheet title). A folder that was complete is never touched again.
+
 ## W5. Every working session
 
 1. **Start**: read `STATUS.md` (decisions waiting, next steps). Check `RECEIVED.md` for anything new.
@@ -103,6 +124,20 @@ issued on a basis the engineer has not approved, and engineering decisions are t
 2. commit `04 Code`;
 3. name in `STATUS.md` the model revision that is live in GEN NX and whether it has been analysed.
 
+### W6.1 Several sessions at once
+
+On CHATAM (12/10/2026) four sessions worked on one project folder at the same time (model and reactions, RC
+schedules, foundation and caps, stair and pool). What kept them apart:
+
+- **One owner per module**: each session names the files it owns in its `STATUS.md` rows; a session that must change
+  another's module (an engineer's instruction that crosses sets) reads it again first, keeps the other's changes, and
+  sends the owner the list of what changed.
+- **Engineer's decisions as data in `04 Code\project.py`**, read by every set (CHATAM `CAP_TOP`, `CAP_TOP_AT`,
+  `CAP_PILES_ADD`, `POOL_SLAB`): the RC schedule, the foundation plan and the cap details then follow without editing
+  each other's code.
+- **`STATUS.md` rows appended**, never rewritten; written with literal backslashes (`DRAWING_PRODUCTION.md` §8).
+- **Before a merged print or an issue, rebuild every set** (`DRAWING_PRODUCTION.md` §1.1).
+
 A work-transfer package (as BANWA 2 received on 09/10/2026) is received into `01 Transfer in` like any other input,
 and is reviewed before anything from it is adopted.
 
@@ -114,9 +149,23 @@ and is reviewed before anything from it is adopted.
 
 ## W8. Existing projects
 
-Projects started before this template (SSK, BANWA 2, SPF) keep their folders; moving them would break the paths in
-their scripts and READMEs. Apply W2 – W5 to new work in them where it does not mean moving files, and use the template
-for every new project.
+Projects with scripts of their own (SSK, BANWA 2, SPF) keep their folders; moving them would break the paths in their
+scripts and READMEs. Apply W2 – W5 to new work in them where it does not mean moving files, and use the template for
+every new project.
+
+A project kept in the earlier office folders (CAD, Calculation, Transfer in, Transfer out) and with no scripts is
+brought into the structure in place when the engineer asks:
+
+```powershell
+python project_template
+ew_project.py --adopt "<project folder>" --code <PPPP> --fea-local D:\Workspace
+```
+
+The old folders are renamed (Transfer in → `01`, Calculation → `05`, CAD → `06`, Transfer out → `09 Publish`), the
+missing folders and files are added, nothing is deleted or written over, and the project folder keeps its name. A
+folder outside the structure is listed and left for the engineer to place (CHATAM HOTEL, 11/10/2026: `Revit` moved to
+`06 CAD\Revit`). Xrefs in the same folder still resolve after the rename; a link by full path (Revit, a DWG xref
+with a full path) is reloaded once.
 
 ## W9. Where the rules came from
 

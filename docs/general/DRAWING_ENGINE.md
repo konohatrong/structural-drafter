@@ -235,3 +235,12 @@ or an area gets one horizontal leader at its height; a target on a horizontal li
   preview showed it centred. Write such fields as single-line TEXT (or attributes) centred on the cell, from the
   project data, and check the title block in the **AutoCAD** PDF; centre every value in its cell (user, 2026-10-07:
   "adjust title block text alignment"; BANWA2 `bw_engine.define_title_block`).
+- **A fine hatch drawn straight on the sheet plots solid grey in AutoCAD** (CHATAM legend, 2026-10-12): the sheets sit
+  in model space far apart, and a pattern at a paper-size scale (AR-CONC 0.02, ANSI31 at 0.35 mm) is too dense for
+  those extents, so AutoCAD drops the pattern and fills the boundary; the ezdxf preview shows it right. Draw a legend
+  sample at the view scale inside a small block and insert it at 1 / scale, as the plans themselves are drawn
+  (CHATAM `ch_sheets.hatch_sample`), and judge every hatch on the AutoCAD PDF.
+- **AutoCAD refuses the DXF: "non-unique entity handle"** (CHATAM detail set, 2026-10-12): a dimension style whose
+  arrow block (`_DOT`, `_ARCHTICK` ...) was never used by a dimension gets that block made by ezdxf while it writes
+  the DIMSTYLE table, after `$HANDSEED` is written, so the new handles lie above the seed. Create the arrow blocks of
+  every dimension style before the save (`ezdxf.render.arrows.ARROWS.create_block`; CHATAM `build.py`).

@@ -70,6 +70,10 @@ Reference jobs:
 
 ## Environment pitfalls
 
+- Python run from the Bash tool loses backslashes even in a quoted heredoc (`\\2026` became `\x82`): write the
+  patch script to a file and run it, or use `chr(92)`; scan edited files for control characters.
+- A project drawn by several sessions: rebuild every set before a merged print, the drawing list S0-01 last (read
+  from the title blocks); issue step by step (`docs/general/PROJECT_WORKFLOW.md` W4.1).
 - Never edit source files with PowerShell `Get-Content` / `Set-Content` (cp874). Use the Edit tool or Python with
   `encoding="utf-8", newline="\n"`.
 - Use a Python with `ezdxf` (a venv from `requirements.txt`).

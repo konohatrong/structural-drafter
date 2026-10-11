@@ -111,3 +111,4 @@ Add one line per new technique or pitfall, with the date and the guide it was fo
 | 2026-10-08 | Staged build over the whole floor (beams → outlines → piles → slab by region → drops / strip → links); no seams | 08 §2A |
 | 2026-10-08 | Local refinement: pre-split the drop / strip outline at 0.20 in a 0.40 slab; drops 0 % under 45 deg (0.40: 11 %) | 08 §2A, 06 §4.1 |
 | 2026-10-08 | Pre-split with ceil(L / size); re-read NODE after each mesh call; compare coordinates at 4 decimals | 08 §2A |
+| 2026-10-12 | 2-D frame from a calc script (BCR carports): `STYP` 1 (X-Z plane), `MATL` from the database (`P_TYPE` 1, `JIS(S)` / `STK400`, E 205 GPa), CHS as `DBUSER` shape `P` with `vSIZE` [D, t], purlin loads as `CNLD`, steel combinations `LCOM-STEEL` with `ANAL` `ST`; base reactions checked against the calc's own solver (project `04 Code\model\build_model.py`) | MIDAS instruction M10 |

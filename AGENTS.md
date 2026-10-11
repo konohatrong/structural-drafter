@@ -148,7 +148,10 @@ The rules come from the user's reviews of real sets. When the user corrects a dr
 - **Copyright**: no standards PDFs, handbooks or other offices' details in the repository; only digests and short
   extracts with page references.
 - **Encoding**: never edit source files with Windows PowerShell `Get-Content` / `Set-Content` (cp874 corrupts ≥ ° Ø).
-  Use an editor or Python with `encoding="utf-8"`.
+  Use an editor or Python with `encoding="utf-8"`. Python run from the Bash tool loses backslashes in the text it
+  writes: write the patch script to a file, or use `chr(92)`, and scan for control characters (`DRAWING_PRODUCTION.md` §8).
+- **Several sessions on one project**: one owner per module; re-read before editing another's file and tell its owner
+  what changed; rebuild every set before a merged print or an issue (`PROJECT_WORKFLOW.md` W6.1, W4.1).
 - **Plot from PowerShell or Python**, not Git Bash; set `PYTHONIOENCODING=utf-8`.
 
 ## 5. Quick commands

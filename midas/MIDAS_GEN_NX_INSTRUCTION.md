@@ -113,6 +113,8 @@ A write changes the user's open model at once, with no undo through the API.
 | `POST /ope/AUTOMESH` on a boundary line longer than the mesh size | The line is split again; plates already meshed beside it do not get the new node (no connection) | One mesh size for every zone of a floor; new lines end on existing nodes (`08` §5.2, §6.1). Pre-split pieces: `ceil(L / size)`, never `round` (13 m at 0.40 → 0.406 m pieces, split again, the next mesh failed) |
 | `POST /ope/AUTOMESH` creates nodes | A node table read before the call misses them | Re-read `NODE` after every mesh call before checking plates (`08` §2A) |
 | `DELETE /db/ELEM/<ids>`, `DELETE /db/NODE/<ids>` | Deletes exactly those IDs (body `{}`); without IDs it would wipe the table | Delete by ID only, 200 IDs per call; check the IDs first (`08` §8) |
+| `Result.TABLE.*` (library) | Calls `Model.units()` first: a `PUT /db/UNIT` to kN-m on the user's model, not restored (FSK 11/10/2026: the engineer's model was in N-m) | For a read-only extraction call `POST /post/TABLE` directly; the reply carries `FORCE` / `DIST`, convert in the script |
+| `PUT /db/MATL` with a name over 16 characters | Rejected ("possible number of characters … is 16"); the other tables still write, so the elements point to a missing material | Material names ≤ 16 characters; treat any error reply as fatal and check `MATL` in the read-back (FSK r01, 11/10/2026) |
 | `PUT /db/RIGD` | Keyed by the master node: `{"<master>":{"ITEMS":[{"ID":1,"GROUP_NAME":"","DOF":111111,"S_NODE":[…]}]}}` | Read back and compare; existing masters stay unchanged (`08` §4) |
 
 Commands the guides use that are not in the library list: `/ope/AUTOMESH`, `/db/MEMB`, `/db/STOR`, `/db/DCON`,
@@ -183,6 +185,7 @@ its decision log (`DECISION_LOG_TEMPLATE.md`), since they are engineering decisi
 | Curved beam | Bulged LWPOLYLINE; chords on the centreline arc, sagitta ≤ b/8, chord ≈ 2 × mesh size; same points on every level | 04 |
 | Neglected members | Only by the engineer's decision (BX stair trimmers); re-attach dead ends, check connectivity | 03 §7 |
 | Mesh | 0.50 m, thick plates; openings under 1 m² ignored; cantilever vertices prepared on the whole level before meshing any panel | 06 |
+| Model input from an AR plan (CHATAM, user 11/10/2026) | Slab boundary read off the AR and checked edge by edge on every floor (each edge on AR linework); a lift shaft opening on the **centre lines of the lift corner columns**; the review sheet draws every slab edge, openings included, as one **heavy** line (0.70 mm), and nothing else that reads as an edge (an undecided wall outline is left off) | project `slab_columns.py`, `PROJECT_WORKFLOW.md` |
 | Pile-supported ground slab (BANWA 2 answers) | FS200 + DP350 drops at the mid-plane; pile stubs to −1.50 pinned (r9: SPUN 300 as solid round dia 300); 8-node rigid zone at each pile (and at a column with no ground beam); GB 400 × 900 CT; all supports pinned; slab 0.40, drops and gutter strip 0.20 by pre-split outlines | 08 |
 
 Drawing-reading lessons carried over from the drafting side: column size from **visible** dynamic-block entities only;
@@ -221,7 +224,9 @@ PDFs does not extract cleanly, so render the pages and read them as images (`01`
    request with "[R] Cannot generate table data as there is no analysis result" and shows each one in its message
    window. A read-only snapshot that asked for 171 reaction tables filled the engineer's screen and looked like a
    failed write (BANWA 2, 05/10/2026). Stop after the first such reply. In result tables a static
-   case `DL` is named `DL(ST)`, a general combination `U1(CB)`, a concrete-design combination `(CBC)`.
+   case `DL` is named `DL(ST)`, a general combination `U1(CB)`, a concrete-design combination `(CBC)`, a steel-design combination `(CBS)` (`sLCB1(CBS)`; also the `TYPE` of a result graphic).
+   That is the name in the request (`LOAD_CASE_NAMES`); the reply's `Load` column gives the bare name (`SW`, `U1`):
+   match on the name before `(` (BCR r01, 12/10/2026).
 6. Storey drift on meshed columns: between storey-level nodes on each column line, not per element.
 
 ## M11. Plug-ins

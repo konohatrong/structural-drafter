@@ -595,7 +595,8 @@ These conventions were agreed with the engineer during NRW-ST Rev A and apply to
 | Zone grid | 8 × 6 (numbers 1–8 horizontal, letters A–F vertical), both sides | §2.3 |
 | Font | **Arial Narrow**: 2.0 mm body, **2.8 mm** bold headers and titles | §2.6 (2.5 / 3.5 series adapted) |
 | Font, A1 project sheets | **A project setting** (user, 2026-10-04: "font in each project may be change depending on user"): ask at the start of each project and keep it in the job's data, never in shared code. **SSK: `cordia.shx`, width factor 0.90, text height 2.00 mm plotted** (200 in model at 1:100) (user rule, 2026-10-04: "cordia.shx is used in this drawing with width factor 0.90, 1:1 font height = 2.00 mm"). Plot style and LTSCALE: §19.2; plans: `FLOOR_PLAN_DRAWING_INSTRUCTION.md` FP6 | §2.6 |
-| Drawing number | `<PROJ>-ST-<series>-<stage>-<rev>`, e.g. `NRW-ST-5001-D-A` | Ch. 4 |
+| Drawing number | `<PROJ>-ST-<series>-<stage>-<rev>`, e.g. `NRW-ST-5001-D-A`; on a project that follows its earlier issue, the project series (`FLOOR_PLAN` D4: CHATAM S0-xx list, S1-xx plans, S2-xx details), numbers continuous from 01 in each series | Ch. 4 |
+| **Drawing list** | Sheet **S0-01** (series 0, EIT Table 4.2) opens the set (§3.7): number, title, scale, revision, date of every sheet, **read from the built sets' title blocks**, with the total (user, 2026-10-12: "add a drawing index sheet"; `DRAWING_PRODUCTION.md` §1.1) | §2.8, Table 4.2 |
 | **General-notes sheets** | **Current (issued F-A, 03/10/2026; developed as review print B, 2026-09-29): the normal sizes (K = 1)**, the notes flowing over as many sheets as they need. Rev A used × 0.625 (text 1.25 / 1.75, pitch 2.08). See `GENERAL_NOTES_DRAWING_INSTRUCTION.md` §0 | – |
 
 ### 19.2 Pens and lines (supersede §4.3 / §16 for A3 originals)

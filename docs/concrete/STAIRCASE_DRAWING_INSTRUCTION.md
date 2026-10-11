@@ -251,6 +251,22 @@ A kink is where the inclined flight meets a horizontal slab (landing or floor). 
 - At B2 both faces end in the beam, so both (1) and (3) terminate in B2.
 - Write the rule as a note (ST-1 note 6).
 
+**Upper kink, top bars** (user, 2026-10-12, CHATAM S2-01 rev A5: "same piece", the Lext dimension "delete"; this
+replaces the separate corner bar of rev A3): the flight's top bar and the upper landing's top bar are **one piece**,
+bent over the outside corner (an outside corner may be bent round, the table above). The upper landing's bottom bar
+runs straight past the inside corner through to the flight's top layer, then on along it.
+
+**Bars crossing an inside corner** (user, 2026-10-12, CHATAM S2-01 rev A4: "top rebar go to far side anchor behind
+logitudinal bottom rebar", "go continue"; upper kink "missing rebar ... refer to"): a bar that crosses an inside
+corner runs **through to the far layer**, then on **along it, behind (inside) that layer's main bars**, for its
+anchorage:
+- lower kink: the flight top bar goes down through the landing to its bottom layer, along it behind the bottom bars,
+  and ends there; the landing top bar goes through to the flight bottom layer and along it;
+- upper kink: the flight bottom bar goes up through the landing to its top layer, along it behind the top bars, and
+  ends there; the landing bottom bar goes through to the flight top layer and along it.
+- the end of an anchorage run is plain, with no small hook (user, rev A5: "no need little hook here").
+Worked example: CHATAM `ch_stair.section` (bars 1 - 4).
+
 **Drawing a kink detail:**
 - Scale 1:10.
 - Show both crossing bars with their anchorage lengths dimensioned from the corner.
@@ -286,7 +302,10 @@ A kink is where the inclined flight meets a horizontal slab (landing or floor). 
    - cutting planes for every section;
    - dimensions: `n @ T = total` going, beam widths, flight width;
    - stair mark `ST1`.
-2. **Longitudinal section along each flight**, 1:20 (EIT examples 1:25). It must show:
+2. **Longitudinal section along each flight**, 1:20 (EIT examples 1:25). It shows **that flight only**, with its
+   two landings and their supports: not the floor below or above where it does not carry the flight, not the
+   flights of the other storeys, not the other flight beyond (user, 2026-10-12, CHATAM S2-02: "no need to show").
+   It must show:
    - span;
    - waist;
    - tread and riser chain;
@@ -304,6 +323,17 @@ A kink is where the inclined flight meets a horizontal slab (landing or floor). 
 5. **Bar schedule** for one flight (§8).
 6. **Notes:** materials, cover, design basis, kink rule, finishes, construction joints (§9).
 7. **Legend** of lines and bar symbols, recommended on stand-alone stair sheets.
+
+**Dummy bar arrangement before the design** (user, 2026-10-12, CHATAM: "add rebar arrangement for dummy then i will
+tell how much rebar is"): when the engineer has not given the bars yet, draw the full arrangement (every bar on its
+path, the kink rule of §4.4, distribution dots) with its marks, and a numbered bar table whose sizes and spacings read
+`DB__ @ ___` (TBC); the labels carry the size and the position only (`DB__ @ ___ BOTTOM`). Fill the table and the
+labels when the engineer gives the bars.
+
+**Plans and cross-section** (user, 2026-10-12, CHATAM rev A: the stair plans, the cross-section and the landing-beam
+elevation "DELETE"): on that project the stair plan is not repeated on the detail sheets (the framing plans and the
+AR show it) and the sections along the flights carry the detail. Ask the engineer before adding plans or a
+cross-section to a stair detail set.
 
 ### 5.2 ST-1 sheet arrangement (A3, one sheet)
 
@@ -353,8 +383,11 @@ A kink is where the inclined flight meets a horizontal slab (landing or floor). 
   - Do not draw finishes or nosing strips on the structural section.
   - Do not hatch RC [§19.6].
 - **Supports:**
-  - Draw the supporting beams complete in section: outline, plus an RB6 stirrup with R = 3.5 db corners and 4 corner dots, all in 0.35.
-  - Break floor slabs 700–900 beyond the beam, with a single-Z break line.
+  - The supports are non-focus (RC focus rule): the beams, posts and floor slab are hatched grey with `nf_hatch` and
+    their bars drawn grey (`S-REBR-NF`, stirrup and corner dots); only the stair is at full weight (user, 2026-10-12,
+    CHATAM S2-02: SB1, B1 and the PT slab marked; CHATAM `ch_stair.section`).
+  - Break floor slabs 700–900 beyond the beam, with a single-Z break line; the slab's outline is not closed at the
+    break (SYMBOLS.md, break line).
   - Show the slab top and bottom bars thin, labelled `FLOOR SLAB (BY OTHERS)`.
 - **Bars along their length:**
   - Draw on the bar centreline.

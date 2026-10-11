@@ -130,12 +130,20 @@ and entity lineweights stay ByLayer / Default and are never used to set a pen.
   legend table must then be corrected so that the two never disagree.
 - Plot from AutoCAD (`plot.py`) for issue; the ezdxf render (`--ezdxf`, or the job's overlay renderer) applies the
   same CTB for review prints.
+- **A3 project sheets** (job CHATAM, engineer 11/10/2026: "As the ST issue 06/09"): **`STRUCT-A3.ctb`**, the same
+  colour meanings one step lighter: 1 → 0.18, 2 → 0.25, 3 → 0.40, 4 → 0.13, 5 → 0.30, 7 → 0.15, 8 → grey 0.13,
+  9 → light grey 0.09. The layers and colours of FP5 do not change with the sheet size; only the plot style does.
+- **Review prints are AutoCAD plots** (user correction, 2026-10-11, CHATAM first plan print: "linetype, scale,
+  weight ... its all note in the rule"): the ezdxf render draws viewport linetypes solid and substitutes the font, so
+  a print made with it shows every hidden beam as solid. Send the AutoCAD plot; run the FP17 checklist before the
+  first print, not after the review.
 
 ---
 
 ## FP4. Linetypes and LTSCALE [USER 2026-10-04; EIT §4.4, §19.2]
 
-- **acadiso.lin** patterns, **LTSCALE 45 when plotted on A1, 30 on A2** (user, 2026-10-04: "30 for A2"),
+- **acadiso.lin** patterns, **LTSCALE 45 when plotted on A1, 30 on A2** (user, 2026-10-04: "30 for A2"), **15 on
+  A3** (the office A3 sets: CHATAM ST issue 06/09/2026, adopted 11/10/2026),
   **PSLTSCALE 0**, MSLTSCALE 0, **entity linetype scale 1** everywhere. A
   plan whose dashes look wrong is fixed by its linetype choice, never by an entity scale.
 - Plotted length = pattern × 45 / 100 at 1:100:
@@ -314,6 +322,20 @@ above is continuous; what lies below the slab is hidden.
   (column - beam width) / 2 - so the facade line is straight; inner beams stay centred on the grid. The outer face is
   then the slab edge (continuous), the inner face hidden under the slab. State it in the plan notes. Worked example:
   BANWA2 S-102 / S-103 (`bw_plans.building_outline`, `flush`: C1 450, B 400 out by 25 mm, B6 / RB1 300 by 75 mm).
+- **A beam along an opening or a free slab edge** (user, 2026-10-11, CHATAM 2F: "keep inner line only"): the slab
+  runs to the beam's **void-side face**, drawn continuous as the slab edge; no line at the beam centre. Worked
+  example: the lift beams LB1 round the lift opening (`ch_plans.plan`, `edge_bms`).
+  - **Its slab-side face is hidden** like every beam under the slab (user, 2026-10-12, CHATAM rev A3: "missing hidden
+    line for SB1 inside slab boundary every floor"): SB1 on the corridor edge at the external stair shows the slab
+    edge on its stair face and a hidden line on its slab face, 2F to roof (`edge_bms` back into the beam body). The
+    lift beams keep the inner line only, as the engineer asked on 11/10 (open: confirm whether LB1 takes the same
+    hidden face).
+- **Band beams and beams together** (user, 2026-10-11, CHATAM roof: "band boundary", "delete this line"): a band
+  edge never runs through a beam; the band outline goes round the beam's face and the beam keeps both faces (draw the
+  band minus the beam strips, then the beams). Worked example: band B round LB1 at the lift on the roof.
+- **Beams meeting end to end away from a column** (user, 2026-10-11, CHATAM 2F canopy: "correct beam join") meet
+  with a mitred corner: merge the chain of one width and offset it as one line, never two square-ended strips
+  (`ch_plans.beam_body`).
 - Steel beams in an RC plan: by their outline or centre line with the section designation (steel S1).
 - **Steel framing plans** (truss chords, bracing, purlins): every member as a **double line at its projected width**
   (CHS outside diameter, SHS / box width, channel flange width, round bar diameter), **no wall thickness** (user,
@@ -497,6 +519,16 @@ above is continuous; what lies below the slab is hidden.
 ### FP11.3 Level changes
 - Slab steps: step symbol (FP9.5). Ramps: arrow with the levels at each end. Roof falls: `SLOPE` arrow with the
   fall (RC §14.4).
+- **Fill concrete instead of a step** (user, 2026-10-12, CHATAM rev A3: "add hatch showing filled concrete 50 mm.
+  refer to corridor level check every room on plan area except restroom and balcony need 50 mm. filled"): where the
+  slab is flat at the lower level and a room floor stands higher (CHATAM guest rooms FFL +3.75 over the corridor
+  +3.70), the difference is fill concrete. Hatch every such room area on the plan with the office fill concrete
+  hatch (`S-HATCH`, AR-CONC at 2.0 in a 1:100 view, as the ST issue of 06/09/2026), give it a legend entry
+  ("FILL CONCRETE 50 mm", FP14.1) and a plan note with the two levels. Check every room against the AR levels:
+  bathrooms, balconies, corridors, lobbies and stairs at or below the reference level take none. Take the areas from
+  the AR plan by script, never by eye, and leave the hatch clear of every text. Worked example: CHATAM 2F - 5F
+  (`ar_rooms.py`: the room bands facade wall to corridor wall, each bathroom a box from the corridor wall to the AR
+  wall faces round its name, the entry strip between the bathrooms kept in the room; `ch_plans.fill_concrete`).
 
 ---
 
@@ -536,6 +568,25 @@ or in the notes); pile type, size and capacity in the notes.
   the engineer's edge distance). Reconcile cap areas and quantities across plan, details and schedules.
 - **Every support is classified once**, beam, wall and slab connectivity checked (BANWA2: 17 tank-wall supports were
   missed by a column-only test); a wall load already in a support reaction is not added again.
+
+- **A slab on single-pile caps used as drops** (user, 2026-10-12, CHATAM pool: "we will use F1 pile cap as a drop
+  of 250 mm. thk pool slab", "draw the pool F1 caps on S1-01"):
+  - the cap's top is flush with the slab top, so it hangs below the slab by its depth less the slab;
+  - stations on the grid lines, on the beam lines that land on the slab's walls, and on the wall lines and corners;
+    the spacing set by the slab (CHATAM 250: spans <= 4.65 m), not by the pile;
+  - a cap under an edge wall is **moved in** until its face is flush with the wall's outer face: it never sticks out
+    past the slab edge (CHATAM: 300 mm in, cap 800 under a wall 200); on a line where the building continues (grid A)
+    it stays centred;
+  - the caps carry their own mark only ("F1", no column mark); those off the grid are dimensioned in the member tier
+    of the grid dimensions (FP12), those flush with a wall face are located by that face in a note, not dimensioned;
+  - the column caps the slab also bears on take the slab and water of their tributary cells: recheck their piles;
+  - the slab itself, when the engineer gives no detail, is a **note over it in the engineer's words** ("250 mm. THK",
+    "DB16@150# TOP/BOTTOM", from the project data), and every section through it (the pool wall) uses that thickness.
+  Worked example: CHATAM `calc\pool_piles.py`, `drawings\ch_fdn.py` (S1-01 rev A4).
+- **Caps at more than one top level** (user, 2026-10-12: "lower A caps to -0.85 and add a pile to A3, A4"): the level
+  of each cap and any pile the engineer adds over the calculated count are project data (`CAP_TOP`, `CAP_TOP_AT`,
+  `CAP_PILES_ADD`), applied by the cap calculation, never by editing its output. The cap table gives the cut-off of
+  the usual level; a note gives the other caps' top and how much lower their cut-off is.
 
 Grid; footings (outline continuous, `S-Footing`) with piles inside; footing + column mark `F4,C1` at the lower right;
 column stubs solid; **tie beams / ground beams** (mark `FB1`, `GB1`) where they are at this level; **lift pit**,
@@ -592,6 +643,13 @@ North arrow on every plan sheet, same size and place; the plan always drawn in t
 - AR layers that do not help the reader are frozen in the plan viewport (furniture, sanitary fittings, hatch patterns,
   dimensions) [REC]; walls, doors, windows, stairs and room names stay.
 - The AR plan is placed by the grid (grid 1 / grid A on grid 1 / grid A), at its own scale (metres → × 1000).
+- **When the AR file holds every floor on its own sheet** (CHATAM, user 2026-10-11: "add AR background as xref colour
+  9", "AR staircase drawing every floor"): keep a colour-9 reference copy of the current AR drawing in
+  `06 CAD\xref` (every layer 9, entities ByLayer, room-tag attributes and MTEXT colour codes too, hatch and
+  dimensions left out; the received file is never edited), xref it once per plan, inserted so that the floor's grid
+  1 / C falls on the plan's origin, and **XCLIP it to the plan's extents** so no AR sheet text or title shows. The
+  stairs, lift and room walls then appear on every floor. Worked example: `04 Code\drawings\ar_bg.py` (copy, DWG,
+  origins and clips) and `ch_plans.ar_background`.
 - **Before every review and every issue, run the overlay check** (FP16): ST over AR, level by level, grid, levels and
   columns compared, findings numbered. Every finding is either fixed or answered.
 
@@ -675,6 +733,9 @@ North arrow on every plan sheet, same size and place; the plan always drawn in t
 |---|---|
 | 2026-10-04 | Written for job SSK before its plans are drafted: office practice read from the SSK structural file, the user's rules of the day (plot style, LTSCALE 45, colour 9 background, cordia.shx 0.90 at 2.00 mm with the font a project setting), the SSK review findings as "never" rules, open decisions D1 – D7 |
 | 2026-10-04 | FP11.2 SFL = FFL − 50 mm as the usual rule, and FP10.3 slab tags placed in their panel, not aligned with AR tags (user); the overlay check compares levels by area |
+| 2026-10-11 | CHATAM first plan print (user: "linetype, scale, weight ... its all note in the rule"): A3 pens of `STRUCT-A3.ctb` (FP3) and LTSCALE 15 on A3 (FP4); review prints from AutoCAD, the FP17 checklist before the first print |
+| 2026-10-12 | CHATAM rev A3 comments (user): the slab-side face of an edge beam hidden (FP9.2, SB1); fill concrete hatch over raised room floors, every room checked against the AR levels (FP11.3) |
+| 2026-10-12 | CHATAM foundation (user): a slab on single-pile caps used as drops, caps flush inside the slab edge, the slab as a note in the engineer's words; caps at two top levels and added piles as project data (FP13.2) |
 | 2026-10-06 | Review of the BANWA2 plans (user): main beams marked once per column bay with a length bracket (FP10.2); opening cross on the grid linetype, colour 8 (FP9.4, `S-OPEN`); no moment-release symbols on plans and steel framing as double lines at projected width (FP9.2); steel posts as their actual section (FP9.1); truss marks per support span (FP10.5, steel S3.7) |
 | 2026-10-06 | Second BANWA2 review (user): the bracket solid grey with 45° ends of the text height / mark diameter, ending on the member's start and end lines (FP10.2, `S-BRACKET`); chords trimmed by the posts on every roof plan; tie rods one line each on the grid linetype (FP9.2, `S-ROD`); layers added to FP5 |
 | 2026-10-06 | BANWA2: purlins on post rows beside the post (FP9.2, steel S7.8); steel roof plan set described (FP13.5) |

@@ -25,8 +25,26 @@ copied, dated, to `07 Review`. The examples in `jobs/` keep everything in the jo
 | 6. **Plot** | `plot.py` | AutoCAD Core Console to PDF and DWG, plus one DWG per detail block. Finishes with `font check OK` |
 | 7. **Test** | `pytest -q` at the repository root | Builds every job without AutoCAD; fails on any `!!`, a non-zero exit or a DXF audit error |
 | 8. **Review** | The user reviews the PDF | Every correction is fixed in the job **and** written into the rules (see `AGENTS.md`, "How the rules grow") |
-| 9. **Issue** (projects) | Copy to a new `09 Publish\YYYYMMDD - <set> Rev <R> - <purpose>\` folder | Only when the engineer decides; register and transmittal; never edited afterwards (`PROJECT_WORKFLOW.md` W4, stage S8) |
+| 9. **Issue** (projects) | Copy to a new `09 Publish\YYYYMMDD - <set> Rev <R> - <purpose>\` folder | Only when the engineer decides; title-block row first, then register and transmittal; never edited afterwards (`PROJECT_WORKFLOW.md` W4.1) |
 | 9. **Issue** (standard sets) | `standard_drawings/publish.py <set> [--issue]` | Review copies go to `standard_drawings/developing/`; an official issue (the user's decision) to `standard_drawings/issued/` with the register (`standard_drawings/README.md`) |
+
+### 1.1 A project of several sets: drawing list and merged set
+
+A project's drawings are usually several sets, each a script of its own (CHATAM: plans S1-01 - S1-07, details S2-01 -
+S2-03, RC schedules S2-04 - S2-05, pile caps S2-06 - S2-12), often built by different sessions. Before a merged
+review print or an issue (user, 2026-10-12: "check drawing numbering then merge all drawing", "add a drawing index
+sheet"):
+
+1. **Rebuild every set fresh** and plot it: another session may have changed the shared data (a cap schedule, the
+   project values) since a set was last plotted. A merged set made of stale plots mixes revisions.
+2. **Check the numbering** across the sets: one series per kind (EIT §19.1), numbers continuous from 01 in each
+   series, no number twice, and every sheet a note or callout cites exists ("DETAILS S2-06 - S2-12" on S1-01).
+3. **Drawing list S0-01** opens the set (EIT §3.7). It is a set of its own (`index`), built **after** the others and
+   **read from their title blocks** (the `DWG_NO`, `TITLE_n`, `SCALE`, `REV_n` attributes of every layout in the built
+   DXFs), never typed: the list cannot drift from the sheets. Its build warns on a number used twice or a gap in a
+   series, and lists the total. Worked example: CHATAM `04 Code\drawings\ch_index.py`.
+4. **Merge** the plotted PDFs in drawing-number order, one bookmark per sheet ("S1-01  FOUNDATION PLAN"), and check
+   that the list on S0-01 names exactly the merged sheets. The merged print goes, dated, to `07 Review`.
 
 ## 2. How the drawings are built (engine `drafter/td_engine.py`)
 
@@ -152,11 +170,25 @@ it even when AutoCAD is there. For a quick look at any single DXF, run
 - Use a Python that has `ezdxf` installed (a venv with `requirements.txt`), not a bare system interpreter.
 - The PDF may be open in a viewer while you rebuild. Write review copies under another name instead of fighting the
   file lock: on a project, the dated copy in `07 Review` is the one the engineer opens.
+- A PDF made by placing clips of **one big vector page** (all views rendered once, each sheet `show_pdf_page` with a
+  clip) carries the whole drawing on every page: CHATAM's markup set had 12.6 MB of vectors behind each A2 page, and
+  the 5th floor page came up blank in the viewer (11/10/2026). Render each sheet from its own entities (filter by the
+  view's extents) so a page holds only what it shows.
 - Give a job's `plot.py` an **absolute** output folder: the Core Console script is written there and a relative path
   is not found ("_plot.scr can't find", BANWA2).
 - The ezdxf plot draws viewport linetypes solid: judge dashed, hidden and chain lines on the AutoCAD plot.
 - In a Python patch script, write regex or path text as raw strings: `"\b"` inside a normal string becomes a
   backspace character in the file (it happened twice on BANWA2). Check edited files for control characters.
+- **Python run from the Bash tool loses backslashes even in a quoted heredoc** (CHATAM, 12/10/2026): `09 Publish\\2026...`
+  was written as `\x82` + `61012`, `Calculation\\foundation` as a form feed + `oundation`, in code comments and in
+  `STATUS.md` rows that other sessions read. Write the patch script to a file with an editor (or the Write tool) and
+  run the file, or build a backslash with `chr(92)`; then scan the file for characters below 32 (except tab and
+  newline) and 0x7F - 0x9F.
+- A sheet title is not a file name: "PILE CAP DETAILS F1 / F2" stopped the per-sheet PDF export half way. Replace
+  `/ \ : * ? " < > |` when a title becomes a file name.
+- **Several sessions on one project** write the same files (`project.py`, a shared plan module, `STATUS.md`). Before
+  editing a module another session owns, read it again; after editing, tell that session what changed (names, values,
+  sheets rebuilt). Never write over another session's change to fix your own (`PROJECT_WORKFLOW.md` W6.1).
 - **Revisions:** an issued job (for example `jobs/nooker_rw`) is changed only by a new revision, with its revision row
   and drawing numbers updated. A frozen set (`jobs/standard_set` R1, `jobs/typical_details`) is not changed. Verify a
   refactor by building both versions and diffing the DXFs, ignoring the header timestamps, CLASSES order and the ezdxf

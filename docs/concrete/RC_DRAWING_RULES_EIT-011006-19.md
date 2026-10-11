@@ -196,6 +196,14 @@ Details must be clear, complete, and consistent with the plans (Ch. 5).
   default (19.4 gives true size with a 1.1 mm minimum).
 - Changing a cap's depth or bars on the drawing is a drawing revision, not a strength check: state on the sheet that
   the revised caps are not rechecked until they are.
+- **A single-pile cap** carries its bars each way as **top bars with legs down** to the cover over the pile top (an
+  inverted U), the other set cut under the top bar at the bend centres, and **perimeter ties** round the legs at the
+  cover, **distributed over the depth** (user correction, 2026-10-12, CHATAM S2-06 F1: "4-DB16 E/W", "3-DB12 TIE
+  DIST. VERT."). In the section the ties' far legs are seen (grey, `S-STIR-ELEV`) and their legs across the cut are
+  dots beside the main legs; the plan shows the tie square at the cover. Callouts: `4-DB16 E/W`,
+  `3-DB12 TIE DIST. VERT.` Helper: `single_pile_bars()` in the CHATAM job (`04 Code\drawings\ch_caps.py`).
+- Callout spacing in a detail drawn at more than one scale is set in **paper** millimetres (n x S), not model
+  millimetres, or the callouts close up at the smaller scale (CHATAM F15 at 1:50, 2026-10-12).
 
 ### 15.2 Columns [STD §6.3, FIG 6.3–6.4]
 Provide a **full-height elevation** (typical: bars and laps) plus a **column schedule**.
@@ -407,6 +415,28 @@ Plan required. One plan is enough unless bars change with height.
   overlap: stagger them or end them at equal levels clear of the adjoining mats (user, 2026-10-09: "top and bottom
   hook ends must be clear"). At an internal continuous support the adjoining bars run through; no end hook is
   invented there. A hook moved for clearance is not proof of anchorage.
+- **A clean arrangement** (user, 2026-10-12, CHATAM stair and pool rev A2: "messy rebar arrangement", "show clear
+  hook end, missing rebar or miss arrangement"):
+  - one bar per layer and run: two bars are never drawn on one line (top bars from both ends of a flight that
+    overlap are one bar; a pool's outer face bars and base bottom bars are one U);
+  - a bar crossing an inside corner lies inside the layer it runs along, clear of that layer's distribution dots
+    (about 45 mm, 1.8 mm at 1:25), so both bars read;
+  - distribution bars are drawn once per layer along the whole layer, not once per main bar;
+  - every bar end is visible: a hook's tail is not laid on another bar, a stirrup or a face (bar ends in a support
+    beam stop clear of its stirrup, §4.2 of the stair instruction);
+  - the bars that lap into an adjoining element (a slab into a wall) are shown, grey dashed.
+  Worked example: CHATAM S2-01 - S2-03 (`ch_stair.section`, `ch_pool.section_11`).
+- **Wall bars** (user, 2026-10-12, CHATAM pool wall rev A3: "standard 90 deg. hook end with first row of rebar start
+  at center of hook fillet"; "these 2 bars are not same pieces as base slab bars"; base slab "show as grey"):
+  - each face of a wall has its own vertical bar, ending at the top and in the base with a **standard 90° hook**
+    (tail 12 db); the two top hooks of one wall are staggered so both read; a tail that cannot fit the wall
+    thickness stops within the cover of the opposite face (at that face's bar line: rev A4 "Lext should place within
+    covering") and is flagged for the bar size;
+  - the **first row** of horizontal bars sits at the level of the centre of the top hook's bend (the bar in the bend);
+    the horizontal bars of both faces are at the same levels (rev A4: "logitudinal rebar align same level both
+    side");
+  - the wall bars and the base slab bars are separate pieces: in a wall detail the base slab is non-focus (grey
+    hatch, its bars grey dashed) and its thickness is not dimensioned there.
 - Spacing is written in mm (`DB12@200`, §3.7.3). Bar marks go in Ø4 bubbles.
 
 ### 19.7 Bar ends and lap splices (office rule, user 2026-09-30)
