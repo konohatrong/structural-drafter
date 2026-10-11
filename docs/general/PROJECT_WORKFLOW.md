@@ -4,8 +4,7 @@ How a project is organised on disk and how the work moves from received drawings
 note. It applies to every project, whatever the structure or material. The drawing pipeline inside the work is
 `DRAWING_PRODUCTION.md`; the analysis model is `midas/MIDAS_GEN_NX_INSTRUCTION.md`.
 
-The structure extends the office template `G:\My Drive\Works\##Project Structures\` (CAD, Calculation, Transfer in,
-Transfer out) with the folders the scripted work needs. It was written on 11/10/2026 at the user's request, from what
+The structure extends the earlier office template (CAD, Calculation, Transfer in, Transfer out) with the folders the scripted work needs. It was written on 11/10/2026 at the user's request, from what
 the SSK, BANWA 2 and SPF jobs taught (W9).
 
 ## W1. Create the folder
@@ -17,6 +16,13 @@ python project_template\new_project.py "<name>" --code <PPPP> --root "G:\My Driv
 The script (`project_template/README.md`) copies the template, fills the name, the code and the paths, and makes
 `04 Code` a git repository. Then fill `PROJECT.md` §1 – §3 and `02 Design basis\DESIGN_BASIS.md`. Change the template
 in `project_template/tree/`, never project by project.
+
+The office copy `G:\My Drive\Works\##Project Structures\` (for copying by hand, with `_HOW TO USE.md`) is generated
+from the same template: after a change to `tree/`, refresh it with
+`python project_template
+ew_project.py --office-template "G:\My Drive\Works\##Project Structures"`. It was
+converted on 11/10/2026: the old folders renamed (Transfer in → `01`, Calculation → `05`, CAD → `06`, Transfer out →
+`09 Publish`).
 
 ## W2. The structure
 

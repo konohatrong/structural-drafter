@@ -1,10 +1,14 @@
-"""Create a new project folder from the office template (docs/general/PROJECT_WORKFLOW.md).
+r"""Create a new project folder from the office template (docs/general/PROJECT_WORKFLOW.md).
 
-    python project_template/new_project.py "BANWA 3" --code BW3 --root "G:\\My Drive\\Works\\##2026"
-    python project_template/new_project.py "BANWA 3" --code BW3 --root "G:\\My Drive\\Works\\##2026" --fea-local D:\\Workspace
+    python project_template\new_project.py "BANWA 3" --code BW3 --root "G:\My Drive\Works\##2026"
+    python project_template\new_project.py "BANWA 3" --code BW3 --root "G:\My Drive\Works\##2026" --fea-local D:\Workspace
+    python project_template\new_project.py --office-template "G:\My Drive\Works\##Project Structures"
 
 The folder is named "YYYYMMDD - <name>" (today, or --date). The template is `project_template/tree/`: edit it there
-to change every future project. The script never writes into an existing folder.
+to change every future project. The script never writes into an existing project folder.
+
+--office-template refreshes the office copy of the template (the folder copied by hand for a new project) from
+`tree/`, so the two never differ.
 """
 import argparse
 import datetime as dt
@@ -30,6 +34,29 @@ TEXT = {".md", ".py", ".csv", ".txt"}
 RENAME = {"gitignore.txt": ".gitignore"}
 SYNCED = ("My Drive", "Google Drive", "OneDrive", "Dropbox")
 
+# the office template before 11/10/2026 -> its place in this structure
+OFFICE_OLD = [("Transfer in", "01 Transfer in"), ("Calculation", "05 Calculation"), ("CAD", "06 CAD"),
+              ("Transfer out", "09 Publish"),
+              ("09 Publish/EXAMPLE", "09 Publish/YYYYMMDD - SET Rev A - PURPOSE (example)")]
+OFFICE_EXAMPLE = OFFICE_OLD[-1][1]
+OFFICE_VALUES = {"PROJECT": "<project name>", "CODE": "<PPPP>", "DATE": "YYYYMMDD", "DATE_TEXT": "DD/MM/YYYY",
+                 "DRAFTER": str(DRAFTER), "FEA_RUN": r"D:\Workspace\<YYYYMMDD - project name>\FEA run"}
+OFFICE_README = r"""# Office project structure (template)
+
+Create a new project with the script, which names the folder, fills the names and paths and makes `04 Code` a git
+repository:
+
+    python "{drafter}\project_template\new_project.py" "<project name>" --code <PPPP> --root "G:\My Drive\Works\##2026" --fea-local D:\Workspace
+
+Or copy this whole folder and rename it `YYYYMMDD - <project name>`; then replace `<project name>`, `<PPPP>` and
+`DD/MM/YYYY` in `PROJECT.md`, `STATUS.md` and the READMEs, set `FEA_RUN` in `04 Code\paths.py`, and delete this file.
+
+The workflow (stages, revisions, what goes where): `{drafter}\docs\general\PROJECT_WORKFLOW.md`.
+
+This folder is generated from `{drafter}\project_template\tree` by `new_project.py --office-template`. Change the
+template there, then refresh this copy; do not edit it here.
+"""
+
 
 def fill(text, values):
     for k, v in values.items():
@@ -37,16 +64,9 @@ def fill(text, values):
     return text
 
 
-def create(name, code, root, date=None, fea_local=None, git=True):
-    date = date or dt.date.today().strftime("%Y%m%d")
-    d = dt.datetime.strptime(date, "%Y%m%d")
-    folder = Path(root) / f"{date} - {name}"
-    if folder.exists():
-        raise SystemExit(f"!! {folder} already exists: the template never writes into an existing folder")
-    fea_run = Path(fea_local) / folder.name / "FEA run" if fea_local else folder / "03 FEA" / "run"
-    values = {"PROJECT": name, "CODE": code.upper(), "DATE": date, "DATE_TEXT": d.strftime("%d/%m/%Y"),
-              "DRAFTER": str(DRAFTER), "FEA_RUN": str(fea_run)}
-
+def copy_tree(folder, values):
+    """Copy the template into folder with the placeholders filled. Template files are written over; nothing else in
+    folder is changed."""
     for src in sorted(TREE.rglob("*")):
         rel = src.relative_to(TREE)
         dst = folder / rel.parent / RENAME.get(rel.name, rel.name)
@@ -60,6 +80,19 @@ def create(name, code, root, date=None, fea_local=None, git=True):
             shutil.copy2(src, dst)
     for sub in SUBDIRS:
         (folder / sub).mkdir(parents=True, exist_ok=True)
+
+
+def create(name, code, root, date=None, fea_local=None, git=True):
+    date = date or dt.date.today().strftime("%Y%m%d")
+    d = dt.datetime.strptime(date, "%Y%m%d")
+    folder = Path(root) / f"{date} - {name}"
+    if folder.exists():
+        raise SystemExit(f"!! {folder} already exists: the template never writes into an existing folder")
+    fea_run = Path(fea_local) / folder.name / "FEA run" if fea_local else folder / "03 FEA" / "run"
+    values = {"PROJECT": name, "CODE": code.upper(), "DATE": date, "DATE_TEXT": d.strftime("%d/%m/%Y"),
+              "DRAFTER": str(DRAFTER), "FEA_RUN": str(fea_run)}
+
+    copy_tree(folder, values)
     fea_run.mkdir(parents=True, exist_ok=True)
 
     left = [str(p.relative_to(folder)) for p in folder.rglob("*") if p.is_file() and p.suffix in TEXT
@@ -86,15 +119,43 @@ def create(name, code, root, date=None, fea_local=None, git=True):
     return folder
 
 
+def office_template(dest):
+    """Refresh the office copy of the template: the old office folders are renamed into the structure, the template
+    files written over; nothing else in dest is changed or deleted."""
+    dest = Path(dest)
+    if not dest.is_dir():
+        raise SystemExit(f"!! {dest} not found")
+    for old, new in OFFICE_OLD:
+        o, n = dest / old, dest / new
+        if o.is_dir() and not n.exists():
+            o.rename(n)
+            print(f"renamed {old} -> {new}")
+        elif o.is_dir():
+            print(f"!! both {old} and {new} exist: merge them by hand")
+    copy_tree(dest, OFFICE_VALUES)
+    for sub in ("CAD", "PDF"):
+        (dest / OFFICE_EXAMPLE / sub).mkdir(parents=True, exist_ok=True)
+    (dest / "_HOW TO USE.md").write_text(OFFICE_README.format(drafter=DRAFTER), encoding="utf-8", newline="\n")
+    print(f"office template refreshed: {dest}")
+    return dest
+
+
 def main(argv=None):
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
-    ap.add_argument("name", help='project name, e.g. "BANWA 3"')
-    ap.add_argument("--code", required=True, help="EIT 13 project abbreviation, 2 - 4 letters (e.g. BW3)")
-    ap.add_argument("--root", required=True, help=r'parent folder, e.g. "G:\My Drive\Works\##2026"')
+    ap.add_argument("name", nargs="?", help='project name, e.g. "BANWA 3"')
+    ap.add_argument("--code", help="EIT 13 project abbreviation, 2 - 4 letters (e.g. BW3)")
+    ap.add_argument("--root", help=r'parent folder, e.g. "G:\My Drive\Works\##2026"')
     ap.add_argument("--date", help="YYYYMMDD start date (default today)")
     ap.add_argument("--fea-local", help=r"local disk folder for GEN NX runs, e.g. D:\Workspace")
     ap.add_argument("--no-git", action="store_true", help="do not make 04 Code a git repository")
+    ap.add_argument("--office-template", metavar="FOLDER",
+                    help=r'refresh the office copy instead, e.g. "G:\My Drive\Works\##Project Structures"')
     a = ap.parse_args(argv)
+    if a.office_template:
+        office_template(a.office_template)
+        return
+    if not (a.name and a.code and a.root):
+        ap.error("name, --code and --root are required")
     if not (2 <= len(a.code) <= 4 and a.code.isalnum()):
         raise SystemExit("!! --code must be 2 - 4 letters or digits (EIT 13 PPPP)")
     create(a.name, a.code, a.root, a.date, a.fea_local, git=not a.no_git)

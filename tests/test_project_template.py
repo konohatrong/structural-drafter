@@ -46,3 +46,18 @@ def test_new_project(tmp_path):
 
     with pytest.raises(SystemExit):
         np_.create("Test Job", "tj", tmp_path, date="20261011", git=False)
+
+
+def test_office_template(tmp_path):
+    np_ = load()
+    for d in ["CAD", "Calculation", "Transfer in", "Transfer out/EXAMPLE/CAD", "Transfer out/EXAMPLE/PDF"]:
+        (tmp_path / d).mkdir(parents=True)
+    (tmp_path / "CAD" / "desktop.ini").write_text("x")
+    np_.office_template(tmp_path)
+    assert not (tmp_path / "CAD").exists() and (tmp_path / "06 CAD" / "desktop.ini").is_file()
+    assert (tmp_path / "09 Publish" / "YYYYMMDD - SET Rev A - PURPOSE (example)" / "PDF").is_dir()
+    assert (tmp_path / "_HOW TO USE.md").is_file() and (tmp_path / "04 Code" / ".gitignore").is_file()
+    for p in tmp_path.rglob("*"):
+        if p.is_file() and p.suffix in {".md", ".py", ".csv"}:
+            assert "{{" not in p.read_text(encoding="utf-8"), p
+    np_.office_template(tmp_path)                       # a second refresh changes nothing else
