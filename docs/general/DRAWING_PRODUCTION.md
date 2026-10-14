@@ -87,7 +87,7 @@ DWG or a library file is missing, or a glyph is not Arial Narrow. A partial set 
 |---|---|
 | Windows + **AutoCAD 2024 or later** (optional) | `accoreconsole.exe` and the `DWG To PDF.pc3` plotter. Only plotting uses it; building the DXF never does. The newest installed `C:\Program Files\Autodesk\AutoCAD 20xx` is used; set `ACCORECONSOLE` to the full path of another `accoreconsole.exe` to override it |
 | Python 3.11 | Tested with 3.11.9 |
-| Python packages | `requirements.txt`: `ezdxf`, `fonttools`, `pymupdf`, and `matplotlib` / `numpy` for the preview renderers. Tests: `requirements-dev.txt` |
+| Python packages | `requirements.txt`: `ezdxf`, `fonttools`, `pymupdf`, and `matplotlib` / `numpy` for the preview renderers, `shapely` for the steel portal frame job's geometry. Tests: `requirements-dev.txt` |
 | Fonts | Arial Narrow (`ARIALN.TTF`, `ARIALNB.TTF`) in `%WINDIR%\Fonts`. Text widths are measured from the font files |
 | Plot styles | The plot scripts write their CTB next to the drawings and into the Plot Styles folder of every installed AutoCAD version, so the DWG plots the same way when opened there |
 
