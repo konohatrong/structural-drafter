@@ -388,7 +388,12 @@ Placement of leaders, tags, weld symbols, cutting planes and node dimensions: `A
 2. **Holes** = bolt + 2 mm unless noted, in a general note. Avoid one-bolt structural connections (DSC p.94 #14).
 3. **Grades**: keep one grade per diameter where possible (DSC p.95 #45).
 4. **Anchor rods** (DSC Ch. 7)
-   - Headed (nut plus plate), because the rods resist uplift.
+   - Embedded end: **a heavy hex nut or a forged head only**, never a hook. Add a plate washer there only where a
+     calculation needs it (high-strength rods, side-face blowout), sized as small as works and checked against the
+     bars and the concrete placement (user rule, 2026-10-14: "align S8.4 with DG1"; AISC DG1 §2.5, §3.2.2; notes
+     `base_plates/02_MATERIALS.md`, `base_plates/11_CONCRETE_ANCHORAGE.md`). A plate adds no pullout strength and
+     obstructs the bars and the concrete under it.
+   - Nuts are heavy hex (ASTM A563 Gr A, or the equivalent for the grade).
    - Projection = grout + plate + washer + 2 nuts + 3 threads.
    - Set by template.
    - Oversized holes to AISC Manual Table 14-2 (M20: Ø33), with plate washers sized to cover the hole or slot.

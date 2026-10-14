@@ -34,6 +34,8 @@ For how this differs from concrete, see the comparison in `docs/README.md`.
 |---|---|
 | `STEEL_DETAILING_INSTRUCTION.md` | Rules S1 – S11: set content, setting out, marks, graphics, weld symbols, hollow-section welds (AWS D1.1 Fig 9.10), joints and splices, bolts and anchor rods, erection, fly bracing (S9A), checks, and where each rule is coded |
 | `reference/SOURCES_STEEL_DETAILING.md` | Extracts with page references: AISC *Detailing for Steel Construction* (Part A), AISC Design Guide 21 welds (B), Design Guide 24 HSS connections (C – D), Beca standard sheet SE-1505 fly bracing (E), Design Guides 4 and 16 moment end plates (F – G), Design Guide 25 web-tapered frames (H), Design Guide 29 bracing connections (I) |
+| `stairs/README.md` | Steel-framed stairways (AISC Design Guide 34 study notes, each file ≤ 500 words): loads, seismic and drift, layout and opening size, treads, stringers, landings, bracing, connections, guards, tolerances, delegated design, worked examples, drawing checklist. Start at its router |
+| `base_plates/README.md` | Column base plates and anchor rods (AISC Design Guide 1, 2nd ed., study notes, each file ≤ 500 words): materials, holes and washers, rod layout and tolerances, erection and grout, repairs, seismic, compression, uplift and concrete anchorage, small and large moments, shear and lugs, double-nut and fatigue joints, worked examples, drawing checklist. Start at its router |
 | `.claude/skills/steel-detailing/SKILL.md` | Step-by-step workflow and the office rules, for Claude Code |
 
 Office standard steel sheets (Beca SE-1501 to SE-1505: holding-down bolts, end plates, cleats, bracing, fly bracing)

@@ -46,6 +46,8 @@ the documents rather than in one drawing.
 | `steel/README.md` | **The steel presentation approach**, documents, reading order, helpers |
 | `steel/STEEL_DETAILING_INSTRUCTION.md` | Rules S1 – S11 and S9A (fly bracing); continuous trusses: marks per support span, key sections, typical elevations, joints from a concentric model, posts through a truss, bill of all steel |
 | `steel/reference/SOURCES_STEEL_DETAILING.md` | AISC DSC, DG21, DG24 and Beca SE-1505 extracts |
+| `steel/stairs/README.md` | Steel-framed stairways: router to the AISC Design Guide 34 study notes (design, connections, guards, drawing checklist) |
+| `steel/base_plates/README.md` | Column base plates and anchor rods: router to the AISC Design Guide 1 study notes (design, anchorage, erection, repairs, drawing checklist) |
 
 Other materials (timber, masonry, composite) have no folder yet. Use `general/` with the closest material rules (bolts
 and plates from steel, bars from concrete), and start a folder when the first job of that kind is done.
