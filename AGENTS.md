@@ -6,7 +6,7 @@ to the Thai drafting standard EIT 011006-19 and the office conventions. It has t
 | Part | Folder | Role |
 |---|---|---|
 | **Rules, guides, instructions** | `docs/` | What a drawing must show and how it is presented: `general/` for every structure type, `concrete/` and `steel/` for each material. Index: `docs/README.md` |
-| **Toolkit** | `drafter/` | The drafting engine (`td_engine.py`), pens (`pens.py`), steel helpers (`steel.py`), font metrics, plotting |
+| **Toolkit** | `drafter/` | The drafting engine (`td_engine.py`), pens (`pens.py`), steel helpers (`steel.py`; stairs, guards and ladders `steel_access.py`), font metrics, plotting |
 | **Worked examples** | `jobs/` | Complete sets built with the rules, and the record of how the rules were developed. Catalogue: `jobs/README.md` |
 | **Standard drawings** | `standard_drawings/` | The office standard sets (general notes, typical details) as plotted output: `developing/` review copies (local) and `issued/` official revisions (in git), with the issue register. Rules: `standard_drawings/README.md` |
 | **Project template** | `project_template/` | The folder structure of a new project (Transfer in, design basis, FEA, code, calculation, CAD, review, report, publish) and `new_project.py`, which creates it. Workflow: `docs/general/PROJECT_WORKFLOW.md` |
@@ -51,7 +51,8 @@ Fix the disagreement in the documents, not only in one drawing.
 | Any symbol (section, callout, level, break, tag, weld …) | `SYMBOLS.md`, then the rule it cites |
 | Bars, ties, laps, bar notation | `RC_DRAWING_RULES_EIT-011006-19.md` §12, §19.4, §19.7; guide §2.1 – §2.3 |
 | Welds, bolts, marks, bills, camber, erection | `STEEL_DETAILING_INSTRUCTION.md` S3 – S9 |
-| Steel stair, guard or handrail: loads, seismic drift, opening size, stringers, landings, connections, drawing content | `docs/steel/stairs/README.md` (router to the AISC DG34 notes) |
+| Steel stair, guard or handrail: loads, seismic drift, opening size, stringers, landings, connections, drawing content | `docs/steel/stairs/README.md` (router to the AISC DG34 notes); how the details are drawn: `17_STAIR_DETAILING_PRACTICE.md`, steel S4.14 |
+| Fixed steel ladder: limits, cage or fall arrest, ladder sheet content | `docs/steel/stairs/18_LADDER_DETAILING.md`; example `jobs/steel_ladder_typical` |
 | Column base plate, anchor rods, grout, shear lug, anchor rod layout or repair | `docs/steel/base_plates/README.md` (router to the AISC DG1 notes); steel S8.4 – S8.5 |
 | Continuous steel trusses (roof on an RC frame): marks per span, key sections, elevations, joints, posts, purlins | Steel S2.10, S3.7 – S3.8, S4.10 – S4.12, S7.8; `FLOOR_PLAN_DRAWING_INSTRUCTION.md` FP9.2, FP13.5; example BANWA2 (`jobs/README.md`) |
 | Bill of materials, steel weight, weight per area | Steel S1.6, S3.8 |

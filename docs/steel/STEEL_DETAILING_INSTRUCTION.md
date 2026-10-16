@@ -171,13 +171,15 @@ Placement of leaders, tags, weld symbols, cutting planes and node dimensions: `A
      WELDED 10 mm OFF THE TRUSS PLANE".
    - Dimension figures, weld symbol sizes and designations stay bare.
    - Table headers carry the units (`ANNOTATION_ALIGNMENT_GUIDE.md` §2.4.2).
-   - Leaders to bolts aim at the bolt centre and end in an open circle of 1.25 × the hole size (`leader(..., bolt=hole)`).
+   - Leaders to bolts seen **end-on** aim at the bolt centre and end in an open circle of 1.25 × the hole size
+     (`leader(..., bolt=hole)`); a bolt seen **side-on** gets an arrow on the bolt (user, 2026-10-15; guide §2.1).
    - A leader to a plate ends with its arrow on the plate edge, never inside the plate.
    - A number and its unit stay on one line (`td_engine.WRAP_UNITS = True`).
 
 1. **Hollow sections**
    - The wall is shown as a fine hidden line (S-STL-WALL, grey ACI 8) in every view, including the 1:50 elevation.
-   - A CHS cut in section is a solid-filled ring. Never cross-hatch steel in section (DSC p.94 #12).
+   - A CHS cut in section is its outer and inner circle (S4.15; the solid-filled ring of the 2026-10-03 sets is
+     superseded). Never cross-hatch steel in section (DSC p.94 #12).
 2. **Centre and work lines**: grey ACI 8, EIT grid linetype (S-GRID).
    - Bolt, hole, slot and anchor-rod centre lines stay on S-CENT, but in a steel set **S-CENT is grey ACI 8, 0.18**
      (`drafter/steel.py`; user rule 2026-10-03).
@@ -235,6 +237,17 @@ Placement of leaders, tags, weld symbols, cutting planes and node dimensions: `A
       over a top chord, a bottom chord over a post).
     - Circled marks over members: the member lines stop at the circle (the geometry is cut). A wipeout is not used: the
       AutoCAD PDF plot of the office set ignored it (BANWA2, 2026-10-06).
+    - **A plan is a top view: decide what is in front and what is behind** (user, 2026-10-15, RPM stair C review A1:
+      "check your view when you present as top view what line should bring in front and what line should put behind
+      with hidden line color no.8"). Draw every part by its outline, highest first: the outline is seen where nothing
+      is over it, and **hidden in colour 8 (fine hidden linetype)** where a higher part covers it. On a steel stair:
+      walls cut (hatched, both faces); decks, treads, stringers and guard rails seen; landing frames under the deck,
+      brackets and struts under the landings, base plates under the stringer feet hidden; a door swing hidden in
+      colour 8. Parts at one level are merged first, so members meet in clean joints (bullet above). A line that lies
+      on the edge of a higher part is not drawn again as hidden. Helper: RPM Staircase `rpm_engine.layered()` (shapely
+      outlines; to move into `drafter/steel.py` when a second job uses it).
+    - At 1:50 a guard is its rail centre line with the posts as small filled squares, so the stringer, the deck edge
+      and the guard do not merge into one heavy line (RPM 3101, 2026-10-15).
 12. **Key sections and enlarged elevations of continuous trusses** (user, 2026-10-06: "key section for truss detail
     ... 1:200 then lead to enlarge detail; show dummy top/bot/dia for showing that those are end at post or continue
     to others")
@@ -263,6 +276,111 @@ Placement of leaders, tags, weld symbols, cutting planes and node dimensions: `A
       shown.
     - Worked example: BANWA2 S-201 (key sections K1 - K9), S-202 - S-204 (elevations T1 - T17, ST1, ST2),
       `plans/truss_details.py` (`key_section`, `truss_elev`).
+13. **Sections of steel structures attached to a building** (stairs, platforms, canopies; user, 2026-10-15, RPM stair
+    C review A1: "show as real project section with proper cut and wall thickness linetype scale and weight";
+    "improve showing strut section with bolts or any and detail callout"; "this is not call a engineering drawing")
+    - The general views are **sections**, not outline elevations: a cutting plane on the plan for each, along the
+      flight or through the landing, looking at the building.
+    - **Cut** parts are distinct from **seen** parts: steel cut in section is its actual section outlined at 0.35
+      (treads, joists, beams, struts and rails where the plane cuts them; S4.15), steel beyond in outline (0.25), the
+      building beyond grey, hidden parts colour 8.
+    - **Walls and floors that the plane cuts are drawn at their real thickness**, hatched AR-CONC, outline 0.35, the
+      floor level through a door; an assumed thickness is labelled "(ASSUMED)" until it is confirmed. At least one
+      section passes through each wall connection (bracket, embed, anchor plate), so the connection is shown in its
+      wall.
+    - The ground is a heavy line with an EARTH band, never the concrete hatch.
+    - H and I sections seen side-on show both flange lines; RHS show their outline (walls hidden fine where useful).
+    - Every connection on a general section is called out to its detail: a dashed circle or, round a joint, a
+      dashed rounded box (`steel_access.call_box`), and on a dense view a split bubble "n / sheet" in clear space
+      (S4.10; `steel_access.ref_bubble`).
+    - Worked example: RPM Staircase 3102, 3103 (sections along the flights) and 5103 (section through the top
+      landing and the door, wall plate anchors, corner seat).
+14. **Stairs, guards and ladders to the office standard of detail** (user, 2026-10-15: "check these folder inside
+    there are finest ladder detail please improve yourself equivalent to these"; reference Beca SE-0501 – SE-0504,
+    digest in `docs/steel/stairs/17_STAIR_DETAILING_PRACTICE.md` and `18_LADDER_DETAILING.md`)
+    - Every flight is dimensioned "n R @ r = total" and "(n − 1) G @ g = total", with a **work point** at the nosing
+      line / floor intersection at each end (`steel_access.wp_point`).
+    - Every stringer end, foot and tread connection has a 1:10 detail. It shows the stringer side-on with the treads
+      behind it hidden, the nosing line (unless it is the stringer edge), the WP, the rise and going that set the
+      joint out, break lines on every member cut off, and bolts and anchors as built.
+    - Guards and rails are tubes (double line, radiused bends; `tube_run`), posts at the calc's spacing measured
+      along the rail. Joints drawn as made (user, 2026-10-15, review of A7: "rail join not good make it more
+      professional"): posts continuous to the underside of the top rail, the top rail running over them, the mid
+      rail stopping at each post face (welded between posts); where a rail turns away from the viewer it is drawn
+      as its pipe section at the corner; a guard running away along its flight is drawn end-on as the band of its
+      rails ("rail missing?"); a guard cut by the section is two pipe sections in front of the next post (RPM
+      `guard_seen`, `rail_endon`, `rails_cut`).
+    - A member under another is not drawn where it is under it, not even hidden (review of A7: "stringer on top of
+      knee brace then should not see knee brace beam"). The bracket arms are drawn hidden on the general plan
+      under the deck, but not where a stringer sits on them. Each arm carries its mark with a short arrow (user,
+      2026-10-16, review of R2: "brace beam missing? we don't know where BK1 is and what 4-M16 refer to"; guide §9.2;
+      RPM `arm_plan_items`, `arm_tag`; 3201, 3301).
+    - A landing seen beyond a section shows its deck plate edge-on and the joist seen between the stringer ends, as a
+      landing cut shows them cut (user, 2026-10-16, review of R2 on 3103: "deck and joist missing"; RPM `deck_seen`,
+      `joist_beyond`).
+    - Every level on a section or detail has its level line across the object (SYMBOLS "Level mark").
+    - A knee bracket seen face-on beyond a cut: the strut underside seen (solid) from its cut section down to the
+      wall plate, its section at the plate dashed (behind the strut), plate edges hidden behind nearer members
+      ("why i saw plate edge?", "strut section should present at baseplate"); a strut cut by a vertical plane is its
+      H stretched 1 / cos of its slope.
+    - **A knee brace shows its length** (user, 2026-10-16, RPM F1 review of A2: "show knee length"): an aligned
+      dimension along the strut axis, from the arm soffit to the plate face, "<> (STRUT, ON ITS AXIS)", outside the
+      knee. Inside the arm - strut - wall triangle its extension lines would cross the arm and the wall. The text
+      reads upright, and the member schedule takes the same value (RPM `strut_dim`, `strut_len`; 1/5203, 1/5206,
+      1/5103). A note that would cross the dimension is folded into the next note: the strut weld goes with the arm
+      note.
+    - **Brackets on an existing building are fixed to structural elements only** (user, 2026-10-16, RPM F1 review
+      of A2: "mention that plate need to be fixed to structural element only it may not a wall it can be any column,
+      beam, wall please correct in all staircase"). The support is named "EXISTING RC COLUMN, BEAM OR WALL
+      (STRUCTURAL ELEMENT ONLY)", never just "wall", on every section, detail and plan note of every stair. The
+      general notes say: never into block, brick, infill or panel walls; where no structural element is at a
+      bracket, report to the engineer before fabrication. The table column is "SUPPORT / LANDING" (RPM C A12, F1 A3).
+    - A ladder sheet dimensions every limit with its value (pitch, clear width, toe clearance, extension above the
+      landing, step-across, climbing-side clear zone drawn dashed). The governing code (OSHA 1910.23, AS 1657, the
+      client's standard) is stated in a geometry table and checked in the job (`steel_ladder_typical`).
+    - **Draw each joint as built before issue**: drawing RPM 2/5102 as built showed that its nuts sat inside a closed
+      RHS, and drawing the knee bracket (RPM 1/5103, A4) showed wall-plate anchors at ±50 on the tips of a 100 wide
+      post flange. A detail that cannot be assembled is a design question for the engineer, not a drafting choice:
+      put the fix in the calc data (`project.py`), rerun, and list it as a decision.
+    - **The analytical model of a bracket or frame is not drawn on the sheets** (user, 2026-10-15, RPM review of
+      A4: "this one i just let you know not put in the drawing"): it belongs in the calculation report. The drawn
+      joints must match it: a pinned end is a plate connection, a moment release is a single-plate or bolted joint.
+    - An H member seen side-on shows **both flange lines** ("show flange thickness as double line", review of A3),
+      and a strut or brace is **cut to the face it is welded to and fillet welded all round** (review of A4: "brace
+      cut at plate and fillet weld all around"; RPM `h_clip`). No intermediate wall post where each member can have
+      its own wall plate ("no need for wall post").
+    - **Stringers bear on their supports, they are not hung beside them**, when the engineer asks for it (review of
+      A4: "stringer ... bottom on top of H beam"): the stringer is cranked level at the landing (complete
+      penetration butt weld, ground flush) and its level leg sits on the support beam, bolted through both flanges
+      (RPM 1/5105).
+    - Worked examples: RPM Staircase A3 (3102, 3103, 5102, 5105); `jobs/steel_ladder_typical` (LAD-ST 5201 – 5203).
+15. **Steel sections are drawn as the actual section, never as a solid fill** (user, 2026-10-15: "check steel section
+    here and improve our drawing not draw as thick line for steel section we draw actual section"; the office block
+    library `G:\My Drive\##Workset_Autocad\Autocad_Work_Set\Autocad_Work_Set\Block\Technical Standards\Steel Work`)
+    - A member cut in a section or seen end-on is its true profile, outlined: rolled H and I with their root radii,
+      JIS channels with the sloped inner flange faces (about 1 : 11.4) and root and toe radii, RHS / SHS with
+      rounded corners (outer 3t, inner 2t), CHS as two circles, angles with root and toe radii, plates as rectangles.
+      Cut: 0.35 (S-CUT); end-on beyond: the member's seen layer.
+    - No solid fill on steel: at 1:50 and 1:20 a fill reads as a thick line and hides the shape (a thin plate at
+      1:50 still draws as its two edges, which read as one line).
+    - A member cut obliquely (a sloping stringer cut by a vertical plane) keeps its profile, stretched along the cut
+      (`draw_profile(..., sy=1 / cos)`).
+    - **Line weight of thin parts** (user, 2026-10-15, review of A6: "improve line weight"): a plate or wall thinner
+      than about 1 mm on paper is outlined with the fine pen (`S-CUT-FINE`, 0.18), so its two edges stay two lines;
+      a hollow section cut keeps its outer wall at 0.35 and its inner wall fine.
+    - **Cross symbol**: a hollow section cut in a section gets the two diagonals of its inner wall ("cross symbol";
+      `draw_profile(..., cross=True)`).
+    - **Break lines end a member** (review of A6: "proper break line no member line here"): where a member is broken
+      off, the break line is its end; no member end line is drawn (`stringer_side(..., open_ends=...)`).
+    - **What is in front hides what is behind, in sections too** (review of A6: "riser need to be hidden behind
+      strut", "review what line behind channel"): lines behind a nearer member are hidden in colour 8 or left out
+      (RPM `draw_split`, `bracket_area`).
+    - Helpers: `drafter/steel_access.py` `profile(spec)`, `h_profile`, `c_profile`, `rhs_profile`, `chs_profile`,
+      `draw_profile`; radii from the office blocks in `RADII` (H 200x100 r 11, H 100x100 r 10, C 200x80 r1 12 / r2 6,
+      C 150x75 r1 10 / r2 5), fallbacks for other sizes. Add a size to `RADII` from its office block when it is used.
+    - Worked example: RPM Staircase A6 (Section A 1/5102 channels, Section 1/5103 arm and channel legs, 1/5105 arm);
+      the treads, cage and tube ends of `steel_access` and `jobs/steel_ladder_typical`. Sets drawn before this rule
+      (SRT, BANWA2) keep their fills until they are revised.
 
 ## S5. Weld symbols (AWS A2.4; DSC p.115-127, DG21 Fig 3-36)
 
@@ -401,6 +519,11 @@ Placement of leaders, tags, weld symbols, cutting planes and node dimensions: `A
    - Sliding end: the washers are loose and the double nuts snug.
    - Levelling nut on every rod; grout after the frame is plumbed and braced.
    - Levels: underside of base plate = bearing level BL; top of concrete = BL − grout.
+   - **Post-installed (chemical) anchors are drawn as built** (user, 2026-10-15, RPM review A1: "improve anchor bolts
+     presentation"): in a section through the anchors, the concrete cut and hatched, the drilled hole with its resin,
+     the rod to its embedment, the plate (cut, solid) with its hole, the washer and the nut; dimensions hef, plate
+     thickness, spacing and edge distances; the note gives the rod grade, the drill size and depth, the hole cleaning
+     and "resin to the maker". A plan of the plate gives the hole pattern (RPM 5102 detail 5, 5103 detail 2).
 5. **Base plate plan**: the edge distance, rod spacing and overall size in both directions. The plate and washer marks.
 
 ## S9. Erection notes (1001)
@@ -514,7 +637,7 @@ The build enforces a clean layout (exit code 1 on any `!!`). Before sending a se
 | Leader engine | `td_engine.LEADER_ORTH`, `ORTH_RISE`, `ORTH_LEG_MIN`, `BOLT_RING_K`, `WRAP_UNITS` (`drafter.fonts.wrap(keep_units=True)`) |
 | Views and tables | `srt_sheets`: `node_detail` (set-out, symbols), `branch_weld_detail`, `camber_diagram`, `bearing_elev`, `anchor_rod`, `base_plans`, `loose_conn` (`behind`), tables 1-6 |
 
-BANWA2 (steel roof on an RC frame, outside the repository: `...61005 BANWA 2\Drafter\plans`, see `jobs/README.md`):
+BANWA2 (steel roof on an RC frame, outside the repository: `...\20261005 BANWA 2\Drafter\plans`, see `jobs/README.md`):
 
 | Rule | Code |
 |---|---|

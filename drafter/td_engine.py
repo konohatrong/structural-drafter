@@ -1368,14 +1368,23 @@ def _tb_strip(ps, x0, x1, FY0, FY1, TBW):
     y_own = y_prj + 14
     for yy in (y_app, y_des, y_tit, y_off, y_prj, y_own):
         hline(yy)
-    text(ps, "APPROVED BY : ..........................   DATE : ............", (tx, FY0 + 3.5), 2.0, align=TA.MIDDLE_LEFT)
+    o = TB_OPTS
+    if o.get("approved"):                          # names filled in (opt-in, TB_OPTS)
+        text(ps, f"APPROVED BY : {o['approved']}", (tx, FY0 + 3.5), 2.0, align=TA.MIDDLE_LEFT)
+        text(ps, f"DATE : {o.get('approved_date', '')}", (x0 + 35 + 1.5, FY0 + 3.5), 2.0, align=TA.MIDDLE_LEFT)
+    else:
+        text(ps, "APPROVED BY : ..........................   DATE : ............", (tx, FY0 + 3.5), 2.0,
+             align=TA.MIDDLE_LEFT)
     xm = x0 + 35
     line(ps, (xm, y_app), (xm, y_des), "S-TTLB")
     ly = y_des - 3.5
-    for lab in ["DESIGNED : ......................", "DRAWN : ...........................",
-                "CHECKED : .......................", "ENGINEER : .......................",
-                "COE LICENSE NO. : ..............", "SIGNATURE : ....................."]:
-        text(ps, lab, (tx, ly), 2.0, align=TA.MIDDLE_LEFT)
+    people = o.get("people") or {}
+    rows = [("DESIGNED", "......................"), ("DRAWN", "..........................."),
+            ("CHECKED", "......................."), ("ENGINEER", ".......................")]
+    if o.get("licence_rows", True):
+        rows += [("COE LICENSE NO.", ".............."), ("SIGNATURE", ".....................")]
+    for lab, dots in rows:
+        text(ps, f"{lab} : {people.get(lab, dots)}", (tx, ly), 2.0, align=TA.MIDDLE_LEFT)
         ly -= 4.8
     text(ps, "DRAWING NO.", (xm + 1.5, y_des - 3.5), 2.0, align=TA.MIDDLE_LEFT)
     att(ps, "DWG_NO", "STR-ST-0000-D-A", (xm + 1.5, y_des - 8.5), 2.8, style="ANB", prompt="Drawing number")
@@ -1392,28 +1401,40 @@ def _tb_strip(ps, x0, x1, FY0, FY1, TBW):
         att(ps, f"TITLE_{k + 1}", "", (xc, yy), 2.8, TA.MIDDLE_CENTER, "ANB", prompt=f"Drawing title line {k + 1}")
         yy -= 4.3
     text(ps, "STRUCTURAL DESIGN OFFICE", (tx, y_off - 3), 2.0, align=TA.MIDDLE_LEFT)
-    att(ps, "OFFICE", PROJ["office"], (xc, y_off - 9), 2.8, TA.MIDDLE_CENTER, prompt="Design office")
-    att(ps, "OFFICE_ADDR", PROJ["office2"], (xc, y_off - 14.5), 2.0, TA.MIDDLE_CENTER, prompt="Office address / tel.")
+    ost, ok_ = o.get("office_style", "AN"), o.get("office_scale", 1.0)    # a Thai name needs a Thai font (opt-in)
+    att(ps, "OFFICE", PROJ["office"], (xc, y_off - 9), 2.8 * ok_, TA.MIDDLE_CENTER, ost, prompt="Design office")
+    att(ps, "OFFICE_ADDR", PROJ["office2"], (xc, y_off - 14.5), 2.0 * ok_, TA.MIDDLE_CENTER, ost,
+        prompt="Office address / tel.")
     text(ps, "PROJECT", (tx, y_prj - 3), 2.0, align=TA.MIDDLE_LEFT)
     att(ps, "PROJECT", PROJ["project"], (xc, y_prj - 9), 2.8, TA.MIDDLE_CENTER, "ANB")
     att(ps, "LOCATION", PROJ["location"], (xc, y_prj - 15), 1.8, TA.MIDDLE_CENTER, prompt="Building / location")
     text(ps, "OWNER", (tx, y_own - 3), 2.0, align=TA.MIDDLE_LEFT)
     att(ps, "OWNER", PROJ["owner"], (xc, y_own - 9), 2.8, TA.MIDDLE_CENTER)
 
-    y_auth = y_own + 20
-    y_cli = y_auth + 16
-    hline(y_auth)
-    hline(y_cli)
-    text(ps, "LOCAL AUTHORITY (BUILDING CONTROL)", (tx, y_auth - 3), 2.0, align=TA.MIDDLE_LEFT, style="ANB")
-    text(ps, "PERMIT NO. : ...................................", (tx, y_auth - 8), 2.0, align=TA.MIDDLE_LEFT)
-    text(ps, "[ STAMP ]", (xc, y_auth - 15), 2.0, align=TA.MIDDLE_CENTER)
-    text(ps, "OWNER / CLIENT APPROVAL", (tx, y_cli - 3), 2.0, align=TA.MIDDLE_LEFT, style="ANB")
-    text(ps, "SIGNATURE : ...................................", (tx, y_cli - 8), 2.0, align=TA.MIDDLE_LEFT)
-    text(ps, "NAME : ......................  DATE : ..........", (tx, y_cli - 13), 2.0, align=TA.MIDDLE_LEFT)
+    freed = 0.0
+    if o.get("authority", True):
+        y_auth = y_own + 20
+        y_cli = y_auth + 16
+        hline(y_auth)
+        hline(y_cli)
+        text(ps, "LOCAL AUTHORITY (BUILDING CONTROL)", (tx, y_auth - 3), 2.0, align=TA.MIDDLE_LEFT, style="ANB")
+        text(ps, "PERMIT NO. : ...................................", (tx, y_auth - 8), 2.0, align=TA.MIDDLE_LEFT)
+        text(ps, "[ STAMP ]", (xc, y_auth - 15), 2.0, align=TA.MIDDLE_CENTER)
+        text(ps, "OWNER / CLIENT APPROVAL", (tx, y_cli - 3), 2.0, align=TA.MIDDLE_LEFT, style="ANB")
+        text(ps, "SIGNATURE : ...................................", (tx, y_cli - 8), 2.0, align=TA.MIDDLE_LEFT)
+        text(ps, "NAME : ......................  DATE : ..........", (tx, y_cli - 13), 2.0, align=TA.MIDDLE_LEFT)
+    else:                                          # no authority / client boxes: the key plan takes their 36 mm
+        y_cli = y_own
+        freed = 36.0
 
     # revision table - EIT 2.2.2.4: above title block, same width, rows >= 5 mm
+    global TB_REV_ROWS
     rh = 5.0
-    nrows = 4
+    nrows = TB_REV_ROWS
+    sy = y_cli + (nrows + 1) * rh + 6 + 32 + freed + 3      # status stamp, where the key plan leaves it
+    if not o.get("keyplan", True):                 # no key plan (opt-in): the revision table takes its place,
+        nrows = int((sy - 3 - 6 - rh - y_cli) // rh)   # the status stamp stays where it was
+        TB_REV_ROWS = nrows
     y_r0 = y_cli
     y_hdr = y_r0 + nrows * rh
     y_rt = y_hdr + rh
@@ -1433,18 +1454,22 @@ def _tb_strip(ps, x0, x1, FY0, FY1, TBW):
     hline(y_rt + 6)
 
     # key plan - EIT 2.2.2.5
-    y_kp0 = y_rt + 6
-    y_kp1 = y_kp0 + 32
-    hline(y_kp1)
-    text(ps, "KEY PLAN (N.T.S.)", (tx, y_kp1 - 3), 2.0, align=TA.MIDDLE_LEFT, style="ANB")
-    bx0, by0, bx1, by1 = x0 + 10, y_kp0 + 5, x1 - 10, y_kp1 - 7
-    pline(ps, [(bx0, by0), (bx1, by0), (bx1, by1), (bx0, by1)], "S-TTLB-THIN", close=True)
-    pline(ps, [(bx0, by0), (bx1, by0)], "S-FRAME")
-    att(ps, "KEYPLAN_1", "NOT APPLICABLE", (xc, (by0 + by1) / 2 + 2.5), 2.0, TA.MIDDLE_CENTER, prompt="Key plan line 1")
-    att(ps, "KEYPLAN_2", "", (xc, (by0 + by1) / 2 - 2.5), 2.0, TA.MIDDLE_CENTER, prompt="Key plan line 2")
+    if o.get("keyplan", True):
+        y_kp0 = y_rt + 6
+        y_kp1 = y_kp0 + 32 + freed
+        hline(y_kp1)
+        text(ps, "KEY PLAN (N.T.S.)", (tx, y_kp1 - 3), 2.0, align=TA.MIDDLE_LEFT, style="ANB")
+        m_ = o.get("keyplan_margin", 10.0)
+        bx0, by0, bx1, by1 = x0 + m_, y_kp0 + 5 - (3 if freed else 0), x1 - m_, y_kp1 - 7
+        pline(ps, [(bx0, by0), (bx1, by0), (bx1, by1), (bx0, by1)], "S-TTLB-THIN", close=True)
+        if o.get("keyplan_ground", True):          # the heavy ground line of a section key plan
+            pline(ps, [(bx0, by0), (bx1, by0)], "S-FRAME")
+        att(ps, "KEYPLAN_1", "NOT APPLICABLE", (xc, (by0 + by1) / 2 + 2.5), 2.0, TA.MIDDLE_CENTER,
+            prompt="Key plan line 1")
+        att(ps, "KEYPLAN_2", "", (xc, (by0 + by1) / 2 - 2.5), 2.0, TA.MIDDLE_CENTER, prompt="Key plan line 2")
+        sy = y_kp1 + 3
 
     # status stamp + sheet notes (text area, EIT 2.2.2.2)
-    sy = y_kp1 + 3
     pline(ps, [(x0 + 3, sy), (x1 - 3, sy), (x1 - 3, sy + 12), (x0 + 3, sy + 12)], "S-TITLE", close=True)
     att(ps, "STATUS_1", "FOR REVIEW", (xc, sy + 8.2), 2.8, TA.MIDDLE_CENTER, "ANB", prompt="Status line 1")
     att(ps, "STATUS_2", "NOT FOR CONSTRUCTION", (xc, sy + 3.8), 2.8, TA.MIDDLE_CENTER, "ANB", prompt="Status line 2")
@@ -1453,13 +1478,23 @@ def _tb_strip(ps, x0, x1, FY0, FY1, TBW):
              "2. DIMENSIONS IN mm; LEVELS IN m.\\P"
              "3. DO NOT SCALE FROM DRAWINGS.\\P"
              "4. DRAFTING TO EIT 011006-19.")
+    if o.get("notes"):                             # the project's own sheet notes (opt-in)
+        notes = "\\P".join(f"{k + 1}. {t}" for k, t in enumerate(o["notes"]))
     mtext(ps, notes, (tx, FY1 - 6.5), 2.0, TBW - 3)
 
 
 KEYPLAN_2 = "(TYPICAL DETAILS)"      # set by the content module (general notes: "(GENERAL NOTES)")
 REVS = [("A", "ISSUED FOR REVIEW", PROJ["date"])]
+TB_REV_ROWS = 4                      # revision rows in the A3 title block (tb_define)
 REVS_BY_SHEET = {}                   # series -> own revision rows (a sheet added at a later revision)
 STATUS = ("FOR REVIEW", "NOT FOR CONSTRUCTION")   # title-block status stamp (2 lines); set by the project for an issue
+# title-block options, all opt-in (set before tb_define): "people" {"DESIGNED": "PP", "DRAWN": ..., "CHECKED": ...,
+# "ENGINEER": ...}, "approved" (name), "approved_date", "licence_rows" (False: no COE licence / signature rows),
+# "authority" (False: no local authority and owner approval boxes; the key plan grows into them), "notes" (list of
+# sheet notes), "office_style" / "office_scale" (a font for the office name, e.g. a Thai one), "keyplan_ground"
+# (False: no heavy ground line in the key-plan box), "keyplan_margin" (mm each side of the key-plan box), "keyplan"
+# (False: no key plan; the revision table grows into its place and TB_REV_ROWS is set to the rows it holds)
+TB_OPTS = {}
 
 
 def _centre_status(tb):
@@ -1482,7 +1517,11 @@ def tb_values(series, title_lines, scale_txt, sheet_i):
          "STATUS_1": STATUS[0], "STATUS_2": STATUS[1]}
     for k, tl in enumerate(title_lines):
         v[f"TITLE_{k + 1}"] = tl
-    for k, (r, d, dt) in enumerate(REVS_BY_SHEET.get(series, REVS)):
+    revs = REVS_BY_SHEET.get(series, REVS)
+    if len(revs) > TB_REV_ROWS:                    # the block has no attribute for the extra rows: never drop silently
+        warn(f"{dwg_no(series)}: {len(revs)} revisions for {TB_REV_ROWS} title-block rows - list the latest "
+             f"{TB_REV_ROWS} (REVS[-{TB_REV_ROWS}:]) or extend the block")
+    for k, (r, d, dt) in enumerate(revs[:TB_REV_ROWS]):
         v[f"REV_{k + 1}"], v[f"REV_{k + 1}_DESC"], v[f"REV_{k + 1}_DATE"] = r, d, dt
     return v
 

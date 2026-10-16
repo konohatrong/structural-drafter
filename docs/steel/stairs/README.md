@@ -38,6 +38,8 @@ Study notes on **AISC Design Guide 34, *Steel-Framed Stairway Design*** (Adam D.
 | 14 | `14_DELEGATED_DESIGN.md` | Who provides what, submittals, the Appendix A checklists |
 | 15 | `15_DESIGN_WORKFLOW_EXAMPLES.md` | Step-by-step design order and the results of DG34's two worked examples |
 | 16 | `16_DRAWING_CHECKLIST.md` | [REC] What our steel-stair drawings must show, using the rule book |
+| 17 | `17_STAIR_DETAILING_PRACTICE.md` | [REC] How a stair joint is drawn to the office standard (Beca SE-0501 – 0503 studied): WP, hidden treads, nosing line, breaks, tubes, boxes and bubbles, checklist, `steel_access` helpers |
+| 18 | `18_LADDER_DETAILING.md` | [REC] Fixed ladders: sheet content (SE-0504), AS 1657 vs OSHA 1910.23 limits, cages and ladder safety systems, worked example LAD |
 
 ## Quick answers
 
@@ -51,6 +53,8 @@ Study notes on **AISC Design Guide 34, *Steel-Framed Stairway Design*** (Adam D.
 | Channel stringer under a guard post: does it need a stiffener? | 12B |
 | What gap to leave against a concrete or masonry wall? | 07, 13; anchors and embeds: 11B |
 | What must the architect or SER put on the drawings? | 14 |
+| How should a stringer end, foot or tread detail look? | 17 |
+| Fixed ladder: rung pitch, width, clearances, cage or fall arrest? | 18 |
 
 ## Related rule-book files
 

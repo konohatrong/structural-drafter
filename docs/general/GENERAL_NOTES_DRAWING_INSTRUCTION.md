@@ -294,6 +294,22 @@ python plot_gn.py out
 ```
 
 6. Check the printed A3 (§9).
+7. **Every project cites Thai law and Thai standards first** (user, 2026-10-15: "check that every standard refer to
+   Thai regulation and construction standard"). Each set has a codes-and-standards block in three groups:
+   - **A. Thai law:** Building Control Act B.E. 2522; Ministerial Regulation No. 55 (stairs, exits); MR on structural
+     design and materials **B.E. 2566** (live loads cl. 11, combinations cl. 7 = 1.4D + 1.7L, resistance factors cl. 8;
+     it repealed MR 6 (2527)); MOI notification B.E. 2567 (accepted design standards cl. 6, deflection cl. 8, wind
+     cl. 22, material properties cl. 27); seismic MR and MOI notification B.E. 2564 where the building is covered;
+     the local bylaw (e.g. Bangkok 2544) where it applies.
+   - **B. Thai standards:** EIT (วสท.), DPT (มยผ. 1311 wind, 1301/1302 seismic, 1561-1565 weld inspection) and TIS
+     (มอก. 1227 sections, 107 tubes, 1479 plates, 24 bars).
+   - **C. Foreign standards** only where the Thai documents are silent or refer to them (AISC 360 as an accepted
+     standard with the MR factors, ACI 318 Ch. 17 anchors, AWS D1.1 / D1.3, DG34, ASCE 7 guard loads, ISO bolts,
+     SSPC / ISO paint), each with that reason.
+   - The calc uses the legal values (loads, combinations, φ caps, TIS Fy or the uncertified limits Fy 235 / 205 MPa),
+     and a table lists each Thai requirement, its clause and the project value (worked example: RPM Staircase A9,
+     sheet 1002, TABLE 5; source note `02 Design basis61015 - Thai regulations and standards check.md`).
+   - Sources: `G:\My Drive\##Textbook\Law`, `TIS`, `EIT`, `DPT` (scanned Thai PDFs: read the page images).
 
 ---
 

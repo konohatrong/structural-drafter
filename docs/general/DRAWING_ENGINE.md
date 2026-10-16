@@ -49,6 +49,8 @@ from drafter.steel import *                       # steel sets only: steel layer
 | `TABLES` | Table register: key → (number, name). `TABT(key)` gives "TABLE n - NAME", `TAB(key)` the citation "TABLE n" |
 | `SC` | Arranging scale of the sheet composition (25) |
 | `LEADER_ORTH`, `WRAP_UNITS` | Opt-in options (section 6) |
+| `TB_OPTS` | Title-block options, all opt-in, set before `tb_define()` (empty: the office block unchanged, proved on the ladder job's 240 block entities): `people` (names for DESIGNED / DRAWN / CHECKED / ENGINEER), `approved`, `approved_date`, `licence_rows` (False: no COE licence and signature rows), `authority` (False: no local authority and owner approval boxes; the key plan takes their 36 mm), `notes` (the sheet notes), `office_style` / `office_scale` (a font for the office name, e.g. TH Sarabun New for Thai), `keyplan_ground` (False: no ground line in the key-plan box), `keyplan_margin`. `keyplan` (False: no key plan; the revision table grows into its place and `TB_REV_ROWS` is set to its rows, the status stamp stays put). First used on RPM Staircase R1 (user, 2026-10-16) |
+| `acad.ALLOWED_FONTS` | Fonts the plotted PDF may use (font check). Default Arial Narrow; a project adds a font it uses on purpose (RPM: `THSarabun` for the Thai office name), never to hide a mis-encoded symbol |
 
 The build driver (`build.py`) then does: build the views and sheets, `finish()`, delete `Layout1`, audit the DXF
 (audit errors go through `warn()`), save the DXF, write the block index (`index_csv`), and exit 1 if
@@ -135,7 +137,7 @@ with the engine's tags at the office fields, sets `td_engine.TB_NAME`, the frame
 | **Paper blocks** | `tbl(ps, x, y_top, widths, heads, rows, align, title=TABT(key))`, `table`, `notes_block`, `bar_end_legend`; `group(prefix, fn, …, g_kind=, g_title=, g_scale=)` turns anything a job draws on the sheet into a block (the `g_` prefix keeps the index keywords apart from the function's own) |
 | **Annotation** | `note_cfg(...)` per view; `leader(sp, tip, knee, text, S, side, width, mark=, ring=, bolt=, dot_tip=, fixed=)`; `callout`, `callout_list`; `level`; `TABT`, `TAB` |
 | **Dimensions** | `dim(sp, p1, p2, base, S, angle=, text=, tside=)`, `row_label` (tier labels), `zone_band` (stirrup zones) |
-| **Drawing** | `line`, `pline`, `text`, `mtext`, `hatch` / `pscale`, `dot`, `arrowhead`, `zbreak`, `zigzag`, `earth_band`, `nf_hatch`; bars `bar`, `strip`, `rdot`, `stirrup`, `crosstie`, `lap_crank`, `dist_line`, `dowel_end`; `grid_bubble`, `pour_header`; steel helpers in `drafter/steel.py` |
+| **Drawing** | `line`, `pline`, `text`, `mtext`, `hatch` / `pscale`, `dot`, `arrowhead`, `zbreak`, `zigzag`, `earth_band`, `nf_hatch`; bars `bar`, `strip`, `rdot`, `stirrup`, `crosstie`, `lap_crank`, `dist_line`, `dowel_end`; `grid_bubble`, `pour_header`; steel helpers in `drafter/steel.py`; revisions: `REVS` (the A3 block has `TB_REV_ROWS` = 4 rows; more gives a `!!` warning - list the latest four); stairs, guards and ladders in `drafter/steel_access.py` (opt-in: work points, detail boxes, member breaks, stringers with hidden treads, tubes with bends, bolts and anchors as built, ladder views, cage plan) |
 | **Checks** | `warn(msg)` records a `!!` problem; `check_dims()` runs inside `capture()` |
 | **Output** | `index_csv(path)`: every block with its kind, sheet, title and scale (the library index) |
 
@@ -253,3 +255,8 @@ or an area gets one horizontal leader at its height; a target on a horizontal li
   arrow block (`_DOT`, `_ARCHTICK` ...) was never used by a dimension gets that block made by ezdxf while it writes
   the DIMSTYLE table, after `$HANDSEED` is written, so the new handles lie above the seed. Create the arrow blocks of
   every dimension style before the save (`ezdxf.render.arrows.ARROWS.create_block`; CHATAM `build.py`).
+- **The AutoCAD Core Console does not plot raster images** (RPM Staircase, 14/10/2026): an IMAGE (a client logo in the
+  title block) shows in the ezdxf preview but is missing from the AutoCAD PDF, with an absolute or a relative path
+  and no message in the log. Draw a logo as vector: trace the bitmap's dark pixels into closed loops (matplotlib
+  `contour` on the grey image) and fill them with one SOLID hatch in the title-block definition (RPM
+  `rpm_engine.logo_loops`); it plots black with the monochrome CTB and needs no external file.

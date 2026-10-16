@@ -90,6 +90,11 @@ def install_ctb(ctb, name, out):
         ctb.save(str(Path(d) / name))
 
 
+# fonts a plotted PDF may use (font check): Arial Narrow; a project adds a font it uses on purpose, e.g. a Thai
+# font for a Thai name in the title block (RPM Staircase: "THSarabunNew"), never to hide a mis-encoded symbol
+ALLOWED_FONTS = ["ArialNarrow"]
+
+
 def plot(dxf, layouts, ctb, *, setvars, per_layout=(), wblocks=(), lib=None, timeout=600, font_check=True,
          paper=None):
     """Plot every layout of dxf to <dxf dir>/<base>.pdf, save <base>.dwg and, with wblocks, one DWG per block
@@ -164,9 +169,9 @@ def plot(dxf, layouts, ctb, *, setvars, per_layout=(), wblocks=(), lib=None, tim
         # every glyph must come from Arial Narrow. Anything else (e.g. CordiaNew) means a symbol was
         # mis-encoded or is missing from the font - see TYPICAL_DETAILS_INSTRUCTION.md sec. 6.
         fonts = {f[3] for pg in merged for f in pg.get_fonts()}
-        bad = sorted(f for f in fonts if not f.startswith("ArialNarrow"))
+        bad = sorted(f for f in fonts if not f.startswith(tuple(ALLOWED_FONTS)))
         if bad:
-            problems.append("non-Arial-Narrow fonts: " + ", ".join(bad))
+            problems.append("fonts not allowed (ALLOWED_FONTS): " + ", ".join(bad))
         print("fonts:", ", ".join(sorted(fonts)), "| font check OK" if not bad else "")
     for p in problems:
         print("  !!", p)

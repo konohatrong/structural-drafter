@@ -108,6 +108,7 @@ Text is wrapped using the **real glyph advances** of Arial Narrow (average ≈ 0
 | **Bar drawn along its length** (vertical and horizontal bars, C-bars, U-bars, L-bars, 1:5 strips) | **Filled arrowhead, 2.0 mm long** | Tip on the bar's **edge** (`ARROW = 2.0`) |
 | **Bar cut in section** (longitudinal bars, verticals in plan, dowels end-on) | **Open circle ("blank dot"), Ø = 2 × drawn bar-dot diameter**, centred on the bar | Leader starts on the circle's edge (`RING_K = 2.0`). Examples: DB12 at 1:10 → Ø2.4; DB10 at 1:10 → Ø2.2; any bar at 1:20 → Ø2.2. |
 | **Bolt, anchor, screw or hole seen end-on** (steel, timber, precast fixings, anchors cast into or drilled into concrete) | **Open circle, Ø = 1.25 × the HOLE size**, centred on the bolt (Ø22 hole → Ø27.5; Ø33 rod hole → Ø41) | Tip given at the bolt **centre**; the leader starts on the circle's edge: `leader(..., bolt=hole Ø)` (`BOLT_RING_K`), user rule 2026-10-03 |
+| **Bolt or anchor seen side-on** (shank along the view: head, washer, nut drawn) | **Arrow** on the bolt (its threaded end or nut), never the open ring | User, 2026-10-15, RPM 3/5105: "use arrow pointer instead of dot open". The ring is only for a bolt seen end-on |
 | **Plate, tube, member or panel** (any material: steel plate, cast-in plate, timber member, precast panel) | Filled arrowhead, 2.0 mm | Tip **on the plate edge** or outline, never inside the plate area (user rule 2026-10-03) |
 | Concrete edge, surface, line, pipe, fill or soil area | Filled arrowhead, 2.0 mm | Tip on the edge or line, or inside the area for hatched regions |
 | Point inside an area (optional) | Filled dot Ø0.7 mm | **Not used for reinforcement** |
@@ -251,6 +252,11 @@ The same choices apply to any structure. Steel examples (SRT-ST) are in §9.
 - **Keep rows inside their view** (`xmax`) so they never run into the installation-note block beside the view.
 - **A leader never crosses a dimension line, an extension line or dimension text** (user rule, 2026-09-29). A leader across a dimension reads as part of it. How to lay out a view:
   - Put every dimension chain on **one side** of the view, and the note column on the other. On beams: chains below, notes right and above the soffit. On columns: chains left, notes right.
+  - On a plan with chains on two sides, the notes take the other two. On the RPM stair F1 plan (3201, A1 of
+    16/10/2026) the chains are below and left, the notes right and top-left. The top-left notes reach the stair
+    through the door opening in the wall. The ends of the cutting planes stay outside the note bands and above the
+    member tags. Each leader runs in a free window between the cutting-plane labels. A packed note column moved
+    notes below the chains, so the notes were set with `fixed=True` at known heights.
   - When chains measure different bars, label each row (`TOP BARS`, `BOTTOM BARS`) instead of splitting them above and below.
   - A dimension that can only go between the drawing and its notes is dropped. Its value goes in the note text instead (e.g. "CLEAR ≥ 25 AND ≥ db").
   - Keep the note rows in the dimension-free band: `note_cfg(yminR=…, upR=True)` packs upward from the lowest tip and never goes below the floor; `ymaxR` sets a ceiling.
@@ -401,6 +407,54 @@ units. Use the project's mark scheme; the circle and the placement rules are the
 - Trusses: chord tags sit outside the truss, at mid-panel, one per shop-piece mark (TC1, TC2, BC1, BC2). Frames:
   beam tags above or below the beam at mid-span, column tags beside the column at mid-height.
 - **No node numbers** on a general elevation (user rule). Tables refer to "panel points counted from the pin end".
+- **A tag never sits on a line or crosses one with its letters** (user, 2026-10-15, RPM stair C review A1: "refine tag
+  placing crash letter crash with the line"). Its circle keeps clear of every line drawn in the view, every text and
+  every other tag (RPM `rpm_engine.clear_tag`, candidates scored by their clearance from the view's lines).
+- **A member tag is the mark in its circle, beside the member, with no leader** (user, 2026-10-16, RPM F2 review of
+  A1: "member tag can be only mark in the circle no need leader"; this replaces the tag leaders of 2026-10-15/16).
+  - The circle touches or nearly touches the member it names, with a gap of about 0.6 mm. On a side view it sits
+    beside the strut; on a face-on view it sits beside the part of the strut that is seen, between the cut and the
+    plate.
+  - Where the member is drawn over other lines (a bracket behind a flight end-on), the mark goes beside the
+    member's end in clear space, never on the lines.
+  - Helpers: RPM `rpm_views.mark_tag`, `tag_d`; `clear_tag(..., leader=False)`.
+- **A mark that cannot touch its member points at it with a short arrow** (user, 2026-10-16, review of RPM R2: "we
+  don't know where BK1 is"; "mark not clarify where are the member they define to", with a sketch of the mark
+  beside the arm and an arrow onto it). This replaces the marks against the building face of 2026-10-16.
+  - Where the member is hidden or under others (a bracket arm under a landing, on a plan or a framing plan), the
+    member is drawn (hidden) and its mark stands in clear space beside it. On a framing plan the mark is beside the
+    arm at 30 – 70 % of its length. On a general plan, where the landing is crowded, the mark is just beyond the arm
+    tip, outside the landing.
+  - The leader is one straight line from the circle with a filled arrow (2.0 mm) ending on the member's edge. It is
+    short and never crosses another mark.
+  - A mark is never on the far side of a wall from its member: the building side of the wall is not the bracket.
+  - Where marks of one type differ in a site item (anchors), the item is written beside the mark on its clearer side
+    ("BK1 4-M20 ANCHORS"; review of R2: "what 4-M16 refer to").
+  - Helper: RPM `rpm_views.arm_tag` (candidates beyond the tip and beside the arm, scored by `clear_tag`; the hidden
+    arms and the cut lines are obstacles); `arm_plan_items` draws the arms on the plan. Worked example: RPM 3201,
+    3301, 5101, 5201, 5301 (R3).
+- **Same section, same mark** (user, 2026-10-16: "if there are same section can use same tag and add note for member
+  schedule"). Members of the same section and detail carry one type mark wherever they stand.
+  - **The mark is the fabricated piece.** Site items (anchors, shims, grout) are not part of it (user, 2026-10-16,
+    review of the merged RPM set: "BK2 and BK1 are the same? then same mark!!"). Brackets with the same arm and drop
+    are one mark even when their anchors differ. On RPM F1 all four brackets are BK1:
+    - the anchors are written beside the mark on the plan ("4-M20 ANCHORS" at the flight ends, "4-M16 ANCHORS" at
+      the landing ends);
+    - the anchor table has one row per mark and anchor type;
+    - the notes name the positions ("the two brackets beside the flight ends").
+  - The schedule lists each mark once, with its number (No.).
+  - The anchor table gives the worst position of each mark and anchor type.
+  - Notes and view titles name the mark, e.g. "ALL FOUR BK1".
+  - **Pieces that differ only by a few millimetres are made one** when the engineer agrees (user, 2026-10-16, review
+    of RPM R2 on stair C: "BK2 and BK1 the same? keep only one mark"). Arms of 1280 and 1300 became one 1300 arm in
+    the design data (`project.py`), the calc was rerun, and the four brackets are one mark. Propose it whenever two
+    marks differ by less than the fabrication tolerance that matters; the engineer decides.
+  - RPM `rpm_views.use` numbers the types by arm and drop; `bracket_member_rows`, `bracket_anchor_rows` and
+    `arm_tag` (anchor label) carry them. Notes that name the marks of several positions use `marks()`, which writes
+    each mark once ("ARMS BK1", never "BK1, BK1").
+- **A leader never crosses a member mark** (user, 2026-10-16, review of the merged RPM set: "leader crash member
+  mark"). The note row is moved so the leader passes clear of the marks, e.g. above the bracket marks on RPM 3202.
+  The build does not check this yet: look at every mark in the render.
 
 ### 9.3 Weld symbols (`drafter.steel.weld`): steel, and welded inserts in any structure
 

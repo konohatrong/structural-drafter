@@ -117,6 +117,18 @@ The sheet has five zones:
 3. **Title block**: at the right.
 4. **Revision table**.
 5. **Key plan** (location sketch): hatch the area shown on this sheet on a small site plan, building plan or building section. [Fig 2.6]
+   Office (user, 2026-10-16, review of the merged RPM set: "refine hatch scale"): on a key plan sheet at 1:500 - 1:1000
+   the marked items are hatched at a readable spacing (ANSI31 about 0.5 mm at 1:1000, 1 mm at 1:500), not filled
+   solid. A solid fill hides the item's shape at that scale (RPM `rpm_keyplan._draw_stairs`). The small key plan
+   in the title block may stay solid.
+   Office (user, 2026-10-16, review of RPM 1003: "there were drawing object as a block that missing please adjust
+   and refine"): a key plan or background taken from the client's drawing keeps **all its drawing objects**:
+   doors and their swings, columns and filled walls, stairs, windows, plant, parking and furniture. Leave out only
+   the client's text. Do not filter by length alone: a length cut also drops the small objects. Exploded text is
+   told by its shape: clusters of short lines with a share of diagonal strokes, or small solid glyph fills in tight
+   groups, while windows and stair lines are square to the building. Look at a render of the extract beside the
+   source before using it (RPM `make_site.py`). Our own names over the client's line work get a background mask
+   (RPM `rpm_keyplan.building_label`).
 
 **Layouts:**
 - **Vertical layout (Fig 2.2a)**: title block at the bottom-right corner. Revision table directly **above** it, same width. Key plan above that. Text area runs down the right strip.
@@ -599,6 +611,17 @@ These conventions were agreed with the engineer during NRW-ST Rev A and apply to
 | **Drawing list** | Sheet **S0-01** (series 0, EIT Table 4.2) opens the set (§3.7): number, title, scale, revision, date of every sheet, **read from the built sets' title blocks**, with the total (user, 2026-10-12: "add a drawing index sheet"; `DRAWING_PRODUCTION.md` §1.1) | §2.8, Table 4.2 |
 | **General-notes sheets** | **Current (issued F-A, 03/10/2026; developed as review print B, 2026-09-29): the normal sizes (K = 1)**, the notes flowing over as many sheets as they need. Rev A used × 0.625 (text 1.25 / 1.75, pitch 2.08). See `GENERAL_NOTES_DRAWING_INSTRUCTION.md` §0 | – |
 
+- **A set for submission** (user, 2026-10-16, RPM Staircase markup of R4): the stamp reads "FOR SUBMISSION"; the
+  revision table restarts at **R1 FOR SUBMISSION** with the publish date, and the internal review prints (A1, A2,
+  ...) are not listed; the sheet notes leave out the drafting-standard note; the names (designed, drawn, checked,
+  engineer, approved) are filled in, with the approval date the publish date. The local authority and owner approval
+  boxes and the COE licence and signature rows are left out when the engineer strikes them (the key plan takes the
+  space). The design office is the engineer's name, licence and address, in Thai where the engineer writes it, in a
+  Thai font (`td_engine.TB_OPTS`; RPM `rpm_engine.py`).
+- The title block may leave out the key plan when the set has a key-plan sheet (user, 2026-10-16, RPM R1: "delete
+  key plan from title block"; 1003 is the key plan): the revision table takes its place (`TB_OPTS["keyplan"] =
+  False`). Where the small key plan is kept, it shows the buildings as clean outlines, named, and each stair named
+  beside its mark (RPM `rpm_keyplan.tb_key_plan`, `footprints`).
 ### 19.2 Pens and lines (supersede §4.3 / §16 for A3 originals)
 
 | Line | Pen | Linetype | Colour (plotted) |
