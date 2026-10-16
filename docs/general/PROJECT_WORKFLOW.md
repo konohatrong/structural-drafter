@@ -106,6 +106,13 @@ is frozen, so everything printed on the sheets is settled **before** the copy:
 6. One row per sheet in `ISSUE_REGISTER.csv` the same day; a log row in `STATUS.md`.
 7. From then on the next changes are internal revisions (`B1`, `B2` … review prints) and the next issue is `B`.
 
+**CAD of an issued revision** (user, 2026-10-16, CHATAM: "make .dwg for transmittal", "make 1:1 scale on all cad
+file"): the issued folder stays as it is; the DWGs go out in a new folder `YYYYMMDD - <set> Rev <R> - CAD\` with
+its own `TRANSMITTAL.md` and register rows (purpose "... (CAD)"). The DWGs are made from the revision's DXFs, refused
+if any drawing source is newer: model space full size (`drafter/fullsize.py`), xrefs as files in `CAD\xref\`,
+fonts / CTB / PC3 / `acad.fmp` as the office eTransmit package, and every page plotted again and compared with the
+issued PDF before the copy (CHATAM `04 Code\drawings\transmit_cad.py`).
+
 If the copy fails half way within the same minute, the half-written files are yours: remove them and rerun the
 script (CHATAM: a "/" in a sheet title). A folder that was complete is never touched again.
 

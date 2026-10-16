@@ -214,9 +214,18 @@ or an area gets one horizontal leader at its height; a target on a horizontal li
 - **Full-size model space** (user instruction for BANWA2 CAD deliverables, 08/10/2026: "DWG model space is drawn at
   1:1"): one unit = one mm and every plan or detail inserted at scale 1, with paper-space layouts and locked viewports
   at the view scales. The engine's composed sheets do not do this (a 1:200 plan is a block inserted at SC / 200 in
-  model space, section 2); the BANWA2 transfer converted its merged DWGs separately. Open: an engine option for
-  full-size model space with viewports. Check a known dimension in the saved DWG and that no two views overlap in
-  model space.
+  model space, section 2). **`drafter/fullsize.py` `convert()`** does it as a post-step on a built DXF, without
+  changing the build (CHATAM, 16/10/2026: "make 1:1 scale on all cad file"): each `DET-*` view at insert scale 1 in
+  its own place, a locked viewport per view at its scale where it was on the sheet, the paper-level items into the
+  layout at 1:1, LTSCALE x ref_scale / SC with each view's entities at ltscale x S / ref_scale (PSLTSCALE 0), so the
+  plot is unchanged. Check after converting: a known dimension in model space (CHATAM grid 1 - 5 = 29 650), no
+  overlap (`fullsize.overlaps`), and the AutoCAD plot of the converted file against the issued PDF page by page
+  (CHATAM: largest difference 3.8 % of the ink, from hatch phase and sub-pixel edges). Use in a CAD transmittal:
+  CHATAM `04 Code\drawings\transmit_cad.py`. In a DXF that AutoCAD writes back, the viewports of layouts not opened
+  in that session have id 0: count them per layout, not by `id > 1`.
+- **Xrefs in a CAD transmittal travel as files**, re-pathed relative (`xref\<file>`) beside the drawings, as
+  eTransmit does. Binding them with Core Console (`-XREF B`, either BINDTYPE) gave a DWG that Core Console could not
+  reopen (ErrorStatus 53, CHATAM plans, 16/10/2026); a bound file is not sent unless it reopens.
 - **`place_tag` samples 9 points of the tag box**: a thin member (a CHS web at 1:50) can cross the box between them.
   Where members are thin and dense, check the clearance on the exact geometry (BANWA2 `truss_details.best_spot`).
 - **Text that is known only after the layout** (the sheet number of a detail drawn on a later sheet, inside a view
