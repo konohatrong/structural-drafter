@@ -40,3 +40,4 @@ Thumbs.db
 
 # Local working notes (not in the repository)
 jobs/steel_portal_frame/STATUS.md
+*.egg-info/

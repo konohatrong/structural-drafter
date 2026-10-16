@@ -61,3 +61,18 @@ def test_office_template(tmp_path):
         if p.is_file() and p.suffix in {".md", ".py", ".csv"}:
             assert "{{" not in p.read_text(encoding="utf-8"), p
     np_.office_template(tmp_path)                       # a second refresh changes nothing else
+
+
+def test_adopt(tmp_path):
+    np_ = load()
+    prj = tmp_path / "20250908 OLD JOB"
+    for d in ["CAD", "Calculation", "Transfer in/20250908", "Transfer out", "Revit"]:
+        (prj / d).mkdir(parents=True)
+    (prj / "CAD" / "plan.dwg").write_text("x")
+    (prj / "PROJECT.md").write_text("mine", encoding="utf-8")
+    np_.adopt(prj, "oj", fea_local=tmp_path / "local", git=False)
+    assert (prj / "06 CAD" / "plan.dwg").read_text() == "x" and not (prj / "CAD").exists()
+    assert (prj / "01 Transfer in" / "20250908").is_dir() and (prj / "09 Publish").is_dir()
+    assert (prj / "PROJECT.md").read_text(encoding="utf-8") == "mine"            # never overwritten
+    assert (prj / "Revit").is_dir() and (prj / "03 FEA" / "MODEL_LOG.md").is_file()
+    assert "OLD JOB" in (prj / "STATUS.md").read_text(encoding="utf-8")

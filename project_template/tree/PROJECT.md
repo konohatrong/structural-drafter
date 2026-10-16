@@ -19,7 +19,7 @@ Created {{DATE_TEXT}} from the office project template (`{{DRAFTER}}\project_tem
 | Scope of our work | |
 | Stage (EIT Table 4.3: I C P D T F S A) | |
 | Engineer in charge | |
-| Started | {{DATE_TEXT}} |
+| Started | {{STARTED}} |
 
 ## 2. Design basis (summary; full text and sources in `02 Design basis\DESIGN_BASIS.md`)
 

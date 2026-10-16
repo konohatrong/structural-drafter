@@ -7,7 +7,7 @@ Units: m, kN (or tonf: say which), MPa.
 
 NAME = "{{PROJECT}}"
 CODE = "{{CODE}}"                     # EIT §13 project abbreviation (PPPP)
-STARTED = "{{DATE_TEXT}}"
+STARTED = "{{STARTED}}"
 STAGE = None                          # EIT Table 4.3: "P" preliminary, "T" tender, "F" construction ...
 
 # --- design basis (02 Design basis\DESIGN_BASIS.md, approved by the engineer on ____) -------------------------
