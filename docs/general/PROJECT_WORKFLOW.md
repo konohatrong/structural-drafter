@@ -19,8 +19,7 @@ in `project_template/tree/`, never project by project.
 
 The office copy `G:\My Drive\Works\##Project Structures\` (for copying by hand, with `_HOW TO USE.md`) is generated
 from the same template: after a change to `tree/`, refresh it with
-`python project_template
-ew_project.py --office-template "G:\My Drive\Works\##Project Structures"`. It was
+`python project_template\new_project.py --office-template "G:\My Drive\Works\##Project Structures"`. It was
 converted on 11/10/2026: the old folders renamed (Transfer in → `01`, Calculation → `05`, CAD → `06`, Transfer out →
 `09 Publish`).
 
@@ -164,14 +163,14 @@ A project kept in the earlier office folders (CAD, Calculation, Transfer in, Tra
 brought into the structure in place when the engineer asks:
 
 ```powershell
-python project_template
-ew_project.py --adopt "<project folder>" --code <PPPP> --fea-local D:\Workspace
+python project_template\new_project.py --adopt "<project folder>" --code <PPPP> --fea-local D:\Workspace
 ```
 
 The old folders are renamed (Transfer in → `01`, Calculation → `05`, CAD → `06`, Transfer out → `09 Publish`), the
 missing folders and files are added, nothing is deleted or written over, and the project folder keeps its name. A
-folder outside the structure is listed and left for the engineer to place (CHATAM HOTEL, 11/10/2026: `Revit` moved to
-`06 CAD\Revit`). Xrefs in the same folder still resolve after the rename; a link by full path (Revit, a DWG xref
+folder or file outside the structure is listed and left for the engineer to place; received data loose at the top
+level goes to `01 Transfer in\YYYYMMDD - <from> - <what>\` with its `RECEIVED.md` row (RPM Staircase,
+14/10/2026). CHATAM HOTEL, 11/10/2026: `Revit` moved to `06 CAD\Revit`. Xrefs in the same folder still resolve after the rename; a link by full path (Revit, a DWG xref
 with a full path) is reloaded once.
 
 ## W9. Where the rules came from
