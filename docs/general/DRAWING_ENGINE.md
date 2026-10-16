@@ -222,7 +222,7 @@ or an area gets one horizontal leader at its height; a target on a horizontal li
   layout at 1:1, LTSCALE x ref_scale / SC with each view's entities at ltscale x S / ref_scale (PSLTSCALE 0), so the
   plot is unchanged. Check after converting: a known dimension in model space (CHATAM grid 1 - 5 = 29 650), no
   overlap (`fullsize.overlaps`), and the AutoCAD plot of the converted file against the issued PDF page by page
-  (CHATAM: largest difference 3.8 % of the ink, from hatch phase and sub-pixel edges). Use in a CAD transmittal:
+  (CHATAM: largest difference 3.8 % of the ink, from hatch phase and sub-pixel edges). Compare with a 1 px tolerance (ink of one plot with no ink of the other within 1 px at 100 dpi): on a page of dense thin lines the raw XOR reached 7.2 % with nothing changed (RPM 3102, 16/10/2026), 1.7 % with the tolerance, the rest grey 50 % lines rasterised either side of the threshold and identical at 300 dpi (RPM `04 Code\publish_issue.py`, limit 3 %). A report, the PDF set and the full-size CAD may go out in one issue folder with one transmittal (`REPORT\`, `PDF\`, `CAD\`) when the engineer asks for them together. Use in a CAD transmittal:
   CHATAM `04 Code\drawings\transmit_cad.py`. In a DXF that AutoCAD writes back, the viewports of layouts not opened
   in that session have id 0: count them per layout, not by `id > 1`.
 - **Xrefs in a CAD transmittal travel as files**, re-pathed relative (`xref\<file>`) beside the drawings, as
