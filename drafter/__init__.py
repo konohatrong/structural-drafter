@@ -5,6 +5,7 @@ Code shared by every job:
     pens.py       pens by colour and LTSCALE (no side effects)
     td_engine.py  the general drafting engine (creates its DXF document at import: one set per process)
     steel.py      steel layers and helpers on top of td_engine (import after the project data is set)
+    thai.py       cad_thai(): Thai text shaped for AutoCAD (opt-in, DXF text only)
 
 The job scripts add the repository root to sys.path and import from here, e.g.
     sys.path.insert(0, str(Path(__file__).resolve().parents[2]))

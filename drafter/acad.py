@@ -91,7 +91,9 @@ def install_ctb(ctb, name, out):
 
 
 # fonts a plotted PDF may use (font check): Arial Narrow; a project adds a font it uses on purpose, e.g. a Thai
-# font for a Thai name in the title block (RPM Staircase: "THSarabunNew"), never to hide a mis-encoded symbol
+# font for a Thai name in the title block (RPM Staircase: "THSarabunNew"), never to hide a mis-encoded symbol.
+# AutoCAD does not shape Thai: write the Thai strings through drafter.thai.cad_thai() (low / left mark glyphs; the
+# font must carry the Microsoft Thai private-use set) - DRAWING_PRODUCTION.md §8
 ALLOWED_FONTS = ["ArialNarrow"]
 
 

@@ -131,6 +131,8 @@ pytest -q
 - `drafter/td_engine.py`: the drafting engine (document, layers, dimension styles, annotation engine, detail blocks,
   title block, tables, bar graphics). It creates its DXF document at import: one set per process.
 - `drafter/pens.py`: pens by colour and LTSCALE, with no side effects (the plot scripts read it).
+- `drafter/thai.py`: `cad_thai()`, Thai text shaped for AutoCAD (tone marks to the font's low and left glyphs);
+  opt-in, for Thai strings written into the DXF only (§8).
 - `drafter/steel.py`: steel layers and helpers on top of the engine (welds, bolts, breaks, cutting planes, callouts,
   tags). Moved out of the job folders on 2026-10-03, with the DXF output unchanged.
 
@@ -184,6 +186,18 @@ it even when AutoCAD is there. For a quick look at any single DXF, run
   `STATUS.md` rows that other sessions read. Write the patch script to a file with an editor (or the Write tool) and
   run the file, or build a backslash with `chr(92)`; then scan the file for characters below 32 (except tab and
   newline) and 0x7F - 0x9F.
+- **Thai text in AutoCAD: marks are not shaped** (rule 17/10/2026, RPM Staircase title block B3). AutoCAD draws
+  Thai TrueType text without shaping: a tone mark or thanthakhat always sits at the high position (TH Sarabun New:
+  1.42 - 1.76 x cap height), and on ป ฝ ฟ ฬ the marks and upper vowels are not moved off the stem. In the A3
+  signature table (2.2 mm text at 3.6 mm pitch) the mark of "ด้" in "บางด้วน" reached into the line above and read
+  as a hook under its letters. Checked with a test plot of TH Sarabun New, SarabunPSK, Leelawadee, Tahoma and
+  Angsana New; TEXT and MTEXT behave the same. Write every Thai string meant for AutoCAD through
+  `drafter.thai.cad_thai()`: it maps a mark with no upper vowel under it to the font's low glyph (Microsoft Thai
+  private-use U+F70A - F70E; low-left U+F705 - F709 after ป ฝ ฟ ฬ), and on ป ฝ ฟ ฬ the upper vowels and high marks
+  to their left glyphs (U+F701 - F704, F710 - F712; U+F713 - F717); a mark before sara am stays high. It is opt-in:
+  reports, DOCX and any text that is searched or checked stay plain Unicode. A new Thai font must carry the
+  private-use set (check with fontTools) and be added to `ALLOWED_FONTS` (`drafter/acad.py`). Look at the plotted
+  Thai lines at print size: the PDF text check does not see a floating mark.
 - A sheet title is not a file name: "PILE CAP DETAILS F1 / F2" stopped the per-sheet PDF export half way. Replace
   `/ \ : * ? " < > |` when a title becomes a file name.
 - **Several sessions on one project** write the same files (`project.py`, a shared plan module, `STATUS.md`). Before
