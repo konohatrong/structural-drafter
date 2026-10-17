@@ -319,6 +319,8 @@ LEADER_ORTH = False    # True: route leaders as single straight segments (0 / 90
                        # orthogonal L-shapes where they fit, inclined legs only as the fallback, and pick for each
                        # note the shape that crosses no other leader, dimension or note text (a project opts in)
 _BOXES = []          # true note text boxes (ezdxf under-measures multi-line MTEXT)
+_TBOXES = []         # note text (+ bar-mark bubble) boxes of the current view: (x0, y0, x1, y1, S, text)
+NOTE_CLEAR = 0.5     # two note texts of one view keep at least this clear of each other (paper mm)
 
 
 def note_cfg(**kw):
@@ -495,6 +497,7 @@ def _draw_note(n, knee):
     elif not n["ring"]:
         arrowhead(sp, tip, path[1], ARROW * S, n["layer"])
     tx = ex + sgn * TGAP * S
+    bx = tx                                           # near edge of the bubble / text
     if n["mark"]:
         cx = tx + sgn * BUB_R * S
         sp.add_circle((cx, ky), BUB_R * S, dxfattribs=A("S-SYMB"))
@@ -514,6 +517,20 @@ def _draw_note(n, knee):
     x0, x1 = (tx - wmax * S, tx) if side == "L" else (tx, tx + wmax * S)
     y1 = ty + hbox if side == "T" else ty
     _BOXES.append((min(x0, kx), y1 - hbox - 0.6 * S, max(x1, kx), y1))
+    y0 = y1 - hbox
+    if n["mark"]:
+        x0, x1 = min(x0, bx), max(x1, bx)
+        y0, y1 = min(y0, ky - BUB_R * S), max(y1, ky + BUB_R * S)
+    _TBOXES.append((x0, y0, x1, y1, S, n["s"]))
+
+
+def _check_note_overlap():
+    """a view's notes are finished: no two note texts (fixed or packed) overlap or come closer than NOTE_CLEAR"""
+    for i, (a0, b0, a1, b1, Sa, s) in enumerate(_TBOXES):
+        for c0, d0, c1, d1, Sb, _ in _TBOXES[i + 1:]:
+            g = NOTE_CLEAR * min(Sa, Sb)
+            if a0 < c1 + g and c0 < a1 + g and b0 < d1 + g and d0 < b1 + g:
+                warn(f"note overlaps another note: '{s[:40]}'")
 
 
 def _pack(lens, desired, bands=(), item_bands=None):
@@ -1082,6 +1099,7 @@ def capture(fn, *args):
     _NOTES = []
     _CFG.clear()
     _BOXES.clear()
+    _TBOXES.clear()
     fn(*args)
     check_dims(fn.__name__ + (f"{args[2:]}" if len(args) > 2 else ""),
                [e for e in msp if e.dxf.handle not in before])
@@ -1130,6 +1148,7 @@ def capture(fn, *args):
                 elif b == 0 and abs(x1 - x0) < 1e-6 and abs(y1 - y0) > 1e-6:
                     _VSEGS.append((x0, min(y0, y1), max(y0, y1)))
     _layout_notes()
+    _check_note_overlap()
     _NOTES = None
     _DIMSEGS.clear()
     new = [e for e in msp if e.dxf.handle not in before]

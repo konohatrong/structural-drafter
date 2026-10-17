@@ -75,6 +75,7 @@ with code 1 while one remains, but still writes the DXF for inspection. Fix the 
 | `detail … outside drawing area` | A view runs past the frame or into the title strip | Shorten member stubs, narrow the note column, shorten notes (guide §9.6) |
 | `leader crosses a dimension` | A leader crosses a dimension or extension line | Move the chain to the side away from the notes, or put its value in the note (guide §5) |
 | `leader crosses another leader or a note` | Orthogonal routing found no clean path | Move the tip to another visible part, or merge the notes (guide §9.1) |
+| `note overlaps another note: '…'` | Two note texts in one view (fixed or packed) overlap or are less than 0.5 mm apart (`NOTE_CLEAR`). Usually a `fixed=True` knee | Move the fixed knee clear of the other note, or let the packer place it (guide §5) |
 | `<view>: extension line of 'A' crosses dimension line 'B'` and similar | Dirty dimensioning | Tier order, `tside`, drop a duplicate chain (guide §2.4.1) |
 | Table or note block below the frame, table without a number | Sheet overflow, unregistered table | Move it to another sheet; register it in `TABLES` |
 

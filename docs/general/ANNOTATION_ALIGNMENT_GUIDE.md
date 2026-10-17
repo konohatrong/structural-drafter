@@ -262,6 +262,16 @@ The same choices apply to any structure. Steel examples (SRT-ST) are in §9.
   - Keep the note rows in the dimension-free band: `note_cfg(yminR=…, upR=True)` packs upward from the lowest tip and never goes below the floor; `ymaxR` sets a ceiling.
   - Keep views far enough apart in model space that no viewport window shows a neighbour's notes.
   - **Check:** `capture()` collects every dimension and extension line. Note rows avoid them, and any leader that still crosses one prints `!! leader crosses a dimension: '<note>'` in the build log. A sheet is not finished while that line appears.
+- **Two notes never overlap** (user, 2026-10-16). The packer keeps the notes of one column apart, but a note placed
+  with `fixed=True` (or `note_cfg(free=True)`) is not packed and can land on another note, fixed or packed.
+  - **Check:** when a view's notes are finished, `capture()` compares every pair of note text boxes in the view (text,
+    plus the bar-mark bubble). Two boxes closer than `NOTE_CLEAR` = 0.5 mm on paper print
+    `!! note overlaps another note: '<first note>'`. It always runs; there is no option to turn it off. Packed notes in
+    one column stand 2.9 mm apart, so the check only finds fixed knees set too close, or two columns or rows that meet.
+  - **Fix:** move the fixed knee by at least the other note's height plus a clear line, or let the packer place it.
+  - On the RPM stair F1 plan (3201), the GUARD and FLIGHT LF notes were both fixed at knees in the right-hand column
+    and their texts overlapped. The build printed no warning. The GUARD knee now sits 600 mm (12 mm on paper at 1:50)
+    above the FLIGHT LF knee.
 
 ---
 
