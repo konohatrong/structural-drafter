@@ -617,7 +617,10 @@ These conventions were agreed with the engineer during NRW-ST Rev A and apply to
   engineer, approved) are filled in, with the approval date the publish date. The local authority and owner approval
   boxes and the COE licence and signature rows are left out when the engineer strikes them (the key plan takes the
   space). The design office is the engineer's name, licence and address, in Thai where the engineer writes it, in a
-  Thai font (`td_engine.TB_OPTS`; RPM `rpm_engine.py`).
+  Thai font (`td_engine.TB_OPTS`; RPM `rpm_engine.py`). The design office band then becomes a signature table
+  (user, 2026-10-17, RPM: "make a room for signature and licensed architect"): STRUCTURAL ENGINEER with the name,
+  licence and address and a SIGNATURE cell; ARCHITECT left blank for the licensed architect, with its own signature
+  cell (`TB_OPTS["signatures"]`).
 - The title block may leave out the key plan when the set has a key-plan sheet (user, 2026-10-16, RPM R1: "delete
   key plan from title block"; 1003 is the key plan): the revision table takes its place (`TB_OPTS["keyplan"] =
   False`). Where the small key plan is kept, it shows the buildings as clean outlines, named, and each stair named

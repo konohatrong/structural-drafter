@@ -1360,15 +1360,20 @@ def _tb_strip(ps, x0, x1, FY0, FY1, TBW):
     def hline(yy, lay="S-TTLB"):
         line(ps, (x0, yy), (x1, yy), lay)
 
+    o = TB_OPTS
+    sig = o.get("signatures")                      # signature table in place of the office band (opt-in)
+    SIG_HDR, SIG_LH = 4.5, 3.6
+    sig_n = max((max(len(ln), 2) for _, ln in sig), default=2) if sig else 2   # every party's box as the tallest
+    h_off = len(sig) * (SIG_HDR + sig_n * SIG_LH + 1.5) if sig else 18.0
+    extra = h_off - 18.0                           # taken from the revision table / key plan: the stamp stays put
     y_app = FY0 + 7
     y_des = y_app + 32
     y_tit = y_des + 20
-    y_off = y_tit + 18
+    y_off = y_tit + h_off
     y_prj = y_off + 20
     y_own = y_prj + 14
     for yy in (y_app, y_des, y_tit, y_off, y_prj, y_own):
         hline(yy)
-    o = TB_OPTS
     if o.get("approved"):                          # names filled in (opt-in, TB_OPTS)
         text(ps, f"APPROVED BY : {o['approved']}", (tx, FY0 + 3.5), 2.0, align=TA.MIDDLE_LEFT)
         text(ps, f"DATE : {o.get('approved_date', '')}", (x0 + 35 + 1.5, FY0 + 3.5), 2.0, align=TA.MIDDLE_LEFT)
@@ -1400,11 +1405,32 @@ def _tb_strip(ps, x0, x1, FY0, FY1, TBW):
     for k in range(3):
         att(ps, f"TITLE_{k + 1}", "", (xc, yy), 2.8, TA.MIDDLE_CENTER, "ANB", prompt=f"Drawing title line {k + 1}")
         yy -= 4.3
-    text(ps, "STRUCTURAL DESIGN OFFICE", (tx, y_off - 3), 2.0, align=TA.MIDDLE_LEFT)
-    ost, ok_ = o.get("office_style", "AN"), o.get("office_scale", 1.0)    # a Thai name needs a Thai font (opt-in)
-    att(ps, "OFFICE", PROJ["office"], (xc, y_off - 9), 2.8 * ok_, TA.MIDDLE_CENTER, ost, prompt="Design office")
-    att(ps, "OFFICE_ADDR", PROJ["office2"], (xc, y_off - 14.5), 2.0 * ok_, TA.MIDDLE_CENTER, ost,
-        prompt="Office address / tel.")
+    if sig:                                        # parties with a signature cell each (first: the engineer)
+        sst, ssc = o.get("sig_style", "AN"), o.get("sig_scale", 1.0)
+        xs = x0 + 0.72 * (x1 - x0)
+        line(ps, (xs, y_tit), (xs, y_off), "S-TTLB-THIN")
+        y = y_off
+        for k, (lab, lines) in enumerate(sig):
+            yh = y - SIG_HDR
+            text(ps, lab, (tx, y - SIG_HDR / 2), 2.0, align=TA.MIDDLE_LEFT)
+            if k == 0:
+                text(ps, "SIGNATURE", ((xs + x1) / 2, y - SIG_HDR / 2), 2.0, align=TA.MIDDLE_CENTER)
+            line(ps, (x0, yh), (x1 if k == 0 else xs, yh), "S-TTLB-THIN")
+            ly = yh - 0.75 - SIG_LH / 2
+            for t in lines:
+                if t:
+                    text(ps, t, (tx, ly), 2.0 * ssc, align=TA.MIDDLE_LEFT, style=sst)
+                ly -= SIG_LH
+            y = yh - (sig_n * SIG_LH + 1.5)          # same box for every party (RPM 17/10/2026: "make name box
+                                                     # same size as engineer")
+            if k < len(sig) - 1:
+                line(ps, (x0, y), (x1, y), "S-TTLB-THIN")
+    else:
+        text(ps, "STRUCTURAL DESIGN OFFICE", (tx, y_off - 3), 2.0, align=TA.MIDDLE_LEFT)
+        ost, ok_ = o.get("office_style", "AN"), o.get("office_scale", 1.0)    # a Thai name needs a Thai font
+        att(ps, "OFFICE", PROJ["office"], (xc, y_off - 9), 2.8 * ok_, TA.MIDDLE_CENTER, ost, prompt="Design office")
+        att(ps, "OFFICE_ADDR", PROJ["office2"], (xc, y_off - 14.5), 2.0 * ok_, TA.MIDDLE_CENTER, ost,
+            prompt="Office address / tel.")
     text(ps, "PROJECT", (tx, y_prj - 3), 2.0, align=TA.MIDDLE_LEFT)
     att(ps, "PROJECT", PROJ["project"], (xc, y_prj - 9), 2.8, TA.MIDDLE_CENTER, "ANB")
     att(ps, "LOCATION", PROJ["location"], (xc, y_prj - 15), 1.8, TA.MIDDLE_CENTER, prompt="Building / location")
@@ -1431,7 +1457,7 @@ def _tb_strip(ps, x0, x1, FY0, FY1, TBW):
     global TB_REV_ROWS
     rh = 5.0
     nrows = TB_REV_ROWS
-    sy = y_cli + (nrows + 1) * rh + 6 + 32 + freed + 3      # status stamp, where the key plan leaves it
+    sy = y_cli + (nrows + 1) * rh + 6 + 32 + freed - extra + 3   # status stamp, where the key plan leaves it
     if not o.get("keyplan", True):                 # no key plan (opt-in): the revision table takes its place,
         nrows = int((sy - 3 - 6 - rh - y_cli) // rh)   # the status stamp stays where it was
         TB_REV_ROWS = nrows
@@ -1456,7 +1482,7 @@ def _tb_strip(ps, x0, x1, FY0, FY1, TBW):
     # key plan - EIT 2.2.2.5
     if o.get("keyplan", True):
         y_kp0 = y_rt + 6
-        y_kp1 = y_kp0 + 32 + freed
+        y_kp1 = y_kp0 + 32 + freed - extra
         hline(y_kp1)
         text(ps, "KEY PLAN (N.T.S.)", (tx, y_kp1 - 3), 2.0, align=TA.MIDDLE_LEFT, style="ANB")
         m_ = o.get("keyplan_margin", 10.0)
@@ -1493,7 +1519,9 @@ STATUS = ("FOR REVIEW", "NOT FOR CONSTRUCTION")   # title-block status stamp (2 
 # "authority" (False: no local authority and owner approval boxes; the key plan grows into them), "notes" (list of
 # sheet notes), "office_style" / "office_scale" (a font for the office name, e.g. a Thai one), "keyplan_ground"
 # (False: no heavy ground line in the key-plan box), "keyplan_margin" (mm each side of the key-plan box), "keyplan"
-# (False: no key plan; the revision table grows into its place and TB_REV_ROWS is set to the rows it holds)
+# (False: no key plan; the revision table grows into its place and TB_REV_ROWS is set to the rows it holds),
+# "signatures" [(label, [text lines]), ...] (a table of parties, each with a signature cell, in place of the design
+# office band; the band grows and the key plan or revision table gives up the height), "sig_style" / "sig_scale"
 TB_OPTS = {}
 
 
