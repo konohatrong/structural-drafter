@@ -322,6 +322,8 @@ above is continuous; what lies below the slab is hidden.
   (column - beam width) / 2 - so the facade line is straight; inner beams stay centred on the grid. The outer face is
   then the slab edge (continuous), the inner face hidden under the slab. State it in the plan notes. Worked example:
   BANWA2 S-102 / S-103 (`bw_plans.building_outline`, `flush`: C1 450, B 400 out by 25 mm, B6 / RB1 300 by 75 mm).
+- **Every beam under or on an AR wall** has its face on the wall face that is flush with the column face, inside
+  the building as on the perimeter (user, 2026-10-17; FP13.7 rule 2).
 - **A beam along an opening or a free slab edge** (user, 2026-10-11, CHATAM 2F: "keep inner line only"): the slab
   runs to the beam's **void-side face**, drawn continuous as the slab edge; no line at the beam centre. Worked
   example: the lift beams LB1 round the lift opening (`ch_plans.plan`, `edge_bms`).
@@ -378,6 +380,8 @@ above is continuous; what lies below the slab is hidden.
 ### FP9.5 Steps in a slab
 - The line of the step continuous, the **step symbol** (office `Sym-Step`: the step height, `UPPER FLOOR` /
   `LOWER FLOOR`) across it, both slab levels tagged.
+- The step line follows the AR room walls and is drawn **whether or not a beam is under it**; a beam under a step is
+  the engineer's decision, never added by default (user, 2026-10-17; FP13.7 rule 3).
 
 ### FP9.6 Stairs, lifts, ramps
 - Stair outline (flights, landings), `UP`/`DN` arrow, stair mark `ST-1` and the sheet of its detail. RC stairs:
@@ -615,6 +619,39 @@ details and the bill (steel S4.12, S7.8, S1.6). Worked example: BANWA2 S-103 - S
 Stair cores, lift pits, congested corners at 1:50 with a callout on the plan ("DETAIL n/sheet", guide §9.7) and the
 view title naming the parent sheet (`SYMBOLS.md` rule 3).
 
+### FP13.7 Initial layout from the AR plans (draft for the engineer's review) [USER 2026-10-17]
+
+The first structural plans of a project, drawn from the architect's plans before the model and the calculation
+(engineer, NSO 17/10/2026: "prepare structural floor plan for me to review ... just draft for review we need to done
+calculation first anyway"; then "recheck beam layout with previous rule apply (beam align to AR wall face)", "make line
+showing different level between area (i will beam to support stepped later if need)", "make this a initial rule").
+
+1. **Measure the AR, never trace it by eye.** Read the AR drawing's columns, walls and room level tags into a data file
+   in plan coordinates (grid 1 / the first row at the origin), and build the layout from it. Columns come from the AR
+   column outlines (NSO: 300 squares on the AR layer `COL`, built from lines inside nested blocks: decompose the
+   blocks), checked one by one against the grid before the first print; an AR background xref is checked the same way
+   (FP15, its base point). Beams run column to column on the column lines.
+2. **A beam under or on an AR wall has its face on the wall face** - the face the AR keeps flush with the column face,
+   so beam, wall and column share one face. Collect the wall faces parallel to the beam within 200 mm of its line along
+   its clear span (column face to column face); when a face is flush with a column face, put the beam face on it. A wall
+   centred on the grid, or no wall, leaves the beam on the grid. Walls on the beam first (the floor above), then walls
+   under it. This includes the perimeter beams of FP9.2 (the outer wall face is the outer column face) and edge beams
+   placed by a slab edge (a beam the engineer places by a slab edge keeps that place). NSO: 134 of 231 beams moved
+   25 mm (beams 250) or 50 mm (beams 200).
+3. **Show every level change as a line.** Each area whose AR finished level differs from its neighbour (toilets, a
+   porch, a lobby, a ramp) is its own slab zone, outlined on the AR room walls, its SFL = AR FFL - finish (FP11.2). Where
+   two zones meet, draw a continuous slab-edge line (FP9.5), **whether or not a beam is under it**. Do not add a beam
+   under a step on your own: the support of each step (a beam, a thickened slab) is the engineer's later decision, and
+   a plan note says so. A zone that reaches the building outline runs to the slab edge, not to the inner face of the
+   outer wall (a line inside an outer wall is not a level change). A strip under 0.8 m left by a beam or a wall is
+   not a tag panel; every zone still carries one tag.
+4. Everything else on these plans is a proposal: sizes PRELIM (drawn widths only) in a member table, assumptions in
+   the notes, open items in the project's `STATUS.md`.
+
+Worked example: NSO (`G:\My Drive\Works\##2026\20261017 - Nong Sarai Office Building`), `04 Code\model\ar_data.py`
+(AR walls and level tags to `06 CAD\xref\NSO-AR-DATA_691015.json`), `04 Code\layout.py` (`align`, level zones in
+`SLABS`), `04 Code\drawings\nso_plans.py` (`zones`, `steps`); drafts A1 - A6 of 17/10/2026.
+
 ---
 
 ## FP14. Legend, notes and north arrow
@@ -698,6 +735,8 @@ North arrow on every plan sheet, same size and place; the plan always drawn in t
 - [ ] Tables: every steel section followed by its weight per length (FP10.5)
 - [ ] Every vertical member classified below / above the cut; lower-only supports shown (FP9.1); walls hatched fine grey
 - [ ] Slab edge at the physical member faces, not the mesh edge (FP9.3); slab tags transparent (FP10.3)
+- [ ] Beams under or on AR walls with their face on the wall face flush with the column face (FP13.7 rule 2); every
+  AR level change a line on the AR room walls, no step beam added by default (FP13.7 rule 3)
 - [ ] Brackets only on receiving main beams and CX-carrying transfer beams; marks at span midpoints with the FP10.2
   anchors and offsets; column marks at symbol corners (FP10.4)
 - [ ] Foundation plans: piles under caps hidden, standard pile patterns, every support in one cap (FP13.2); cap
@@ -740,4 +779,5 @@ North arrow on every plan sheet, same size and place; the plan always drawn in t
 | 2026-10-06 | Second BANWA2 review (user): the bracket solid grey with 45° ends of the text height / mark diameter, ending on the member's start and end lines (FP10.2, `S-BRACKET`); chords trimmed by the posts on every roof plan; tie rods one line each on the grid linetype (FP9.2, `S-ROD`); layers added to FP5 |
 | 2026-10-06 | BANWA2: purlins on post rows beside the post (FP9.2, steel S7.8); steel roof plan set described (FP13.5) |
 | 2026-10-07 | Weight per length after every steel section in tables (FP10.5, steel S3.8); FP17 steel items |
+| 2026-10-17 | NSO draft plans (user): the initial layout from the AR plans, FP13.7 - columns and walls measured from the AR, beam faces on the AR wall faces flush with the column faces (also FP9.2), every level change a line on the AR room walls with no step beam added by default (also FP9.5) |
 | 2026-10-10 | From the user's corrections of 08 - 09/10 recorded in the BANWA2 work transfer R01 of 09/10/2026, `instructions/PLAN_ANNOTATION_IMPROVEMENT.md` and `DRAWING_QUALITY_LESSONS.md`: vertical members classified below / above the cut, RC walls with a fine grey hatch (FP9.1); slab edge at the physical member faces (FP9.3); mark at the reference-span midpoint, bracket only for receiving main beams and transfer beams carrying CX columns, MIDDLE_CENTER bracketed / BOTTOM-TOP_CENTER plain anchors, collision order (FP10.2); transparent slab tags (FP10.3); column marks at symbol corners (FP10.4); piles under caps hidden, standard pile patterns, every support classified once (FP13.2) |
