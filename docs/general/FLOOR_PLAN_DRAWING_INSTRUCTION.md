@@ -764,9 +764,11 @@ showing different level between area (i will beam to support stepped later if ne
     wall-face alignment of rule 2 does not apply. A level with **no floor** shows every panel as an opening, crossed
     VOID (FP9.4). Engineer, NSO A22 (18/10/2026): "all beam can align center to column because there are no AR wall
     and slab changed level at this floor also do not forget void symbol because there is no floor here".
-11. **A beam carried by cantilever tips** spans between the tips, with **one mark per span** (not one mark for the
-    line), and the tips are its supports. Engineer, NSO A22: "make mark for individual span because RB5 were
-    supported by RB4C" (`nso_plans.spans`: a CB tip cuts the span; `regroup` splits the line).
+11. **A beam carried by cantilever tips** spans between the tips: each span is its own member with its own bracket,
+    and the tips are its supports. Engineer, NSO A22: "make mark for individual span because RB5 were supported by
+    RB4C" (`nso_plans.spans`: a CB tip cuts the span; `regroup` splits the line). **The spans share one mark**, on
+    every such line alike, grouped by the line's longest span (user, 2026-10-18, sketch on A30: RB6 / RB7 crossed,
+    "RB5", "correct both side"; `regroup`: key position "tips", `_tipspan`).
 
 **The engineer's own CAD edit is a markup** (NSO, 17/10/2026: "i will adjust by myself then you learn from me").
 When the engineer edits the issued DWG:
@@ -924,4 +926,5 @@ North arrow on every plan sheet, same size and place; the plan always drawn in t
 | 2026-10-18 | NSO markup of A27 (user): a lower roof framed below the next floor has its own plan, the rest of the building in grey colour 8 (FP1.1) |
 | 2026-10-18 | NSO markup of A28 (user): the lower roof as a beam plan and a steel roof framing plan, cropped to its rows (FP1.1); roof members run to the roof edge (FP9.2) |
 | 2026-10-18 | NSO markup of A29 (user): the roof edge is the AR outline with its curved corners; members clipped to it (FP9.2) |
+| 2026-10-18 | NSO sketch on A30 (user): the spans of a beam on cantilever tips share one mark (FP13.7 rule 11) |
 | 2026-10-10 | From the user's corrections of 08 - 09/10 recorded in the BANWA2 work transfer R01 of 09/10/2026, `instructions/PLAN_ANNOTATION_IMPROVEMENT.md` and `DRAWING_QUALITY_LESSONS.md`: vertical members classified below / above the cut, RC walls with a fine grey hatch (FP9.1); slab edge at the physical member faces (FP9.3); mark at the reference-span midpoint, bracket only for receiving main beams and transfer beams carrying CX columns, MIDDLE_CENTER bracketed / BOTTOM-TOP_CENTER plain anchors, collision order (FP10.2); transparent slab tags (FP10.3); column marks at symbol corners (FP10.4); piles under caps hidden, standard pile patterns, every support classified once (FP13.2) |
