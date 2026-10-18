@@ -525,6 +525,14 @@ Placement of leaders, tags, weld symbols, cutting planes and node dimensions: `A
      thickness, spacing and edge distances; the note gives the rod grade, the drill size and depth, the hole cleaning
      and "resin to the maker". A plan of the plate gives the hole pattern (RPM 5102 detail 5, 5103 detail 2).
 5. **Base plate plan**: the edge distance, rod spacing and overall size in both directions. The plate and washer marks.
+6. **Base and end plates sit centred on the member end they carry**, with the anchors symmetric about it, unless
+   the calc needs an offset (user rule, 2026-10-17: "move baseplate align center to stringer foot?", Helicon
+   Staircase 5102: the stringer foot 230 / 230 on BP1 470, both anchor rows either side of it). The plan shows the
+   member's end on the plate so the centring can be read.
+7. **Plates no larger than they need be**: the member cut plus the edge distances and the anchor spacing the calc
+   uses, and the member trimmed to the plate rather than the plate grown to the member (user rule, 2026-10-17:
+   "plate height can reduce?", Helicon Staircase 5103: end plate EP1 540 -> 450 mm, the stringer top trimmed
+   level with the plate top, the anchor calc rerun). A change of plate size reruns the calc.
 
 ## S9. Erection notes (1001)
 
