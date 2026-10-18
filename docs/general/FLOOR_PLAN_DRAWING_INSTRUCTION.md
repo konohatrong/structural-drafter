@@ -62,6 +62,24 @@ else retypes it. Ask the engineer for any value the project has not fixed.
 One plan per structural level. A level with two slab heights (a step, a mezzanine, a double-height void) is one plan
 with step and void symbols (FP9.5, FP11.3), not two plans.
 
+**A partial roof or level of its own framing gets its own plan, the rest of the building in grey** (user, 2026-10-18,
+NSO markup of A27: "please separate lower roof plan as individual plan (when we focus lower roof part we leave others
+part as grey (color 8.)) for make clear drawing presentation"). A lower roof, canopy or deck framed below the next
+floor (its own beams, rafters, stubs, purlins) is not drawn on that floor's plan: it has a plan of its own at its
+level, in the level order of the list above, and the floor plan above it shows only its own floor (a column that ends
+at the lower level leaves the floor plan). On that plan the subject is drawn as usual and every other part of the
+building - the floor slab edges and beams above it, the columns not carrying it - is drawn in colour 8 for reference,
+with a legend row for the grey and a note naming the plan that shows those parts. Same grid and column positions as
+the other plans (FP1.2).
+- **RC beams and steel roof on two plans** (user, 2026-10-18, NSO markup of A28: "show separate lower RC roof beam and
+  structural steel for roof supported"), as for the main roof (FP13.5): a beam plan (the RC beams, the columns ending
+  there, the stubs starting there, marked) and a steel roof framing plan (rafters, purlins, roof edge, the stubs as
+  supports under the rafters), each with the other's members grey.
+- A partial plan may be **cropped to the rows it covers plus one bay of grey context** so the pair fits one A1 sheet
+  (`grid(..., gy=...)`: only those rows drawn and dimensioned).
+Worked example: NSO 3102 A29, LOWER ROOF BEAM PLAN and LOWER STEEL ROOF FRAMING PLAN, rows D - A
+(`nso_plans.columns("LR" / "LF")`, `draw_grey`).
+
 ### FP1.2 Plans on a sheet [OFFICE]
 - Up to **two plans per A1 sheet**, one above the other, as SSK S1-02 and S1-03 do. A long building at 1:100 fills
   the width; a third plan never fits.
@@ -352,6 +370,12 @@ above is continuous; what lies below the slab is hidden.
   2026-10-06: "show as double line showing project dimension (no need to show wall thickness)"); junctions clean as
   for RC beams (union of the member strips), a member below another left out where covered (steel S4.11).
   - A post that runs up through the truss **trims the chords** on every roof plan (FP9.1, steel S4.11).
+  - **Roof members end on the roof boundary** (user, 2026-10-18, NSO markup of A28: "trim/extent roof structure within
+    roof boundary"): rafters and purlins that reach the eave or verge run exactly to the roof edge line - trimmed where
+    they would cross it, extended where they stop short - never a gap or an overshoot at the edge. The roof edge is
+    the AR roof outline as drawn, curves included (user, 2026-10-18, markup of A29: "roof frame should not beyond roof
+    boundary" at the rounded corners): clip the members to the true outline, not to its bounding rectangle. Worked
+    example: NSO 3104 A30 (SB1 and P1 clipped to `ROOF["outline"]`, 2.30 m radius corners).
   - **Tie rods**: one line each on the grid linetype with their own pen (`S-ROD`), never merged with the other rod of a
     cross (user, 2026-10-06).
   - **Purlins on a row with a post** stand **beside the post**, flange edge on the post face, on the down-slope side
@@ -897,4 +921,7 @@ North arrow on every plan sheet, same size and place; the plan always drawn in t
 | 2026-10-18 | NSO beam names and groups (user): B / RB / SB running numbers, ...C cantilever from the named beam, ...A all-span reinforcement; one mark per support type, top level and span (FP10.1) |
 | 2026-10-18 | NSO markup of A24 (user): steel beams joining at a steel column stop 50 mm short of its true outline, the column drawn solid at the joint (FP9.2) |
 | 2026-10-18 | NSO markup of A25 (user): steel column marks at the symbol's bottom right where the column starts, stubs are SC columns (FP10.4); steel columns listed in the legend as "SC1 - section (kg/m)" with no symbol (FP14.1) |
+| 2026-10-18 | NSO markup of A27 (user): a lower roof framed below the next floor has its own plan, the rest of the building in grey colour 8 (FP1.1) |
+| 2026-10-18 | NSO markup of A28 (user): the lower roof as a beam plan and a steel roof framing plan, cropped to its rows (FP1.1); roof members run to the roof edge (FP9.2) |
+| 2026-10-18 | NSO markup of A29 (user): the roof edge is the AR outline with its curved corners; members clipped to it (FP9.2) |
 | 2026-10-10 | From the user's corrections of 08 - 09/10 recorded in the BANWA2 work transfer R01 of 09/10/2026, `instructions/PLAN_ANNOTATION_IMPROVEMENT.md` and `DRAWING_QUALITY_LESSONS.md`: vertical members classified below / above the cut, RC walls with a fine grey hatch (FP9.1); slab edge at the physical member faces (FP9.3); mark at the reference-span midpoint, bracket only for receiving main beams and transfer beams carrying CX columns, MIDDLE_CENTER bracketed / BOTTOM-TOP_CENTER plain anchors, collision order (FP10.2); transparent slab tags (FP10.3); column marks at symbol corners (FP10.4); piles under caps hidden, standard pile patterns, every support classified once (FP13.2) |
