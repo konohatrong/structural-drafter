@@ -361,6 +361,27 @@ Placement of leaders, tags, weld symbols, cutting planes and node dimensions: `A
       JIS channels with the sloped inner flange faces (about 1 : 11.4) and root and toe radii, RHS / SHS with
       rounded corners (outer 3t, inner 2t), CHS as two circles, angles with root and toe radii, plates as rectangles.
       Cut: 0.35 (S-CUT); end-on beyond: the member's seen layer.
+    - **Thai standard sections from their standards** (user, 2026-10-18: "make structural steel section from these
+      document when we show in drawing we show exact geometry of structural steel section not just rectangular").
+      Every section of **TIS 1227-2537** (hot-rolled H, I, channel, angle; the 2539 and 2558 amendments change
+      grades and testing only) and **TIS 1228-2561** (cold-formed angle, channel, lipped channel, Z, lipped Z, hat;
+      Annex A sizes) is in `drafter/tis_sections.py`. Each entry carries its dimensions, its radii (r, r1, r2) and
+      the area and mass of its table, with the table and page it comes from.
+      - Names: `H 150x150x7x10`, `I 200x100x7x10`, `C 150x75x6.5x10`, `L 65x65x6`, `L 100x75x7`;
+        cold-formed `LC 100x50x20x2.3`, `CC 100x50x50x3.2`, `Z`, `LZ`, `HAT`, `CL`.
+      - Draw with `steel_access.profile("H 150x150x7x10")` and `draw_profile`. The outline has the standard's
+        geometry:
+        - H: root radius r;
+        - I: flanges sloped 8° (t2 at mid-outstand), root r1 and toe r2;
+        - channel: flanges sloped 5° (t2 at mid-outstand), r1 and r2;
+        - angle: root r1 and toe r2;
+        - cold-formed: bends with an inner radius 1.0 t, which reproduces the tabulated areas (TIS 1228 gives no
+          radius).
+      - `tests/test_tis_sections.py` checks every outline's area against its table, within 2 % (265 sections, most
+        within 0.2 %).
+      - The catalogue is a digest of the dimension tables only; the standards stay outside the repository
+        (`G:\My Drive\##Textbook\TIS\`).
+      - RADII above remains only for sizes outside TIS (office blocks).
     - No solid fill on steel: at 1:50 and 1:20 a fill reads as a thick line and hides the shape (a thin plate at
       1:50 still draws as its two edges, which read as one line).
     - A member cut obliquely (a sloping stringer cut by a vertical plane) keeps its profile, stretched along the cut

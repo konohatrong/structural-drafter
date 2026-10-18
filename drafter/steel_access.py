@@ -112,7 +112,11 @@ def plate_profile(w, h):
 
 def profile(spec):
     """outline loops of a member spec: ("H", h, b, tw, tf), ("C", h, b, tw, tf), ("RHS", h, b, t), ("CHS", D, t),
-    ("PL", w, h)"""
+    ("PL", w, h) - or a Thai standard section name, "H 150x150x7x10", "LC 100x50x20x2.3" ... (TIS 1227 / 1228,
+    drafter.tis_sections: the standard's radii and flange slopes; user 2026-10-18)"""
+    if isinstance(spec, str):
+        from .tis_sections import outline
+        return outline(spec)
     k = spec[0]
     if k == "H":
         return h_profile(*spec[1:])

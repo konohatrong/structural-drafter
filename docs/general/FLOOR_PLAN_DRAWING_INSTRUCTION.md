@@ -292,7 +292,8 @@ above is continuous; what lies below the slab is hidden.
 | **Column stops under** (from below, ends at this floor) | Outline with an **X**, or the outline hidden (HIDDEN2) | `S-HID_COL` |
 | RC wall cut | Outline filled as a column | `S-CONT_COL` |
 
-- Column size drawn true; the column mark beside it (FP10).
+- Column size drawn true. The column mark goes on the foundation plan only (FP10.4); the floor and roof plans show
+  the symbol without a mark.
 - On the foundation plan the column stub is shown in its footing with the column mark (FP13.2).
 - **Classify every vertical member by comparing below and above the cut** (user correction, 2026-10-09, BANWA2 ground
   plan R01, which showed only the columns rising above the floor and left out 13 lower-only supports, 11 of them under
@@ -376,12 +377,25 @@ above is continuous; what lies below the slab is hidden.
   [EIT; REC labels]. A void without a label is a question on site.
 - The outline is the slab edge (`S-EDGE_SLAB`, continuous); **the X is on the grid linetype in grey** (`S-OPEN`,
   CENTER, colour 8) (user, 2026-10-06: "add cross symbol for opening area with grid line linetype colour 8").
+- **The void is the architect's opening, bounded by the faces of the beams round it**, not the whole grid bay
+  (user, 2026-10-17, NSO: the engineer's DWG edit of A8; FP13.7 rules 5 - 6).
 
 ### FP9.5 Steps in a slab
 - The line of the step continuous, the **step symbol** (office `Sym-Step`: the step height, `UPPER FLOOR` /
   `LOWER FLOOR`) across it, both slab levels tagged.
 - The step line follows the AR room walls and is drawn **whether or not a beam is under it**; a beam under a step is
   the engineer's decision, never added by default (user, 2026-10-17; FP13.7 rule 3).
+- **A step with no beam under it carries the step symbol** (user, 2026-10-17, NSO 2F toilets: "place symbol when slab
+  level changing without beam supported"). Its form, from the engineer's sketch, plotted sizes:
+  - a leg from the **higher** side to the step line (4.5 mm);
+  - a drop along the line (3.5 mm);
+  - a leg with an open arrowhead into the **lower** side (5.0 mm);
+  - the drop in mm ("50") at 2.5 mm on the lower side, beside the drop. It reads across a vertical line and along a
+    horizontal one.
+  One symbol goes on each unsupported part of a step line, at the middle of its longest straight run, on the slab-edge
+  layer. Where a beam runs under the step, its face is the step and no symbol is needed. A line to or from a zone
+  whose level is the AR's (ramp, steps, slope) gets none. Worked example: NSO A15, `04 Code\drawings\nso_plans.py`
+  `step_syms` (2F toilets 50, GF toilets 50, GF lobby 100).
 
 ### FP9.6 Stairs, lifts, ramps
 - Stair outline (flights, landings), `UP`/`DN` arrow, stair mark `ST-1` and the sheet of its detail. RC stairs:
@@ -408,6 +422,36 @@ above is continuous; what lies below the slab is hidden.
 - One system per project (EIT §10.2), stated in the general notes: SSK uses `C1…`, `F1…`, `B1, B1A, B2C…`, `S1`,
   `ST-1`. A suffix letter is a variant of one type (`B1A`).
 - The same mark means the same member type on every plan, detail and schedule.
+- **Office beam names** (user, 2026-10-18, NSO): the beam marks are
+  - **B1, B2 ...** for the ground floor and every floor above. This is one running number with no floor digit
+    ("run single digit 1,2,3,... and later on");
+  - **RB1 ...** for roof beams (the lower roof included);
+  - **SB1 ...** for steel beams (rafters, screen frames, brackets);
+  - a cantilever takes the mark of the beam its top bars continue from, plus **C** (`B17C`);
+  - **A** marks a beam that needs all-span reinforcement, for example a very short internal span of a continuous
+    line with negative moment along its whole length (`B5A`).
+  Columns (C), steel columns and posts (SC, RS) and purlins (P) keep their own letters. Older jobs keep their
+  marks.
+- **Beam groups** (user, 2026-10-18, NSO).
+  - First correction: "some beam has shorter span but mark same as the one longer span also some top placed on lower
+    level but been supported by same beam mark".
+  - Then, on the per-span proposal: "too many beam mark ... we can much reduce and condense beam mark", with a whole
+    grid line marked as one mark.
+  So a **continuous beam line along a grid** (collinear spans joined at columns or crossings) is one member, with one
+  mark on all its spans. Lines share a mark when they agree on all three:
+  - support type (column to column, or ending on a beam);
+  - span class, by the longest span: up to 3.0, 4.5 or 6.5 m;
+  - the set of their top levels.
+  **Marks are shared by all floors** (user, 2026-10-18: "ground and 2nd floor there are many beam in same condition
+  LL, span and location why create beam mark for that"). The top is taken relative to the line's own floor (at the
+  floor SFL, or 50 / 100 / 250 mm below it), so the same condition on any floor is the same mark. The member
+  table gives the lines per level (`B1 6.5 m FL (GF12/2F8)`).
+  A line carrying a lower top (a step, a toilet, an entrance) is its own mark. A step beam's top is the higher slab
+  on it; a beam under no slab takes the level's nominal top.
+  Draft rule for **A**: flag a line whose internal span is no longer than half its longer neighbour as a candidate, and
+  confirm it by analysis.
+  Worked example: NSO A19 had 19 RC marks in place of 33 per span; A21, shared by floors, has 16
+  (`nso_plans.regroup`, `KEYMARK`).
 
 ### FP10.2 Beams
 - Mark (and size `(b×h)` when the project shows sizes on plan, RC §14.3) **along the beam**, centred in its span,
@@ -431,6 +475,10 @@ above is continuous; what lies below the slab is hidden.
      **lower** supports and the bracket continues past the carried column (the model node there is not a support).
   A designation alone (TB1, TB2) does not decide it: check each span. Ordinary beams and **walls never get a
   bracket**; a bracket is not a placement aid.
+- **The bracket ends on the faces of the span's supports**, with its 45 degree ticks on those faces. The supports
+  are the columns or **the beams the span ends on** - never their centre lines (user, 2026-10-18, NSO A16: "bracket
+  end here (improve bracket rules)": GB2 at the porch step between the GB1 faces on 4 and 5, the ramp GB2 up to the
+  step GB2's face; `nso_plans.bracket`, supports = columns + beam strips at the span ends).
 - **Anchors and offsets** (same correction):
 
   | Mark | Text anchor | Offset |
@@ -482,7 +530,12 @@ above is continuous; what lies below the slab is hidden.
   (`bw_plans.slab_panels`, `hc_panels`, `plank_sym`).
 
 ### FP10.4 Columns and footings
-- Floor plans: column mark beside each column, outside the slab tag area, consistent position (lower right) [REC].
+- **Column marks on the foundation plan only** (user, 2026-10-17, NSO: "column mark show at foundation plan only"):
+  every column starts there, so its mark is given once, with the footing (`F4,C1`, below). The floor and roof plans
+  show the column symbol and its state (FP9.1) without a mark, which leaves room for the beam marks and slab tags.
+  This supersedes the column mark beside each column on every floor plan [REC]. A column that starts above the
+  foundation (on a beam, CX) is marked on the plan where it starts. Worked example: NSO 3101 A10
+  (`nso_plans.plan_fd`; `col_marks` no longer called by `plan`).
 - **The column mark sits at a corner of the column symbol** (user correction, 2026-10-09, BANWA2 S-106 R08): above
   right = BOTTOM_LEFT, above left = BOTTOM_RIGHT, below right = TOP_LEFT, below left = TOP_RIGHT, with the same
   clearance. Take the first clear corner of the four, checking the whole text box against brackets, wall marks, grid
@@ -647,10 +700,50 @@ showing different level between area (i will beam to support stepped later if ne
    not a tag panel; every zone still carries one tag.
 4. Everything else on these plans is a proposal: sizes PRELIM (drawn widths only) in a member table, assumptions in
    the notes, open items in the project's `STATUS.md`.
+5. **Edges, voids and steps on the actual member faces** (engineer, NSO draft A7, 17/10/2026: "check beam alignment
+   and slab alignment following the rule beam align to slab edge", "align beam to stair tread edge"). A beam beside a
+   slab edge, a void or a level line has its face on that line. Build the void and the slab edge from the beam faces
+   after the beams are placed, never from the grid bay. A beam at a stair has its face on the AR tread edge.
+   A level change along a column line runs on the **column face**, not on the grid, and the beam's face is flush
+   with it (engineer's DWG edit of NSO A15, 18/10/2026: GB1 on 4 and 5 between F and G with faces on the column
+   inner faces 13.65 / 19.85, the line to the entrance +0.70). A perimeter beam is made flush using the actual
+   column size, not an assumed one (NSO: C2 300, not 400, so the G beams sit on the column faces at 0.55).
+6. **A void is the AR opening, not the grid bay** (engineer's own edit of the NSO A8 DWG, 17/10/2026). Take the void
+   outline from the AR. Frame it with secondary beams whose faces are on its edges. Slab the rest of the bay (NSO 2F:
+   the double-height void E - F 4 - 5 cut from the whole bay to the AR void 4.55 - 6.35, with B4 on both edges).
+7. **Edges on curves follow the AR curve; the beam ends in a column** (engineer, NSO A7: "add curved beam"; A8 DWG
+   edit). A curved slab edge gets a curved edge beam whose outer face is the edge. It runs into the nearest column, not
+   to a grid line where nothing supports it (NSO 2F: B3 round the canopy arcs into the 4/G and 5/G columns; the side
+   bands' edge beam B5 round the front corners into the G beam).
+8. **Bands and canopies outside the frame are framed in concrete, not left to a screen** (NSO A8 DWG edit). Use
+   cantilever arms from the end columns on the column lines (CB1 on E and F, flush with the column face on the
+   outline). Add an edge beam on the AR outline that ties into the perimeter beam. A canopy slab may run through a
+   colonnade line with no beam there, to a front edge beam on the AR outline (NSO 2F: no beam G 4 - 5; B5 a U from the
+   G beams in bays 3 - 4 and 5 - 6). Which members exist is the engineer's decision. Propose them, and mark them PRELIM.
+9. **A beam between two slab levels shows both faces** as continuous lines (NSO 2F: B1 on F 4 - 5 between the canopy
+   +5.35 and the floor +5.05; `seen` beams in `nso_plans.plan`).
+
+10. **A level with no AR walls and no level change** (a roof beam level) has its beams **centred on the columns**: the
+    wall-face alignment of rule 2 does not apply. A level with **no floor** shows every panel as an opening, crossed
+    VOID (FP9.4). Engineer, NSO A22 (18/10/2026): "all beam can align center to column because there are no AR wall
+    and slab changed level at this floor also do not forget void symbol because there is no floor here".
+11. **A beam carried by cantilever tips** spans between the tips, with **one mark per span** (not one mark for the
+    line), and the tips are its supports. Engineer, NSO A22: "make mark for individual span because RB5 were
+    supported by RB4C" (`nso_plans.spans`: a CB tip cuts the span; `regroup` splits the line).
+
+**The engineer's own CAD edit is a markup** (NSO, 17/10/2026: "i will adjust by myself then you learn from me").
+When the engineer edits the issued DWG:
+- read it back with the Core Console (`DXFOUT` of a copy; never save over their file);
+- diff each view block against the DXF it came from. Use model coordinates at 1:1 and ignore text that only moved by
+  its alignment point;
+- treat a pasted AR (its own layers, often bound) as reference, not structure;
+- list every member moved, added, removed or resized. Then put each change into the layout data so the build
+  reproduces it, and the general ones into these rules.
 
 Worked example: NSO (`G:\My Drive\Works\##2026\20261017 - Nong Sarai Office Building`), `04 Code\model\ar_data.py`
 (AR walls and level tags to `06 CAD\xref\NSO-AR-DATA_691015.json`), `04 Code\layout.py` (`align`, level zones in
-`SLABS`), `04 Code\drawings\nso_plans.py` (`zones`, `steps`); drafts A1 - A6 of 17/10/2026.
+`SLABS`, `CANOPY_EDGE`, `CURVED`, `BAND`), `04 Code\drawings\nso_plans.py` (`zones`, `steps`, `void_geom`);
+drafts A1 - A9 of 17/10/2026 (A9 = the engineer's DWG edit of A8, `07 Review\...A8 - CAD`).
 
 ---
 
@@ -738,7 +831,7 @@ North arrow on every plan sheet, same size and place; the plan always drawn in t
 - [ ] Beams under or on AR walls with their face on the wall face flush with the column face (FP13.7 rule 2); every
   AR level change a line on the AR room walls, no step beam added by default (FP13.7 rule 3)
 - [ ] Brackets only on receiving main beams and CX-carrying transfer beams; marks at span midpoints with the FP10.2
-  anchors and offsets; column marks at symbol corners (FP10.4)
+  anchors and offsets; column marks at symbol corners, on the foundation plan only (FP10.4)
 - [ ] Foundation plans: piles under caps hidden, standard pile patterns, every support in one cap (FP13.2); cap
   sections numbered on the cap plans with the exact cut-bar counts (RC §15.1)
 
@@ -780,4 +873,8 @@ North arrow on every plan sheet, same size and place; the plan always drawn in t
 | 2026-10-06 | BANWA2: purlins on post rows beside the post (FP9.2, steel S7.8); steel roof plan set described (FP13.5) |
 | 2026-10-07 | Weight per length after every steel section in tables (FP10.5, steel S3.8); FP17 steel items |
 | 2026-10-17 | NSO draft plans (user): the initial layout from the AR plans, FP13.7 - columns and walls measured from the AR, beam faces on the AR wall faces flush with the column faces (also FP9.2), every level change a line on the AR room walls with no step beam added by default (also FP9.5) |
+| 2026-10-17 | NSO A7 markups and the engineer's DWG edit of A8 (user): edges, voids and steps on the member faces; the void is the AR opening framed by secondary beams; curved edge beams into a column; bands and canopies on cantilever arms and edge beams; a beam between two levels shows both faces; the engineer's CAD edit read back as a markup (FP13.7 rules 5 - 9, FP9.4) |
+| 2026-10-17 | NSO foundation plan (user): column marks on the foundation plan only; floor and roof plans show the column symbol without a mark; a column starting on a beam marked where it starts (FP9.1, FP10.4) |
+| 2026-10-17 | NSO step symbol (user): a level change with no beam under it carries the step symbol - leg from the higher side, drop along the line, arrow into the lower side, the drop in mm (FP9.5) |
+| 2026-10-18 | NSO beam names and groups (user): B / RB / SB running numbers, ...C cantilever from the named beam, ...A all-span reinforcement; one mark per support type, top level and span (FP10.1) |
 | 2026-10-10 | From the user's corrections of 08 - 09/10 recorded in the BANWA2 work transfer R01 of 09/10/2026, `instructions/PLAN_ANNOTATION_IMPROVEMENT.md` and `DRAWING_QUALITY_LESSONS.md`: vertical members classified below / above the cut, RC walls with a fine grey hatch (FP9.1); slab edge at the physical member faces (FP9.3); mark at the reference-span midpoint, bracket only for receiving main beams and transfer beams carrying CX columns, MIDDLE_CENTER bracketed / BOTTOM-TOP_CENTER plain anchors, collision order (FP10.2); transparent slab tags (FP10.3); column marks at symbol corners (FP10.4); piles under caps hidden, standard pile patterns, every support classified once (FP13.2) |
