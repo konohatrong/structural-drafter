@@ -625,6 +625,16 @@ These conventions were agreed with the engineer during NRW-ST Rev A and apply to
   key plan from title block"; 1003 is the key plan): the revision table takes its place (`TB_OPTS["keyplan"] =
   False`). Where the small key plan is kept, it shows the buildings as clean outlines, named, and each stair named
   beside its mark (RPM `rpm_keyplan.tb_key_plan`, `footprints`).
+- **A project title block provided by the client or the architect is used as provided** (user, 2026-10-18, NSO: "we
+  need to keep title block as what they provided to us ... any problem asking me first"). Its file (`01 Transfer in`)
+  is inserted unchanged as the title block of every sheet - geometry, fonts, layers and pens, its texts and
+  signatures as given; our sheets fill only its fields (attributes, filled by their place when tags repeat) and its
+  empty boxes (revision rows, date, file name, total, the status stamp). Its frame and strip edge set the drawing area
+  and its sheet size the paper. An attribute may be moved on our inserts, never in the block definition (as the
+  architect does per sheet). Anything that does not fit or looks wrong in it (another project's text, a box too
+  small for our number, unavailable fonts) is asked first, never rebuilt on our own judgement. Worked example: NSO
+  A43 (A2 at 1:100 on the architect's block: Thai drawing titles as on the views, sheet numbers S-01 ... S-10 in its
+  number box, the full number in FILE NAME; `04 Code\drawings\nso_engine.py`).
 ### 19.2 Pens and lines (supersede §4.3 / §16 for A3 originals)
 
 | Line | Pen | Linetype | Colour (plotted) |

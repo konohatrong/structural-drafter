@@ -345,6 +345,18 @@ Placement of leaders, tags, weld symbols, cutting planes and node dimensions: `A
     - **The analytical model of a bracket or frame is not drawn on the sheets** (user, 2026-10-15, RPM review of
       A4: "this one i just let you know not put in the drawing"): it belongs in the calculation report. The drawn
       joints must match it: a pinned end is a plate connection, a moment release is a single-plate or bolted joint.
+    - **Flange lines at the exact thickness, at every scale** (user, 2026-10-18, NSO A46 / A47: "show flange
+      thickness", then "show exact flange thickness"): never exaggerated to a minimum spacing. At 1:50 a 9 mm flange
+      is 0.18 mm on paper and merges with a 0.35 outline on the print; the drawing file keeps the true geometry.
+      Where the flange must read on paper, draw an enlarged detail rather than widen the flange. Worked example: NSO
+      3201 A48, SB1 H 300x150x6.5x9 and the gutter post and bracket H 150x150x7x10 at 1:50 (the A47 0.7 mm minimum
+      withdrawn), and A49 DETAIL 1 at 1:10 (engineer: "so the exact flanges read on paper"; 9 mm = 0.9 mm), called
+      out on the elevation with the dashed rounded box and the bubble "1 / 3201" (`nso_section._detail`, `callout`).
+    - **A column runs straight to what it carries; the beams frame into it** (user, 2026-10-18, NSO markup of A49:
+      "SC2 straight to under rafter do not cut by intermediate beam", "cut at SC2 flange", "show intermediate beam
+      section"): in an elevation, an intermediate beam is not drawn through the column. The beam along the plane
+      ends on the column flange. The beam across the plane is shown as its cut section in front of the column,
+      whose lines stop at that outline. Worked example: NSO 3201 A50, the column on G and SB2 (`nso_section.steel_true`).
     - An H member seen side-on shows **both flange lines** ("show flange thickness as double line", review of A3),
       and a strut or brace is **cut to the face it is welded to and fillet welded all round** (review of A4: "brace
       cut at plate and fillet weld all around"; RPM `h_clip`). No intermediate wall post where each member can have

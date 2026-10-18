@@ -351,6 +351,15 @@ above is continuous; what lies below the slab is hidden.
     edge on its stair face and a hidden line on its slab face, 2F to roof (`edge_bms` back into the beam body). The
     lift beams keep the inner line only, as the engineer asked on 11/10 (open: confirm whether LB1 takes the same
     hidden face).
+- **A slab at the top level of the beam it meets** (user, 2026-10-18, NSO markup of A43 on S-05: "B3 same level as B4
+  please correct", "hidden line B3 top level same as adjacent S2 at SFL. +5.05"): where a slab panel (a canopy, a
+  cantilever, a step-free bay) has the same top level as the beam along its side, the slab runs **over** that beam to
+  its far face, as a floor slab over its edge beam. The beam's face on the slab side is hidden, the slab edge is the
+  far face only, and no slab-edge line is drawn across the beam's top, nor across the junction with the beam that
+  carries the slab on. A beam with a slab at another level beside it keeps that face seen (step, FP9.5). Decide it
+  from the levels of the slab and the beam, not from where the slab panel was first outlined. Worked example: NSO
+  3104 A44, the front canopy S2 (+5.05) over the G beams B3 from the start of the curved beam B4 to the columns
+  (`layout.CANOPY_EDGE` to the B3 north face; `nso_plans.plan_view` trims slab-edge lines inside the beam bodies).
 - **Band beams and beams together** (user, 2026-10-11, CHATAM roof: "band boundary", "delete this line"): a band
   edge never runs through a beam; the band outline goes round the beam's face and the beam keeps both faces (draw the
   band minus the beam strips, then the beams). Worked example: band B round LB1 at the lift on the roof.
@@ -376,6 +385,15 @@ above is continuous; what lies below the slab is hidden.
     the AR roof outline as drawn, curves included (user, 2026-10-18, markup of A29: "roof frame should not beyond roof
     boundary" at the rounded corners): clip the members to the true outline, not to its bounding rectangle. Worked
     example: NSO 3104 A30 (SB1 and P1 clipped to `ROOF["outline"]`, 2.30 m radius corners).
+    - **Where the engineer stops the structure short of the AR edge** (user, 2026-10-18, NSO markup of A46: "structure
+      stop here", at the rear gutter): the members end at that line, not at the AR edge, which stays as the roof edge
+      line (the fascia and gutter are the architect's). The plan and the section show the same ends: the rafters on
+      the gutter post, the bracket to the stop line, no purlin beyond the rafter ends. Worked example: NSO 3106 / 3201
+      A47 (`layout.GUTTER`, `ROOF_SECTION["rafter_end"]`).
+  - **Purlins sit on top of the rafters** (user, 2026-10-18, NSO markup of A44: "purlin need to be on top of SB1 then
+    purlin line should not been cutted"): the purlin lines run through, unbroken, and the rafter's lines are broken
+    under each purlin (the member below is left out where covered). Worked example: NSO 3103 lower roof (SB3) and
+    3106 roof (SB1) A45 (`nso_plans.plan_view`).
   - **Tie rods**: one line each on the grid linetype with their own pen (`S-ROD`), never merged with the other rod of a
     cross (user, 2026-10-06).
   - **Purlins on a row with a post** stand **beside the post**, flange edge on the post face, on the down-slope side
@@ -400,7 +418,8 @@ above is continuous; what lies below the slab is hidden.
   the analysis mesh (which sits on the member centre lines) (user correction, 2026-10-09, BANWA2 ground plan R01 / R02:
   the edge was moved to the outer member faces, including the south-east set-back and the return round the corner
   column). Build it from the projected member widths, keep set-backs and openings, close orthogonal corners without
-  nibs, and do not draw a hidden beam face on top of it.
+  nibs, and do not draw a hidden beam face on top of it. A slab at the top level of a beam along its side runs over
+  the beam to its far face, with no edge line across the beam top (FP9.2, NSO A44).
 - Each slab panel carries a slab tag (FP10.3). Cantilevers and canopies are slab panels with their own tag.
 
 ### FP9.4 Openings and voids
@@ -490,7 +509,8 @@ above is continuous; what lies below the slab is hidden.
 - Never on the beam line or another tag; never at a column. A beam that changes type changes mark at the column.
 - **The mark stays at the midpoint of its reference span** (user correction, 2026-10-09, BANWA2 S-106 R08): the span
   between the two physical supports, found from the supports and the connectivity, not from the analysis elements
-  (several mesh elements make one span). It is not moved to 40 % or 60 % of the span to clear something else. Where
+  (several mesh elements make one span). It is not moved to 40 % or 60 % of the span to clear something else, except
+  when both midpoint places are on a line (the exception under "Collisions" below, 2026-10-18). Where
   the midpoint falls on a grid line, the grid line is interrupted locally under the text.
 - **A main beam is one member from column to column**, even where secondary beams frame into it and the analysis model
   splits it at every joint. It is marked **once, with a bracket over its length** and the mark at the middle of the
@@ -523,6 +543,14 @@ above is continuous; what lies below the slab is hidden.
   member to make a check pass; genuinely unresolved crowding goes to an enlarged view or a review item. A secondary
   beam framing in at the middle of a main beam is cleared by putting the bracket on the other side (this replaces the
   earlier "middle of the nearest clear segment").
+  - **Lines a mark keeps off**: beam faces, slab edges, curved beams and the opening crosses (FP9.4) - every line,
+    not only the straight beam outlines.
+  - **Exception: both midpoint places on a line** (user, 2026-10-18, NSO markup of A44: "adjust mark position it crash
+    with beam line"): where beams frame in at the midpoint from both sides, so that neither side is clear, the mark
+    slides along its span to the nearest clear place, in steps, within the middle 80 % of the span; a bracket keeps
+    its full length with its gap at the text. This is the one case the mark leaves the midpoint. Worked example: NSO
+    3104 A45, B3 on G 3 - 4 and 5 - 6 (the secondary B3 in the void from the north, B4 at the canopy from the south)
+    250 mm along G (`nso_plans.slide_mark`).
 - **The bracket** (user, 2026-10-06, second review): a **solid grey line** (colour 8, layer `S-BRACKET`) parallel to
   the member; **both ends a 45° diagonal** whose size is the **text height** (dx = dy = 2.0 mm plotted) for a beam
   mark, or the **mark circle's diameter** for a circled (truss) mark; the diagonals **end on the member's start and end
@@ -824,6 +852,19 @@ North arrow on every plan sheet, same size and place; the plan always drawn in t
   1 / C falls on the plan's origin, and **XCLIP it to the plan's extents** so no AR sheet text or title shows. The
   stairs, lift and room walls then appear on every floor. Worked example: `04 Code\drawings\ar_bg.py` (copy, DWG,
   origins and clips) and `ch_plans.ar_background`.
+- **Sections and elevations taken from an AR section** (user, 2026-10-18, NSO markup of A44 on the roof frame
+  elevation: "overlay with grey AR"): the same colour-9 copy is xref'd behind the structural section, placed by a
+  grid and the ±0.00 level (the AR section's grid bubble and level text read from the AR file), at the AR's own
+  scale, and XCLIPped to the view. Where AR notes stand close over the structure, the clip follows the structure's
+  outline (a polygon, e.g. a fixed height over the sloping roof) so no AR text is cut. Worked example: NSO 3201 A45,
+  the roof frame SB1 over AR section C (`nso_section.ar_section`, `AR_SEC_C`, clip 120 mm over the SB1 top).
+  - **A structure line the AR draws is read from the AR file, not from an AR note** (user, 2026-10-18, NSO markup of
+    A45: "align top of rafter to this line (provided by AR)"): where the AR note and the AR drawing disagree (roof
+    "3 %" written, the truss chord drawn at 5.24 %), the structure follows the line the engineer points to. Read
+    its end points from the AR file once, into the project data, and derive the levels and slope from them; the
+    notes and level marks are formatted from that data, never retyped. Worked example: NSO A46,
+    `layout.AR_RAFTER_TOP` (SB1 top +10.14 at the front edge, 5.24 %). The analysis model follows only at its next
+    revision; list it as open.
 - **Before every review and every issue, run the overlay check** (FP16): ST over AR, level by level, grid, levels and
   columns compared, findings numbered. Every finding is either fixed or answered.
 
@@ -927,4 +968,8 @@ North arrow on every plan sheet, same size and place; the plan always drawn in t
 | 2026-10-18 | NSO markup of A28 (user): the lower roof as a beam plan and a steel roof framing plan, cropped to its rows (FP1.1); roof members run to the roof edge (FP9.2) |
 | 2026-10-18 | NSO markup of A29 (user): the roof edge is the AR outline with its curved corners; members clipped to it (FP9.2) |
 | 2026-10-18 | NSO sketch on A30 (user): the spans of a beam on cantilever tips share one mark (FP13.7 rule 11) |
+| 2026-10-18 | NSO markup of A43 (user): a slab at the top level of the beam beside it runs over the beam to its far face; the slab-side face hidden, no edge line across the beam top or the junction (FP9.2, FP9.3) |
+| 2026-10-18 | NSO markup of A44 (user): purlins on top of the rafters run through, the rafters broken under them (FP9.2); marks keep off every line, and slide along the span when both midpoint places are on a line (FP10.2 exception); the AR section in grey behind a structural section taken from it (FP15) |
+| 2026-10-18 | NSO markup of A45 (user): a structure line the AR draws is read from the AR file and wins over the AR note value (FP15) |
+| 2026-10-18 | NSO markup of A46 (user): where the engineer stops the structure short of the AR edge, members end at that line in plan and section (FP9.2); flange lines at the exact thickness (steel S4.14) |
 | 2026-10-10 | From the user's corrections of 08 - 09/10 recorded in the BANWA2 work transfer R01 of 09/10/2026, `instructions/PLAN_ANNOTATION_IMPROVEMENT.md` and `DRAWING_QUALITY_LESSONS.md`: vertical members classified below / above the cut, RC walls with a fine grey hatch (FP9.1); slab edge at the physical member faces (FP9.3); mark at the reference-span midpoint, bracket only for receiving main beams and transfer beams carrying CX columns, MIDDLE_CENTER bracketed / BOTTOM-TOP_CENTER plain anchors, collision order (FP10.2); transparent slab tags (FP10.3); column marks at symbol corners (FP10.4); piles under caps hidden, standard pile patterns, every support classified once (FP13.2) |
