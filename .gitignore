@@ -10,6 +10,9 @@ jobs/general_notes/rev_A/
 *.bak
 *.dwl
 *.dwl2
+# office drawing templates shipped with every new project (BEAM_SCHEDULE_RULES.md): sources, not build output
+!project_template/tree/06 CAD/templates/*.dxf
+!project_template/tree/06 CAD/templates/*.dwg
 
 # AutoCAD script / log by-products
 *.log

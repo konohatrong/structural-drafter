@@ -60,6 +60,36 @@ quoted are examples, not defaults.
    | Beam element | level digit × 10000 + 1001 + i, sorted by midpoint (Y, X) |
    | Panel group | level base (100, 200 …) + panel number |
 
+   **Material, section and thickness IDs and section names** (user rule, 2026-10-18, NSO):
+
+   | Item | RC column | RC beam | Steel column / stub | Steel beam | Slab |
+   |---|---|---|---|---|---|
+   | Material ID | 1xx | 2xx | 3xx | 4xx | 5xx |
+   | Section ID | 1xx | 2xx | 3xx | 4xx | - |
+   | Thickness ID | - | - | - | - | 1xx (general slab) |
+
+   The slab material takes **5xx** (engineer, NSO r02, 18/10/2026: "slab material 501 RC SLAB FC240"); thickness IDs
+   run per slab mark (101 S1, 102 S2, 103 S3).
+
+   Section names, one section per drawing mark:
+   - RC beam: `BXX - width x depth`, e.g. `B1 - 250x600`, `RB4 - 200x400` (the mark as drawn, B / RB / ...C / ...A);
+   - RC column: `CXX - width x depth`, e.g. `C1 - 300x300`;
+   - steel H, channel or other rolled shape: `SBXX - shape depth x width x web thk x flange thk - weight per length`
+     (TIS names and masses from `drafter.tis_sections`; a steel column or stub uses its own mark, SC / ...);
+   - RHS and SHS: `<mark> - RHS / SHS width x depth x wall thk - weight per length`;
+   - CHS: `<mark> - CHS OD x wall thk - weight per length`;
+   - a size not yet given: `<mark> - TBC`, never a guessed section.
+
+   **GEN NX takes at most 28 characters in a section name** (NSO r01, 18/10/2026: "[Error] The possible number of
+   characters that can be entered in Section Name is 28"; the whole `SECT` table was refused). Steel names are
+   therefore written without spaces, the same parts in the same order: `SB1-H300x150x6.5x9-36.7kg/m` (27),
+   `SC1-H150x150x7x10-31.5kg/m`, `SB10-H588x300x12x20-151kg/m`. RC names keep the spaces (`B1 - 250x600`). The writer
+   asserts the length before any write.
+
+   IDs run in mark order inside each block (101, 102 …). Material names stay within the 16-character limit (M5); their
+   wording is the engineer's (proposal: the use, with the grade once given, e.g. `RC COLUMN`, `STEEL BEAM`). Worked
+   example: NSO r01 (written 18/10/2026), `04 Code\model\proto_model.py` `number_sections`, `gen_r01.py`.
+
 4. **Dependency order**: material / section → node → element → support → load case and load group → load →
    analysis. An element names its nodes and section; a load names its case (`MAPI_GUIDE.md` §8).
 5. **No invented engineering values** (`AGENTS.md` §2). A mark missing from the schedule, a level, a support
@@ -114,7 +144,9 @@ A write changes the user's open model at once, with no undo through the API.
 | `POST /ope/AUTOMESH` creates nodes | A node table read before the call misses them | Re-read `NODE` after every mesh call before checking plates (`08` §2A) |
 | `DELETE /db/ELEM/<ids>`, `DELETE /db/NODE/<ids>` | Deletes exactly those IDs (body `{}`); without IDs it would wipe the table | Delete by ID only, 200 IDs per call; check the IDs first (`08` §8) |
 | `Result.TABLE.*` (library) | Calls `Model.units()` first: a `PUT /db/UNIT` to kN-m on the user's model, not restored (FSK 11/10/2026: the engineer's model was in N-m) | For a read-only extraction call `POST /post/TABLE` directly; the reply carries `FORCE` / `DIST`, convert in the script |
+| `PUT /db/SECT` with a name over 28 characters | The whole table refused ("possible number of characters … in Section Name is 28"); the tables before it stay written | Section names ≤ 28 characters (M3: steel names without spaces); assert before writing (NSO r01, 18/10/2026) |
 | `PUT /db/MATL` with a name over 16 characters | Rejected ("possible number of characters … is 16"); the other tables still write, so the elements point to a missing material | Material names ≤ 16 characters; treat any error reply as fatal and check `MATL` in the read-back (FSK r01, 11/10/2026) |
+| `PUT /db/SECT` / `PUT /db/ELEM` re-sectioning; `DELETE /db/SECT/<id>` | The section stiffness scale factors (`/db/SECF`: cracked Ixx / Iyy / Izz) are keyed by the **section ID**: they stay with the ID when it is redefined under another mark, and go with it when it is deleted. The read-back of `SECT` and `ELEM` shows nothing; only the moments change (NSO r06 - r09, 18/10/2026: SECF on every RC section but 201, so whichever beams held ID 201 stayed uncracked; GF line 7 at F -69 / -108 / -50 kN m in three revisions with the same geometry and loads) | Before any re-sectioning read `SECF` (and the other per-section tables) and carry it by mark, not by ID; check that every section of one kind has the same factors; diff all `/db` tables of the old and new file when results move without a reason (`r1_tables.py`) |
 | `PUT /db/RIGD` | Keyed by the master node: `{"<master>":{"ITEMS":[{"ID":1,"GROUP_NAME":"","DOF":111111,"S_NODE":[…]}]}}` | Read back and compare; existing masters stay unchanged (`08` §4) |
 
 Commands the guides use that are not in the library list: `/ope/AUTOMESH`, `/db/MEMB`, `/db/STOR`, `/db/DCON`,

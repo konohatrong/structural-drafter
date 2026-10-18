@@ -50,6 +50,7 @@ Fix the disagreement in the documents, not only in one drawing.
 | Units in text | Guide §2.4.2 |
 | Any symbol (section, callout, level, break, tag, weld …) | `SYMBOLS.md`, then the rule it cites |
 | Bars, ties, laps, bar notation | `RC_DRAWING_RULES_EIT-011006-19.md` §12, §19.4, §19.7; guide §2.1 – §2.3 |
+| RC beam schedule (any project): the form, the spreadsheet notation (`3/3+2`, `2(+1)`, `2-RB9@100`), drawing and checking it | `docs/concrete/BEAM_SCHEDULE_RULES.md`; `drafter/beam_schedule.py`; template `project_template/tree/06 CAD/templates/` |
 | Welds, bolts, marks, bills, camber, erection | `STEEL_DETAILING_INSTRUCTION.md` S3 – S9 |
 | Steel stair, guard or handrail: loads, seismic drift, opening size, stringers, landings, connections, drawing content | `docs/steel/stairs/README.md` (router to the AISC DG34 notes); how the details are drawn: `17_STAIR_DETAILING_PRACTICE.md`, steel S4.14 |
 | Fixed steel ladder: limits, cage or fall arrest, ladder sheet content | `docs/steel/stairs/18_LADDER_DETAILING.md`; example `jobs/steel_ladder_typical` |

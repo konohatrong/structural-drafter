@@ -288,6 +288,11 @@ drawn in each cell**, then rows for size, top bars, bottom bars, side-face bars 
   - the other columns keep `a + b` = outer layer + second layer, defined in the notes.
   - Worked example: BANWA2 S-302 (`rc_schedules.zones_of`, `bars_total`): B1, B2, B3, B5, B5A, RB5 in three columns,
     B1A, B6, RB1, RB2, RB5A as ALL SPAN.
+- **The office beam schedule** (user, 2026-10-18: the engineer's template, made the standard for every project):
+  the row form (NO. | SIZE | five fixed section columns, a TOP / BOT / STIRRUP / SIDE table under each section,
+  the slab dummy with break lines), drawn by `drafter/beam_schedule.py` from the project's spreadsheet with the
+  bar grammar `3/3+2` (layers / extra bars), `2(+1)` and the stirrups `2-RB9@100` (legs). The rules, the
+  notation and the template: **`BEAM_SCHEDULE_RULES.md`** (BS1 - BS6).
 
 **Beam schedule must show:**
 - Mark
@@ -296,8 +301,9 @@ drawn in each cell**, then rows for size, top bars, bottom bars, side-face bars 
 - Top/bottom bars (layer 1 & 2)
 - Extra bars
 - Stirrup shape / size / spacing
-- **Bar-arrangement sketch with cut-off points**
-- Remarks
+- **Bar-arrangement sketch with cut-off points** (or a note citing the typical cut-off details, as NSO 3301 cites
+  STR-ST-1112)
+- Remarks (in the notes when the row form above is used)
 
 **Typical cut-off diagram [FIG 6.7]**, an example only and not a code requirement:
 - **Top bars**:

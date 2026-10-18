@@ -30,6 +30,7 @@ For how this differs from steel, see the comparison in `docs/README.md`.
 | File | Use it for |
 |---|---|
 | `RC_DRAWING_RULES_EIT-011006-19.md` | Reinforcement graphics (§12), required content of RC plans and member details (§14 – §15), office bar rules (§19.4, §19.7) |
+| `BEAM_SCHEDULE_RULES.md` | The office RC beam schedule for every project: the row form, the spreadsheet (bars `3/3+2`, `2(+1)`; stirrups `2-RB9@100`), the generator `drafter/beam_schedule.py`, the template in `project_template` |
 | `TYPICAL_DETAILS_INSTRUCTION.md` | Typical-detail sheets 11xx (columns, beams, slabs): numbering, sources, the content of every detail, generator, pitfalls, checklist |
 | `STAIRCASE_DRAWING_INSTRUCTION.md` | RC stairs: design checks, views, bar shapes, notes |
 | `docs/general/FLOOR_PLAN_DRAWING_INSTRUCTION.md` | Floor and foundation plans of RC buildings (with RC §14 for the required content) |
