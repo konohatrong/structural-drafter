@@ -147,6 +147,7 @@ This applies to every drawing.
   - measure it over the full width, e.g. "DROP ≥ L/3 (L/6 EACH WAY)" instead of a half from the centreline;
   - or drop it where the note and another detail already give it (drop panel on 1122 → note + 1123/2).
 - **Extension lines start clear of other text.** A long dimension over a chain (e.g. "8125 (FIELD SPLICE)" over the 1250 panels) starts its extension lines just below the chain, not at the object, so they never pass through the chain's text.
+- **A dimension says what it measures** when that is not plain from the two edges it spans (user rule, 2026-10-17: "what this dimension refer to", Helicon Staircase 5102 A1): draw both things it measures to, and give it a short name, not a requirement. On the base plate plan of 5102 the 460 measured the stringer foot, whose end cut was not drawn; A2 draws the end cut as a labelled line and writes "460 STRINGER FOOT, END CUT AT ITS CENTRE".
 - **Requirements belong in the notes, not in dimension text.** Write "≥ 156 (K3.1A)" in the general notes. The dimension shows only the value (159), so it stays short enough to sit between its arrows.
 - **One dimension, one place.** If a plan already dimensions a plate and its holes, the elevation and the section do not repeat them. Repeated chains are what end up crossed by leaders.
 - **Inclined chains** (e.g. along a diagonal) use `dim(..., angle=member angle)`, with every link offset the same distance from the axis. The check treats collinear links as a chain, not a crossing.
@@ -405,6 +406,10 @@ keep one style per set (§0).
      than inside it; the far face of a member on the column side.
    - Or merge the note into a neighbour's. For example, the plate washer note joined the anchor rod note on 4/5002.
    - Do not shorten the rule.
+7. **Notes beside their targets** (user rule, 2026-10-17: "refine leader placing", Helicon Staircase plan A1):
+   split a view's notes into columns on the sides nearest their targets, so every leader is short; never one
+   column whose leaders run across the view. On 3101 A2 the top-end and edge-beam notes stand left of the plan,
+   the foot, step 1 and UP notes right of it. A member is named by its tag (§9.8), not by a note.
 
 ### 9.2 Member tags
 
@@ -510,6 +515,11 @@ section on the frame elevation, a truss section on the truss elevation.
     free.
   - `lab="side"`: the number above the arrow and the sheet below it, beyond the arrow tip. Use it when the ends are
     close to a dimension tier, as on the 1:50 elevation, where the plane ends between the chord and the panel chain.
+    With the arrow pointing down, the number and then the sheet sit below the tip.
+- **No symbol touches its letters** (user rule, 2026-10-17: "symbol crash letter", Helicon Staircase plan A1, where
+  the section B letters sat on the arrowheads): the number and the sheet of a cutting plane, a detail callout or a
+  tag are clear of their own strokes and arrows and of every other line. Place the ends where the labels have free
+  space: on a plan of steps, mid-tread (between two riser lines), never on a line.
 - Put the ends past the farthest part of the object (a vertical cut through a bearing ends above the break of the
   vertical and below the RC break), never on a member.
 - The section's view title names its parent, e.g. "SECTION 2 (ON 4/5002)".
@@ -603,3 +613,8 @@ from any structure type:
 - Every leader that would otherwise cross the band leaves it.
 - If a note-column leader would then run along or through the band text, move that note: to a row above or below the
   view, reached by one vertical leader (the cleat note on 1/5004), or to another target point.
+- **A member with no band of its own** (a plate seen edge-on, drawn as one thick line) is named **beside its tag**:
+  the circled mark in clear space beside the member (§9.2), its size right after it on one or two lines, no leader,
+  clear of dimensions, extension lines and cutting planes (user rule, 2026-10-17: "refine leader placing",
+  Helicon Staircase plan 3101: "ST2" then "PL 400 x 12, / FACE R 2474"; A1 named both stringers from a note
+  column with leaders across the treads).

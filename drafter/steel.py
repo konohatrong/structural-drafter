@@ -231,7 +231,12 @@ def cutmark(sp, p1, p2, look, label, S, ref=None, ends_only=True, lab="end"):
         tip = (px + look[0] * 4.5 * S, py + look[1] * 4.5 * S)
         line(sp, (px, py), tip, "S-SYMB")
         arrowhead(sp, tip, (px, py), 2.0 * S, "S-SYMB")
-        if lab == "side":                                          # beside the arrow, beyond its tip
+        if lab == "side" and look[1] < -0.5:                       # arrow down: number, then sheet, below its tip
+            q = (px + look[0] * 5.5 * S, py + look[1] * 5.5 * S)   # (above it, the number sat on the arrowhead:
+            text(sp, label, q, 2.8 * S, "S-TEXT", TA.TOP_CENTER, style="ANB")      # Helicon A1, 17/10/2026)
+            if ref:
+                text(sp, ref, (q[0], q[1] - 3.4 * S), 2.0 * S, "S-TEXT", TA.TOP_CENTER)
+        elif lab == "side":                                        # beside the arrow, beyond its tip
             q = (px + look[0] * 7.5 * S, py + look[1] * 7.5 * S)
             text(sp, label, (q[0], q[1] + 0.6 * S), 2.8 * S, "S-TEXT", TA.BOTTOM_CENTER, style="ANB")
             if ref:
