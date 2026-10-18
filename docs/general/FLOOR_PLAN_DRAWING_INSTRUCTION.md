@@ -340,6 +340,13 @@ above is continuous; what lies below the slab is hidden.
   with a mitred corner: merge the chain of one width and offset it as one line, never two square-ended strips
   (`ch_plans.beam_body`).
 - Steel beams in an RC plan: by their outline or centre line with the section designation (steel S1).
+- **Steel beams joining at a steel column** (user, 2026-10-18, NSO markup of A24: "STEEL BEAM JOIN AT COLUMN SHOW ON
+  PLAN", "50 gap just for drawing"): the column is drawn at the joint as its true section (steel S4.15), solid, on
+  the plan of the level where the beams join it, even where it stops under them; every steel beam stops **50 mm
+  short of the column's outline** (its bounding box), on each side it frames into. The 50 mm is a drawing gap that
+  shows the joint, not a dimension or a fabrication gap; it is the one exception to "no gap" under clean junctions
+  below. A stub or post that starts on the same point is shown in the section, not as a second symbol. Worked
+  example: NSO 3102 roof beam level, SB2 H 100 on G and F - G at SC1 H 150 (`nso_plans.STEEL_GAP`).
 - **Steel framing plans** (truss chords, bracing, purlins): every member as a **double line at its projected width**
   (CHS outside diameter, SHS / box width, channel flange width, round bar diameter), **no wall thickness** (user,
   2026-10-06: "show as double line showing project dimension (no need to show wall thickness)"); junctions clean as
@@ -536,6 +543,12 @@ above is continuous; what lies below the slab is hidden.
   This supersedes the column mark beside each column on every floor plan [REC]. A column that starts above the
   foundation (on a beam, CX) is marked on the plan where it starts. Worked example: NSO 3101 A10
   (`nso_plans.plan_fd`; `col_marks` no longer called by `plan`).
+- **Steel columns and stub columns starting above the foundation** (user, 2026-10-18, NSO markup of A25: "SC2 anchor
+  to bottom right on plan"): the mark (SC1, SC2 …) at the **bottom right** of every symbol (TOP_LEFT anchor, clear
+  of the outline), on the plan of the level where the column starts only; a stub on a beam or column top is a steel
+  column with its own SC mark, not a separate "stub" kind. The section and weight go in the legend (FP14.1), not
+  beside each mark. Worked example: NSO 3102 A26, SC1 H 150 on G at the 2nd floor and SC2 (was RS1) on the roof beam
+  level.
 - **The column mark sits at a corner of the column symbol** (user correction, 2026-10-09, BANWA2 S-106 R08): above
   right = BOTTOM_LEFT, above left = BOTTOM_RIGHT, below right = TOP_LEFT, below left = TOP_RIGHT, with the same
   clearance. Take the first clear corner of the four, checking the whole text box against brackets, wall marks, grid
@@ -753,6 +766,11 @@ drafts A1 - A9 of 17/10/2026 (A9 = the engineer's DWG edit of A8, `07 Review\...
 Column states (FP9.1), slab tag (FP10.3), structural floor level, step symbol, fill concrete hatch, existing-structure
 hatch, pile symbols (foundation sheets), linetypes used (hidden beam, column below, joint). Only symbols that appear
 on the set.
+- **Steel columns are listed, not drawn, in the legend** (user, 2026-10-18, NSO markup of A25: "no need to show in
+  legend ... we put SC2 - .... and SC1 - .... with weight per length in legend instead"): one text row per mark,
+  `SC1 - H 150x150x7x10 (31.5 kg/m)` (section and weight from `drafter.tis_sections`, FP10.5); a size not yet given
+  is written `SC2 - SIZE BY CALCULATION (TBC)`, never guessed. The plan symbol is the true section (steel S4.15) and
+  explains itself, so it gets no legend symbol row.
 
 ### FP14.2 Plan notes [REC]
 `NOTE` block beside the legend: reference to the general notes and typical details (sheet numbers), the datum
@@ -877,4 +895,6 @@ North arrow on every plan sheet, same size and place; the plan always drawn in t
 | 2026-10-17 | NSO foundation plan (user): column marks on the foundation plan only; floor and roof plans show the column symbol without a mark; a column starting on a beam marked where it starts (FP9.1, FP10.4) |
 | 2026-10-17 | NSO step symbol (user): a level change with no beam under it carries the step symbol - leg from the higher side, drop along the line, arrow into the lower side, the drop in mm (FP9.5) |
 | 2026-10-18 | NSO beam names and groups (user): B / RB / SB running numbers, ...C cantilever from the named beam, ...A all-span reinforcement; one mark per support type, top level and span (FP10.1) |
+| 2026-10-18 | NSO markup of A24 (user): steel beams joining at a steel column stop 50 mm short of its true outline, the column drawn solid at the joint (FP9.2) |
+| 2026-10-18 | NSO markup of A25 (user): steel column marks at the symbol's bottom right where the column starts, stubs are SC columns (FP10.4); steel columns listed in the legend as "SC1 - section (kg/m)" with no symbol (FP14.1) |
 | 2026-10-10 | From the user's corrections of 08 - 09/10 recorded in the BANWA2 work transfer R01 of 09/10/2026, `instructions/PLAN_ANNOTATION_IMPROVEMENT.md` and `DRAWING_QUALITY_LESSONS.md`: vertical members classified below / above the cut, RC walls with a fine grey hatch (FP9.1); slab edge at the physical member faces (FP9.3); mark at the reference-span midpoint, bracket only for receiving main beams and transfer beams carrying CX columns, MIDDLE_CENTER bracketed / BOTTOM-TOP_CENTER plain anchors, collision order (FP10.2); transparent slab tags (FP10.3); column marks at symbol corners (FP10.4); piles under caps hidden, standard pile patterns, every support classified once (FP13.2) |
