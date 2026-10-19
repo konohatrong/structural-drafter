@@ -522,6 +522,13 @@ What the symbol says is set by `STEEL_DETAILING_INSTRUCTION.md` §S5. Placement 
    The symbol carries the weld.
 6. **Key**: sheet 1001 shows every symbol form used, with descriptions starting 50 mm from the symbol (clear of the
    tail), and a wrapped footnote for the conventions.
+7. **Groove forms** (`groove=` in `weld()`; added 2026-10-19 for the Helicon Staircase site CJP splice on 5204)
+   - `groove="bevel"`: the perpendicular leg on the left, the root on the line; the arrow is broken, its break
+     pointing to the member to be prepared.
+   - `groove="V"`: the vertex on the reference line, both legs opening away from it; the arrow is straight, because
+     both members are prepared. `side="both"` draws the double-V (X) groove, one V each side of the line.
+   - Both write the size or groove depth as (E), left of the symbol. Draw groove welds only with these values; a local
+     copy of the symbol in a job is not used.
 
 ### 9.4 Cutting planes (`drafter.steel.cutmark`)
 

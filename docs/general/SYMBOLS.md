@@ -95,7 +95,7 @@ Full rules: `docs/steel/STEEL_DETAILING_INSTRUCTION.md` S4 – S5.
 
 | Symbol | Drawn as | Layer / pen | Helper | Rule |
 |---|---|---|---|---|
-| **Weld symbol** | AWS A2.4: reference line, arrow (never collinear with it), basic symbol (arrow side below, other side above), size left and length right. Also all-round circle, field flag toward the tail, NDT letters, a tail reference, and a broken arrow for a bevel | `S-ANNO`, text 2.0 | `steel.weld()` | Steel S5; guide §9.3 |
+| **Weld symbol** | AWS A2.4: reference line, arrow (never collinear with it), basic symbol (arrow side below, other side above), size left and length right. Also all-round circle, field flag toward the tail, NDT letters, a tail reference, and a broken arrow for a bevel. Groove forms: `groove="bevel"` (perpendicular leg left, arrow broken toward the prepared member) and `groove="V"` (vertex on the line, opening away from it, arrow straight; `side="both"` is the double-V / X groove); groove size written (E) | `S-ANNO`, text 2.0 | `steel.weld()` | Steel S5.7; guide §9.3 item 7 |
 | **Weld as seen** | 45° hatch only (ANSI31), spacing 1/3 of the leg; boundary on Defpoints (never plotted). A band along the joint plus the profile triangles at the silhouettes | `S-WELD` | `steel.weld_region()`, `weld_bead()`, `weld_band()`; `srt.weld_branch()` | Steel S4.7 |
 | **Work point** | Small cross in a circle, "WP" (trusses); on stairs and ladders a circle with two opposite quarters filled, "WP" in clear space, at the nosing line / floor intersection | `S-SYMB` | `steel.wp_mark()`; `steel_access.wp_point()` | Steel S2.1, S4.14 |
 | **Centre / work line** | Grey chain, EIT grid linetype, work point to work point | `S-GRID` grey 0.18 | `srt.chord(cl=True)`, `branch(cl=True)` | Steel S4.2 |

@@ -440,6 +440,8 @@ Placement of leaders, tags, weld symbols, cutting planes and node dimensions: `A
      of them (DSC p.128).
 7. **Groove welds**
    - A bevel symbol has the arrow broken toward the member to be prepared (p.122).
+   - A V or double-V (X) groove prepares both members, so its arrow is not broken (`weld(..., groove="V")`,
+     `side="both"` for the double-V; guide §9.3 item 7).
    - The size of a PJP is (E). Never omit E; it is the commonest PJP error (DG21 p.46, 67).
 8. **NDT letters** go on the line beyond the symbol ("MT"). No extent means 100 % (DSC p.127).
 9. **Weld key**: sheet 1001 explains every symbol form used, with the near-side / far-side and full-length conventions.

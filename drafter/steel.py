@@ -159,15 +159,19 @@ def weld(sp, tip, ref, S, size, all_round=False, field=False, other=False, tail=
     runs left). tip = a point or a list of points (one arrow each). side = "arrow" (below the line, default),
     "other" (above) or "both" (other=True is "both"); both sizes are always written (size2 = other side).
     groove = "bevel": bevel-groove symbol (perpendicular leg on the left), size written as (E), the arrow broken
-    toward the member to prepare. ndt = test letters on the line beyond the symbol (e.g. "MT"). Drawn on S-ANNO.
+    toward the member to prepare. groove = "V": V-groove symbol (vertex on the line, opening away from it), size
+    written as (E), the arrow straight (both members are prepared); with side="both" it is the double-V (X) groove.
+    ndt = test letters on the line beyond the symbol (e.g. "MT"). Drawn on S-ANNO.
     The arrow is never collinear with the reference line."""
+    if groove not in (None, "bevel", "V"):
+        raise ValueError(f"weld(): groove={groove!r}; expected None, 'bevel' or 'V'")
     side = side or ("both" if other else "arrow")
     rl = rl or (16.0 + (5.0 if length else 0.0) + (4.0 if ndt else 0.0)) * S
     sgn = -1 if left else 1
     end = (ref[0] + sgn * rl, ref[1])
     line(sp, ref, end, "S-ANNO")
     for tp in (tip if isinstance(tip, list) else [tip]):
-        if groove:                                      # broken arrow: the break points to the prepared member
+        if groove == "bevel":                          # broken arrow: the break points to the prepared member
             mx, my = ref[0] + 0.55 * (tp[0] - ref[0]), ref[1] + 0.55 * (tp[1] - ref[1])
             kx, ky = mx + 1.6 * S * sgn, my
             pline(sp, [ref, (mx, my), (kx, ky), tp], "S-ANNO")
@@ -183,7 +187,10 @@ def weld(sp, tip, ref, S, size, all_round=False, field=False, other=False, tail=
         if groove == "bevel":                          # | / : vertical leg on the left, root on the line
             line(sp, (xs, y), (xs, y + sd * tri), "S-ANNO")
             line(sp, (xs, y), (xs + tri, y + sd * tri), "S-ANNO")
-        else:                                          # fillet: perpendicular leg on the left
+        elif groove == "V":                            # \ / : vertex on the line, both legs open away from it
+            line(sp, (xs + tri / 2, y), (xs, y + sd * tri), "S-ANNO")
+            line(sp, (xs + tri / 2, y), (xs + tri, y + sd * tri), "S-ANNO")
+        else:                                         # fillet: perpendicular leg on the left
             pline(sp, [(xs, y), (xs, y + sd * tri), (xs + tri, y)], "S-ANNO")
         sz = size if sd == -1 or side == "other" else (size2 if size2 is not None else size)
         lab = f"({sz})" if groove else f"{sz}"
