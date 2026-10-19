@@ -282,6 +282,26 @@ The same choices apply to any structure. Steel examples (SRT-ST) are in §9.
 - **Spacing:** at least 10 mm between a title and the next view below.
 - **Note blocks** (general notes, keys, installation notes, schedules): left-aligned columns on a common top line. Headings 2.8 bold, body 2.0, line spacing 1.1–1.15.
 
+### 6.1 Table numbers (user rules, 2026-09-30 and 2026-10-19)
+
+1. Every table is titled **"TABLE n - NAME"**. Notes and leaders cite "TABLE n" only, never a drawing number with it
+   ("1002 TABLE 6", "SEE 1002") and never "TABLE ABOVE" (user, 2026-09-30).
+2. **The office standard sets hold TABLES 1 – 20:** general notes 1 – 10, typical details 11 – 20
+   (`TYPICAL_DETAILS_INSTRUCTION.md` §4C-1). Project notes cite these numbers, for example cover from the general notes'
+   TABLE 7.
+3. **A project set's tables run in one sequence from 21**, through the set in sheet order (user, 2026-10-19: "record
+   in the toolkit docs that project-set tables run in one sequence from 21, after the standard sets' 1 - 20"). A
+   project table never reuses a number from 1 – 20, so that "TABLE 7" on a project sheet can only mean the standard
+   one. A table added later takes the next free number. Do not renumber a set that has been issued.
+4. Tables carried from an earlier or received set are renumbered into the project sequence, together with their
+   citations.
+5. Register: `TABLES` in the job's engine module, built from one ordered list of keys; `TABT(key)` gives the title and
+   `TAB(key)` the citation.
+
+Example: BANWA 2, print B10 (19/10/2026). Its received tables were numbered 1, 2, 15 – 21 and 21 again. They became
+one run, 21 – 34, from S-101 to S-304. The R04 tank tables on S-107 were renumbered on import
+(`bw_engine.py` list, `tank_b.TABLE_MAP`).
+
 ---
 
 ## 7. The engine (`build_rw.py`; current: `td_engine.py`)

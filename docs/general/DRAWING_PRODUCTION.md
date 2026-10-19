@@ -99,7 +99,8 @@ The full reference is `DRAWING_ENGINE.md`. In short:
   LTSCALE 1: EIT §19.2.)
 - **Annotation engine:** `leader()` collects the notes and the engine packs them into columns or rows, then routes the
   leaders (`ANNOTATION_ALIGNMENT_GUIDE.md`). Opt-in: orthogonal leaders, bolt rings, unit-safe wrapping.
-- **Tables:** "TABLE n - NAME" from the register `TABLES`; notes cite "TABLE n" only.
+- **Tables:** "TABLE n - NAME" from the register `TABLES`; notes cite "TABLE n" only. The standard sets use 1 – 20.
+  A project set numbers its tables in one sequence from 21, in sheet order (guide §6.1).
 - **One set per process:** the engine creates its document on import.
 
 ## 3. The checks (`!!` lines)

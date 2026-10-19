@@ -315,7 +315,7 @@ Sources in `SOURCES_SLAB_DETAILING.md` (A: DPT, B: EIT 011008, C: TATA).
 
 ## 4C-1. Table numbering (R2, 2026-09-30)
 
-Every table carries "TABLE n - NAME". The general notes hold Tables 1 – 10; the typical details continue from 11 (register: `TABLES` in `td_engine.py`). Notes and leaders cite "TABLE n" only; a drawing number is never part of a table reference.
+Every table carries "TABLE n - NAME". The general notes hold Tables 1 – 10; the typical details continue from 11 (register: `TABLES` in `td_engine.py`). Notes and leaders cite "TABLE n" only; a drawing number is never part of a table reference. The standard sets keep 1 – 20. Project sets number their tables from 21, in one sequence (annotation guide §6.1, user rule 2026-10-19).
 
 | No. | Name | Sheet |
 |---|---|---|
