@@ -96,7 +96,10 @@ is frozen, so everything printed on the sheets is settled **before** the copy:
    contents (PDF only, or PDF + DWG with fonts and CTB). The row is set once in the project's engine (CHATAM
    `ch_engine.REV`), dated the **issue** day, not the day the set was started.
 2. Rebuild and plot **every** set with that row, the drawing list last (`DRAWING_PRODUCTION.md` §1.1); a clean build
-   (no `!!`) and the AutoCAD plot.
+   (no `!!`) and the AutoCAD plot. **An issue carries no working notes**: the plan and section sheets are built without
+   the development notes and the preliminary member tables of the review prints (legends, the drawing list, schedule
+   notes and the general notes stay); the review prints keep them (user, 2026-10-20, NSO markup of Rev A: "no need to
+   show when publish"; NSO `build.py --publish`, checked by `publish_issue.py`).
 3. Check each page before copying: the revision row and date on every sheet, the drawing list against the sheets.
 4. Create `09 Publish\YYYYMMDD - <set> Rev <R> - <purpose>\PDF\`: the merged set (bookmarked) and one PDF per sheet
    named `<CODE>-ST <No.> Rev <R> - <title>.pdf`. The script refuses to run when the folder exists.
