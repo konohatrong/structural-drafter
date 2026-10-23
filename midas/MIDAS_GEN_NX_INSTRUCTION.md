@@ -110,6 +110,13 @@ A write changes the user's open model at once, with no undo through the API.
    `..._r21` -> `BANWA2_underground_tank_walls_r22.mgbx` before the tank walls). Never overwrite an existing file.
    In a project folder the revision is `<CODE>_rNN_<what>.mgbx` in the GEN NX working folder (`paths.FEA_RUN`),
    with its row in `03 FEA\MODEL_LOG.md` (M9).
+   **Editing a revision into the next** (RPM r01 → r02, 22/10/2026): open the file (`POST /doc/OPEN`), prove it is
+   that revision by comparing `NODE` and `ELEM` with its read-back snapshot (`PROJECTSTATUS` carries no file name),
+   diff the live tables against the payload of the current design, stop on any change outside the expected parts,
+   then save as the new revision and write only the differences: deletes by ID (rigid-link masters that change are
+   deleted and written whole, so a slave is never in two masters at once), groups compared and rewritten by name,
+   full read-back equal to the payload before `SAVE`. Keep the builder's numbering stable: reserve the IDs of removed
+   items and number new ones after the last (RPM `modify_model.py`, `stairs_model.py` r02).
 3. **Never blind-`PUT` or `DELETE` a table you do not wholly own.** Read, merge your own items, write back:
    - `PUT /db/BMLD` **replaces** an element's whole `ITEMS` list: read-merge or you delete the user's other loads;
    - `PUT /db/GRUP` **merges** `E_LIST`: to remove members, delete the group and put it again (or have the user
@@ -147,6 +154,8 @@ A write changes the user's open model at once, with no undo through the API.
 | `PUT /db/SECT` with a name over 28 characters | The whole table refused ("possible number of characters … in Section Name is 28"); the tables before it stay written | Section names ≤ 28 characters (M3: steel names without spaces); assert before writing (NSO r01, 18/10/2026) |
 | `PUT /db/MATL` with a name over 16 characters | Rejected ("possible number of characters … is 16"); the other tables still write, so the elements point to a missing material | Material names ≤ 16 characters; treat any error reply as fatal and check `MATL` in the read-back (FSK r01, 11/10/2026) |
 | `PUT /db/SECT` / `PUT /db/ELEM` re-sectioning; `DELETE /db/SECT/<id>` | The section stiffness scale factors (`/db/SECF`: cracked Ixx / Iyy / Izz) are keyed by the **section ID**: they stay with the ID when it is redefined under another mark, and go with it when it is deleted. The read-back of `SECT` and `ELEM` shows nothing; only the moments change (NSO r06 - r09, 18/10/2026: SECF on every RC section but 201, so whichever beams held ID 201 stayed uncracked; GF line 7 at F -69 / -108 / -50 kN m in three revisions with the same geometry and loads) | Before any re-sectioning read `SECF` (and the other per-section tables) and carry it by mark, not by ID; check that every section of one kind has the same factors; diff all `/db` tables of the old and new file when results move without a reason (`r1_tables.py`) |
+| `/db/MEMB` (design members) after elements are renumbered | GEN NX's design members keep element numbers: when an edit renumbers elements, a member can come to hold elements of different kinds and the code check rates them as one piece (RPM r02, 22/10/2026: three stair C members mixed arm and strut elements; GEN NX 0.26 against 0.13 / 0.08) | Rebuild the members of the edited parts from the model before the code check, and check no member mixes kinds (RPM `design_check.py arm_members`) |
+| `POST /view/CAPTURE` with `ACTIVE` lists | GEN NX keeps every active set as a structure group `TEMP_DATA : Active n` in the model (RPM r01: 51 groups from 27 captures); they show up in `GRUP` and in a diff against a snapshot | Expect them; compare and edit only the script's own groups by name; never delete groups you did not write (M4.3) |
 | `PUT /db/RIGD` | Keyed by the master node: `{"<master>":{"ITEMS":[{"ID":1,"GROUP_NAME":"","DOF":111111,"S_NODE":[…]}]}}` | Read back and compare; existing masters stay unchanged (`08` §4) |
 
 Commands the guides use that are not in the library list: `/ope/AUTOMESH`, `/db/MEMB`, `/db/STOR`, `/db/DCON`,
