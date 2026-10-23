@@ -1340,12 +1340,40 @@ def _grouped(prefix, fn):
     return w
 
 
-def att(sp, tag, val, p, h, align=TA.MIDDLE_LEFT, style="AN", prompt=None):
-    """attribute definition in the title block (placed exactly like the TEXT it replaces)"""
+TB_FIELDS = {}                       # tag -> (room mm, text height, style): the title block's fields (tb_define)
+TB_CLEAR = 0.5                       # mm kept clear between a title-block value and its cell line
+_TB_WARNED = set()
+
+
+def att(sp, tag, val, p, h, align=TA.MIDDLE_LEFT, style="AN", prompt=None, room=None):
+    """attribute definition in the title block (placed exactly like the TEXT it replaces). room: the width its value
+    may take (mm, at the A3 size of the strip), from the insertion point to the cell edge less a clearance, or the
+    cell for a centred field; every value is measured against it at build time (tb_values, a "!!" warning)"""
     a = sp.add_attdef(tag, insert=p, text=val, height=h, dxfattribs=A("S-TEXT", style=style))
     a.dxf.prompt = prompt or tag.replace("_", " ").title()
     a.set_placement(p, align=align)
+    if room is not None:
+        TB_FIELDS[tag] = (room, h, style)
     return a
+
+
+def tb_check(series, values):
+    """a "!!" warning for each title-block value wider than its field (TB_FIELDS): RPM R3 (22/10/2026), the revision
+    description "FOR SUBMISSION: F1 MID LANDING ON PILES" ran into the date column on all 29 sheets and no check saw
+    it. Measured with the Arial Narrow metrics of the notes (fonts.text_w); a field in another font (a Thai office
+    name) or with characters outside Latin-1 is not measured. One warning per field and value, naming the first sheet"""
+    from .fonts import _FONTS
+    for tag, val in values.items():
+        if tag not in TB_FIELDS or not val:
+            continue
+        room, h, style = TB_FIELDS[tag]
+        if style not in _FONTS or any(ord(c) > 255 for c in val):
+            continue
+        w = text_w(val, h, style)
+        if w > room + 1e-6 and (tag, val) not in _TB_WARNED:
+            _TB_WARNED.add((tag, val))
+            warn(f"{dwg_no(series)}: title-block field {tag} '{val}' is {w:.1f} mm wide, its cell holds {room:.1f} mm "
+                 "- shorten the text (every sheet with this value)")
 
 
 def tb_define():
@@ -1411,18 +1439,21 @@ def _tb_strip(ps, x0, x1, FY0, FY1, TBW):
         text(ps, f"{lab} : {people.get(lab, dots)}", (tx, ly), 2.0, align=TA.MIDDLE_LEFT)
         ly -= 4.8
     text(ps, "DRAWING NO.", (xm + 1.5, y_des - 3.5), 2.0, align=TA.MIDDLE_LEFT)
-    att(ps, "DWG_NO", "STR-ST-0000-D-A", (xm + 1.5, y_des - 8.5), 2.8, style="ANB", prompt="Drawing number")
-    att(ps, "SHEET", "SHEET 1 OF 1  |  A3", (xm + 1.5, y_des - 13.5), 2.0, prompt="Sheet x of y")
+    att(ps, "DWG_NO", "STR-ST-0000-D-A", (xm + 1.5, y_des - 8.5), 2.8, style="ANB", prompt="Drawing number",
+        room=x1 - xm - 1.5 - TB_CLEAR)
+    att(ps, "SHEET", "SHEET 1 OF 1  |  A3", (xm + 1.5, y_des - 13.5), 2.0, prompt="Sheet x of y",
+        room=x1 - xm - 1.5 - TB_CLEAR)
     line(ps, (xm, y_app + 13), (x1, y_app + 13), "S-TTLB-THIN")
     line(ps, (xm + 14, y_app), (xm + 14, y_app + 13), "S-TTLB-THIN")
     text(ps, "SCALE", (xm + 1.5, y_app + 10), 2.0, align=TA.MIDDLE_LEFT)
-    att(ps, "SCALE", "AS SHOWN", (xm + 1.5, y_app + 4.5), 2.0, style="ANB")
+    att(ps, "SCALE", "AS SHOWN", (xm + 1.5, y_app + 4.5), 2.0, style="ANB", room=14 - 1.5 - TB_CLEAR)
     text(ps, "DATE", (xm + 15.5, y_app + 10), 2.0, align=TA.MIDDLE_LEFT)
-    att(ps, "DATE", PROJ["date"], (xm + 15.5, y_app + 4.5), 2.0)
+    att(ps, "DATE", PROJ["date"], (xm + 15.5, y_app + 4.5), 2.0, room=x1 - xm - 15.5 - TB_CLEAR)
     text(ps, "DRAWING TITLE", (tx, y_tit - 3), 2.0, align=TA.MIDDLE_LEFT)
     yy = y_tit - 9
     for k in range(3):
-        att(ps, f"TITLE_{k + 1}", "", (xc, yy), 2.8, TA.MIDDLE_CENTER, "ANB", prompt=f"Drawing title line {k + 1}")
+        att(ps, f"TITLE_{k + 1}", "", (xc, yy), 2.8, TA.MIDDLE_CENTER, "ANB", prompt=f"Drawing title line {k + 1}",
+            room=x1 - x0 - 2 * TB_CLEAR)
         yy -= 4.3
     if sig:                                        # parties with a signature cell each (first: the engineer)
         sst, ssc = o.get("sig_style", "AN"), o.get("sig_scale", 1.0)
@@ -1447,14 +1478,16 @@ def _tb_strip(ps, x0, x1, FY0, FY1, TBW):
     else:
         text(ps, "STRUCTURAL DESIGN OFFICE", (tx, y_off - 3), 2.0, align=TA.MIDDLE_LEFT)
         ost, ok_ = o.get("office_style", "AN"), o.get("office_scale", 1.0)    # a Thai name needs a Thai font
-        att(ps, "OFFICE", PROJ["office"], (xc, y_off - 9), 2.8 * ok_, TA.MIDDLE_CENTER, ost, prompt="Design office")
+        att(ps, "OFFICE", PROJ["office"], (xc, y_off - 9), 2.8 * ok_, TA.MIDDLE_CENTER, ost, prompt="Design office",
+            room=x1 - x0 - 2 * TB_CLEAR)
         att(ps, "OFFICE_ADDR", PROJ["office2"], (xc, y_off - 14.5), 2.0 * ok_, TA.MIDDLE_CENTER, ost,
-            prompt="Office address / tel.")
+            prompt="Office address / tel.", room=x1 - x0 - 2 * TB_CLEAR)
     text(ps, "PROJECT", (tx, y_prj - 3), 2.0, align=TA.MIDDLE_LEFT)
-    att(ps, "PROJECT", PROJ["project"], (xc, y_prj - 9), 2.8, TA.MIDDLE_CENTER, "ANB")
-    att(ps, "LOCATION", PROJ["location"], (xc, y_prj - 15), 1.8, TA.MIDDLE_CENTER, prompt="Building / location")
+    att(ps, "PROJECT", PROJ["project"], (xc, y_prj - 9), 2.8, TA.MIDDLE_CENTER, "ANB", room=x1 - x0 - 2 * TB_CLEAR)
+    att(ps, "LOCATION", PROJ["location"], (xc, y_prj - 15), 1.8, TA.MIDDLE_CENTER, prompt="Building / location",
+        room=x1 - x0 - 2 * TB_CLEAR)
     text(ps, "OWNER", (tx, y_own - 3), 2.0, align=TA.MIDDLE_LEFT)
-    att(ps, "OWNER", PROJ["owner"], (xc, y_own - 9), 2.8, TA.MIDDLE_CENTER)
+    att(ps, "OWNER", PROJ["owner"], (xc, y_own - 9), 2.8, TA.MIDDLE_CENTER, room=x1 - x0 - 2 * TB_CLEAR)
 
     freed = 0.0
     if o.get("authority", True):
@@ -1492,9 +1525,12 @@ def _tb_strip(ps, x0, x1, FY0, FY1, TBW):
         text(ps, lab, (cx + 1, y_hdr + rh / 2), 2.0, align=TA.MIDDLE_LEFT)
     for k in range(nrows):                         # REV_1 = top row (first issue)
         yy = y_hdr - rh / 2 - k * rh
-        att(ps, f"REV_{k + 1}", "", (cols[0] + 1, yy), 2.0, prompt=f"Revision {k + 1}: letter")
-        att(ps, f"REV_{k + 1}_DESC", "", (cols[1] + 1, yy), 2.0, prompt=f"Revision {k + 1}: description")
-        att(ps, f"REV_{k + 1}_DATE", "", (cols[2] + 0.6, yy), 1.9, prompt=f"Revision {k + 1}: date")
+        att(ps, f"REV_{k + 1}", "", (cols[0] + 1, yy), 2.0, prompt=f"Revision {k + 1}: letter",
+            room=cols[1] - cols[0] - 1 - TB_CLEAR)
+        att(ps, f"REV_{k + 1}_DESC", "", (cols[1] + 1, yy), 2.0, prompt=f"Revision {k + 1}: description",
+            room=cols[2] - cols[1] - 1 - TB_CLEAR)
+        att(ps, f"REV_{k + 1}_DATE", "", (cols[2] + 0.6, yy), 1.9, prompt=f"Revision {k + 1}: date",
+            room=cols[3] - cols[2] - 0.6 - TB_CLEAR)
     text(ps, "REVISIONS", (tx, y_rt + 3), 2.0, align=TA.MIDDLE_LEFT, style="ANB")
     hline(y_rt + 6)
 
@@ -1510,14 +1546,17 @@ def _tb_strip(ps, x0, x1, FY0, FY1, TBW):
         if o.get("keyplan_ground", True):          # the heavy ground line of a section key plan
             pline(ps, [(bx0, by0), (bx1, by0)], "S-FRAME")
         att(ps, "KEYPLAN_1", "NOT APPLICABLE", (xc, (by0 + by1) / 2 + 2.5), 2.0, TA.MIDDLE_CENTER,
-            prompt="Key plan line 1")
-        att(ps, "KEYPLAN_2", "", (xc, (by0 + by1) / 2 - 2.5), 2.0, TA.MIDDLE_CENTER, prompt="Key plan line 2")
+            prompt="Key plan line 1", room=bx1 - bx0 - 2 * TB_CLEAR)
+        att(ps, "KEYPLAN_2", "", (xc, (by0 + by1) / 2 - 2.5), 2.0, TA.MIDDLE_CENTER, prompt="Key plan line 2",
+            room=bx1 - bx0 - 2 * TB_CLEAR)
         sy = y_kp1 + 3
 
     # status stamp + sheet notes (text area, EIT 2.2.2.2)
     pline(ps, [(x0 + 3, sy), (x1 - 3, sy), (x1 - 3, sy + 12), (x0 + 3, sy + 12)], "S-TITLE", close=True)
-    att(ps, "STATUS_1", "FOR REVIEW", (xc, sy + 8.2), 2.8, TA.MIDDLE_CENTER, "ANB", prompt="Status line 1")
-    att(ps, "STATUS_2", "NOT FOR CONSTRUCTION", (xc, sy + 3.8), 2.8, TA.MIDDLE_CENTER, "ANB", prompt="Status line 2")
+    att(ps, "STATUS_1", "FOR REVIEW", (xc, sy + 8.2), 2.8, TA.MIDDLE_CENTER, "ANB", prompt="Status line 1",
+        room=x1 - x0 - 6 - 2 * TB_CLEAR)
+    att(ps, "STATUS_2", "NOT FOR CONSTRUCTION", (xc, sy + 3.8), 2.8, TA.MIDDLE_CENTER, "ANB", prompt="Status line 2",
+        room=x1 - x0 - 6 - 2 * TB_CLEAR)
     text(ps, "NOTES", (tx, FY1 - 3.5), 2.0, align=TA.MIDDLE_LEFT, style="ANB")
     notes = ("1. APPLIES TO ALL STRUCTURAL DRAWINGS.\\P"
              "2. DIMENSIONS IN mm; LEVELS IN m.\\P"
@@ -1570,6 +1609,7 @@ def tb_values(series, title_lines, scale_txt, sheet_i):
              f"{TB_REV_ROWS} (REVS[-{TB_REV_ROWS}:]) or extend the block")
     for k, (r, d, dt) in enumerate(revs[:TB_REV_ROWS]):
         v[f"REV_{k + 1}"], v[f"REV_{k + 1}_DESC"], v[f"REV_{k + 1}_DATE"] = r, d, dt
+    tb_check(series, v)
     return v
 
 

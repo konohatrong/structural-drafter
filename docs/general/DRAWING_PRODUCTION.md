@@ -78,6 +78,7 @@ with code 1 while one remains, but still writes the DXF for inspection. Fix the 
 | `note overlaps another note: '…'` | Two note texts in one view (fixed or packed) overlap or are less than 0.5 mm apart (`NOTE_CLEAR`). Usually a `fixed=True` knee | Move the fixed knee clear of the other note, or let the packer place it (guide §5) |
 | `<view>: extension line of 'A' crosses dimension line 'B'` and similar | Dirty dimensioning | Tier order, `tside`, drop a duplicate chain (guide §2.4.1) |
 | Table or note block below the frame, table without a number | Sheet overflow, unregistered table | Move it to another sheet; register it in `TABLES` |
+| `<dwg no.>: title-block field <TAG> '…' is … mm wide, its cell holds … mm` | A title-block value (revision description, title line, scale, status …) runs past its cell line (`tb_check`, `DRAWING_ENGINE.md` §3) | Shorten the text; for a revision row, the engineer words it (it goes on an issue) |
 
 The plot step exits 1 when AutoCAD fails or times out, its log shows a rejected command, a sheet did not plot, the
 DWG or a library file is missing, or a glyph is not Arial Narrow. A partial set is never merged into the PDF.

@@ -88,9 +88,18 @@ The drawing area is a rectangle on `S-TB-AREA`; the paper edge is on `S-SHEET` (
 | `DWG_NO`, `SHEET`, `SCALE`, `DATE` | Drawing no., "SHEET x OF y \| A3", scale, date |
 | `TITLE_1` – `TITLE_3` | Drawing title lines (from `SHEETS`) |
 | `PROJECT`, `LOCATION`, `OWNER`, `OFFICE`, `OFFICE_ADDR` | Project data (from `PROJ`) |
-| `REV_1` … `REV_4`, with `_DESC` and `_DATE` | Revision rows (REV_1 = top row). A description must fit its 38 mm column, about 30 characters |
+| `REV_1` … `REV_4`, with `_DESC` and `_DATE` | Revision rows (REV_1 = top row). A description must fit its 38 mm column: 36.5 mm of text, about 26 – 30 characters |
 | `KEYPLAN_1`, `KEYPLAN_2` | Key-plan text |
 | `STATUS_1`, `STATUS_2` | Status stamp ("FOR REVIEW / NOT FOR CONSTRUCTION") |
+
+**Every value is measured against its cell** (`tb_check`, called by `tb_values`; 2026-10-22). `tb_define()` gives each
+attribute its room through `att(..., room=)`: from the insertion point to the cell line less `TB_CLEAR` (0.5 mm), or
+the cell less 0.5 mm each side for a centred field; `TB_FIELDS` holds (room, height, style) per tag. A value wider
+than its room is a `!!` line, once per field and value, naming the first sheet - shorten the text, never the check.
+Widths come from the Arial Narrow metrics of the notes (`fonts.text_w`); a field in another font (a Thai office name)
+or with characters outside Latin-1 is not measured. A project title block (above, BANWA2) records no rooms, so its
+fields are not checked unless its own code calls `att(..., room=)`. Case: RPM issue R3 (22/10/2026), the description
+"FOR SUBMISSION: F1 MID LANDING ON PILES" (50.7 mm) ran into the date column on all 29 sheets with a clean build.
 
 **A project title block** is a new block with the same attribute tags and an `S-TB-AREA` rectangle. In AutoCAD,
 INSERT the project DWG under the name `TB-A3-NRW` and choose to redefine; the attribute values on every sheet are
