@@ -1444,11 +1444,15 @@ def _tb_strip(ps, x0, x1, FY0, FY1, TBW):
     att(ps, "SHEET", "SHEET 1 OF 1  |  A3", (xm + 1.5, y_des - 13.5), 2.0, prompt="Sheet x of y",
         room=x1 - xm - 1.5 - TB_CLEAR)
     line(ps, (xm, y_app + 13), (x1, y_app + 13), "S-TTLB-THIN")
-    line(ps, (xm + 14, y_app), (xm + 14, y_app + 13), "S-TTLB-THIN")
+    # SCALE | DATE divider 15 mm from the column line: "AS SHOWN" (Arial Narrow Bold 2.0) is 12.6 mm and needs
+    # 1.5 + 12.6 + 0.5 = 14.6 mm; at 14 mm it touched the divider (tb_check, steel_roof_truss / steel_portal_frame,
+    # 23/11/2026). The DATE value keeps 18 mm for "23/11/2026" (about 11 mm)
+    xsd = xm + 15
+    line(ps, (xsd, y_app), (xsd, y_app + 13), "S-TTLB-THIN")
     text(ps, "SCALE", (xm + 1.5, y_app + 10), 2.0, align=TA.MIDDLE_LEFT)
-    att(ps, "SCALE", "AS SHOWN", (xm + 1.5, y_app + 4.5), 2.0, style="ANB", room=14 - 1.5 - TB_CLEAR)
-    text(ps, "DATE", (xm + 15.5, y_app + 10), 2.0, align=TA.MIDDLE_LEFT)
-    att(ps, "DATE", PROJ["date"], (xm + 15.5, y_app + 4.5), 2.0, room=x1 - xm - 15.5 - TB_CLEAR)
+    att(ps, "SCALE", "AS SHOWN", (xm + 1.5, y_app + 4.5), 2.0, style="ANB", room=xsd - xm - 1.5 - TB_CLEAR)
+    text(ps, "DATE", (xsd + 1.5, y_app + 10), 2.0, align=TA.MIDDLE_LEFT)
+    att(ps, "DATE", PROJ["date"], (xsd + 1.5, y_app + 4.5), 2.0, room=x1 - xsd - 1.5 - TB_CLEAR)
     text(ps, "DRAWING TITLE", (tx, y_tit - 3), 2.0, align=TA.MIDDLE_LEFT)
     yy = y_tit - 9
     for k in range(3):

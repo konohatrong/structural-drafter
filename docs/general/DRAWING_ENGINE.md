@@ -99,7 +99,11 @@ than its room is a `!!` line, once per field and value, naming the first sheet -
 Widths come from the Arial Narrow metrics of the notes (`fonts.text_w`); a field in another font (a Thai office name)
 or with characters outside Latin-1 is not measured. A project title block (above, BANWA2) records no rooms, so its
 fields are not checked unless its own code calls `att(..., room=)`. Case: RPM issue R3 (22/10/2026), the description
-"FOR SUBMISSION: F1 MID LANDING ON PILES" (50.7 mm) ran into the date column on all 29 sheets with a clean build.
+"FOR SUBMISSION: F1 MID LANDING ON PILES" (50.7 mm) ran into the date column on all 29 sheets with a clean build. The check
+also found the engine's own default: "AS SHOWN" (Arial Narrow Bold 2.0, 12.6 mm) in a SCALE room of 12.0 mm; the
+SCALE | DATE divider of the office strip moved from 14 to 15 mm right of the drawing-number column (23/11/2026,
+`steel_roof_truss`, `steel_portal_frame`; the DATE value keeps 18 mm). The office standard sets, issued before it,
+show this 1 mm move on their next build: it goes out with their next revision.
 
 **A project title block** is a new block with the same attribute tags and an `S-TB-AREA` rectangle. In AutoCAD,
 INSERT the project DWG under the name `TB-A3-NRW` and choose to redefine; the attribute values on every sheet are
