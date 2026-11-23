@@ -67,6 +67,10 @@ extra bars in more than one layer: "possible").
 6. Rejected with the row number: an empty layer (`3/0`, `0(+2)`, `3+0`), a shared layer among the extra layers
    (`3+2(+1)`: write `3+3`), anything outside the grammar.
 
+- **Two or more extra bars go in a second layer** (user, 2026-11-23, IHR markup of A9: "2 layers with 2 no.
+  each"): 4 bars on a face are written `2+2` (2 nominal, 2 extra in layer 2), never `2(+2)` (4 in one layer). One
+  extra bar may share the nominal layer: `2(+1)`. IHR `calc\beam_schedule_xlsx.face`.
+
 ## BS3. Stirrup input rules
 
 User rule, 2026-10-18 ("stirrup : 2-RB9@100 (2 refer to 2 legs equal to 1 hoop stirrup if 3-RB9@100 mean 1 hoop + 1

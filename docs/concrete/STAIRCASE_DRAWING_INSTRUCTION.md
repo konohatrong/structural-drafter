@@ -172,7 +172,9 @@ a  = 565×390 / (0.85×23.5×1000) = 11.0 mm
 **Rules:**
 - Put the design summary in the sheet notes (ST-1 note 4) so the checker sees the basis without the calculation sheet.
 - Keep the calculation file with the job.
-- Minimum bar size [OFF]: main DB12, distribution DB10.
+- Minimum bar size [OFF]: DB12 for every stair bar, the distribution and minimum-steel bars included (user,
+  2026-11-23, IHR markup of C1: "change to equivalent DB12", "we use DB12 instead of DB10"): a DB10 set is replaced
+  by the DB12 spacing of at least the same area, rounded down to 50 mm (DB10 @ 200 = 393 -> DB12 @ 250 = 452 mm2/m).
 
 ---
 
@@ -190,12 +192,14 @@ Numbered from the soffit upward:
 **Rules:**
 - **Distribution position:** distribution bars always go **inside** the main bars, so the main bars get the full effective depth.
 - **Steps are unreinforced concrete** by default.
-- **Nosing bar** [STD FIG]: EIT examples show a nosing bar. Provide `1-DB10` per step, tied to an `RB6` hairpin anchored in the waist, when:
-  - the steps are wider than 1.5 m;
-  - the stair is external;
-  - the architect specifies a cast nosing.
-  
-  If omitted, say so in the notes (ST-1: not provided).
+- **Nosing bar** [STD FIG]: EIT examples show a nosing bar (`1-DB10` per step on an `RB6` hairpin anchored in the
+  waist). **Office: none by default**, not even on steps wider than 1.5 m (user, 2026-11-23, IHR markup of B9 on
+  1.70 m internal flights: "delete these rebar"). Provide it only where the architect specifies a cast nosing or the
+  engineer asks; say "No nosing bars" in the notes.
+- **Top mat at the 0.0018 bh minimum, both directions** (user, 2026-11-23, IHR markup of B9: "0.0018bh on both
+  direction"): where the top bars carry no calculated moment (flights and landings designed simply supported), the
+  top bars along the span and the distribution bars across are both the 0.0018 bh minimum (IHR ST-1, slab 200:
+  DB12 @ 250 = 452 >= 360 mm2/m each way, in DB12 per §3.3); the bottom bars come from the moment.
 
 ### 4.2 Ends at supports
 
@@ -437,6 +441,12 @@ cross-section to a stair detail set.
 **Rules:**
 - **Clear space:** never run note text across the steps or the flight. Leader legs may cross an outline once.
 - **Where to point:** label each bar mark **once** per view, on the most open part of the bar. Label (4) once for each layer.
+- **A leader to every bar set in the view** (user, 2026-11-23, IHR markup of B9: "leader to every rebar", "add dot
+  blank leader to dot rebar also"): every bar drawn along its length has its mark leader in that view (a bar shown
+  in two sections is labelled in both), and the distribution dots get a ring leader for **each layer of each panel**:
+  flight bottom, flight top, landing bottom, landing top (IHR ST-1 sections A-A and B-B: four mark (7) leaders
+  each). Keep the leaders in the empty triangles; cut a member seen beyond (a column under the landing) off just
+  below the beams so the notes under the landing clear it.
 - **Label contents:** size@spacing, position (TOP/BOTTOM/DIST.), extent (`700 BEYOND FACE OF B1`), anchorage (`HOOKED 150 INTO B1`, `150 INTO B1 & B2`), `NO LAPS`.
 - **Cross-section:** a right-hand column, one line per bar, with rings on the end bars.
 

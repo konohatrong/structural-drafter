@@ -28,6 +28,43 @@ copied, dated, to `07 Review`. The examples in `jobs/` keep everything in the jo
 | 9. **Issue** (projects) | Copy to a new `09 Publish\YYYYMMDD - <set> Rev <R> - <purpose>\` folder | Only when the engineer decides; title-block row first, then register and transmittal; never edited afterwards (`PROJECT_WORKFLOW.md` W4.1) |
 | 9. **Issue** (standard sets) | `standard_drawings/publish.py <set> [--issue]` | Review copies go to `standard_drawings/developing/`; an official issue (the user's decision) to `standard_drawings/issued/` with the register (`standard_drawings/README.md`) |
 
+### 1.0 Self-review before every review print
+
+(user, 2026-11-23, after the IHR draft prints A1 - C3: "make lesson learn on drawing produce procedure there are many
+mistake"; the lessons are in §10.) The engineer's markup should find engineering questions, not rules we already
+have. Before a print goes to `07 Review`, go through this list, **reading the rule files, not from memory**:
+
+1. **The system before the detail.** For a new member, write down its structural system: supports, spans, how the
+   loads reach the supports, the governing checks (thickness, deflection, torsion). Write the options with numbers
+   and ask the engineer **before** drawing bars. Draw from the calc output, never from an assumption in the
+   analysis model (§10 L4).
+2. **Calc complete.** For each member: flexure, shear, minimum and maximum steel, bar spacing, deflection (with the
+   compression steel that is really there), the minimum-thickness table, and torsion when a slab or flight frames on
+   one face only (§10 L5). The drawing's notes quote the calc.
+3. **Office preferences first.** For bar sizes, nosing bars, minimum mats, leaders and marks, the office rule wins
+   over a generic recommendation. Read the material instruction's dated user rules before using a `[REC]` or
+   handbook value (§10 L6).
+4. **Geometry against the received drawings.** Every member is inside its AR outline: frames inside the stair box,
+   stringers inside their flight, perimeter beams flush with the outer column face. Positions are computed from the
+   AR edges in code, never typed (§10 L3).
+5. **The model as built.** Member orientation (beta angle), support types and the member set agree with the
+   drawing. A member the drawing adds (a column on a beam, a landing beam) is listed for the next model revision with
+   its loads (§10 L7).
+6. **Marks.** A new member takes an existing mark only under the mark rule: same section, and the mark's bars cover
+   it with at most one bar more per face (FP10.1). Otherwise it gets a new mark (§10 L13).
+7. **The sheet checklists**, every line: EIT §17 and guide §8 for every set, plus the material and sheet ones
+   (`FLOOR_PLAN_DRAWING_INSTRUCTION.md` FP17, `STAIRCASE_DRAWING_INSTRUCTION.md` §11, steel S10, typical details §7).
+   On IHR the flush perimeter beams, the main-beam brackets and a leader for each layer of dots were rules already
+   written, and were still missed (§10 L1).
+8. **A clean build**, with no `!!` line.
+9. **The AutoCAD plot**, never the ezdxf preview, with `font check OK`. Only AutoCAD prints go to `07 Review`
+   (§10 L2).
+10. **Look at every changed area at 150 - 200 dpi**, not only the whole sheet. Look at every new label, mark and
+    leader: the checks do not see hidden lines, extension lines of plan dimensions, or text over a break line
+    (§10 L8).
+11. **Records.** STATUS row, decision log entry for every engineering decision, the markup kept in
+    `07 Review\markups`, and each correction written as a rule (`AGENTS.md` §3).
+
 ### 1.1 A project of several sets: drawing list and merged set
 
 A project's drawings are usually several sets, each a script of its own (CHATAM: plans S1-01 - S1-07, details S2-01 -
@@ -217,3 +254,34 @@ it even when AutoCAD is there. For a quick look at any single DXF, run
 - **Third-party reference material:** standards PDFs, handbooks, other offices' standard details and the ACI MNL-66
   supplemental drawings. They are copyrighted. The `docs/*/reference/` files are digests and extracts with page
   references; `references/aci_mnl66/` keeps only a conversion script and its notes.
+
+## 10. Lessons learned
+
+Each lesson has the same parts: what went wrong, why, and what now prevents it, with the file that holds the rule.
+The checks are in §1.0.
+
+### IHR Ihara Office Canteen, draft set A1 - C3 (2026-11-20 - 23)
+
+The first project set drawn after the BANWA 2 and NSO reviews. It ran to 21 internal prints: A1 - A9, B1 - B9, C1 - C3.
+Several of the engineer's markups pointed at rules already in this repository (L1, L2). Most of the others were
+engineering choices that should have been put to the engineer before drawing (L4).
+
+| # | What went wrong | Why | What prevents it now |
+|---|---|---|---|
+| L1 | Rules already written were missed. Perimeter beams were not flush with the outer column face (FP9.2, a BANWA 2 rule). Main beams were not marked once with a bracket (FP10.2). Distribution dots had no ring leader for each layer (STAIRCASE §7.1, "Label (4) once for each layer"). Every bar set lacked a leader | The sheets were drawn from memory of the rules. The checklists were not run line by line before the print | §1.0 item 7. Each miss is now cited with the IHR example in its rule |
+| L2 | The first review print was the ezdxf preview: dashes too short, scaled per view | The quick preview was treated as the print | §1.0 item 9; FP3. Only AutoCAD plots go to `07 Review` |
+| L3 | Members were placed outside the AR geometry. The stair 2 frame stood past the AR stair box (markup of A3), and its inner stringers sat in the 200 mm well between the flights (markup of B4) | Positions were typed from the model lines and never checked against the AR outlines | §1.0 item 4; FP9.2 (steel stair frame and stringers inside the box and the flights). Positions computed from the AR edges in code (`proposal.py` `X_IN_W / X_IN_E`) |
+| L4 | ST-1 went through six designs in one day: folded slab 250, then 200 with DB12@100, then the engineer's columns and landing beams, then DB12@200, then a 0.0018bh top mat, then all bars DB12. Each design was drawn, plotted and printed | Bars were detailed before the structural system was agreed. The first design took the analysis model's assumption (waist 150, folded slab on two beams), which fails the thickness table and the deflection check | §1.0 item 1. Write the system and its options with numbers, ask, then draw. Use the "dummy arrangement" (STAIRCASE §5.1) when the bars are not decided |
+| L5 | The calc was incomplete. The long-term deflection ignored the compression steel actually present (lambda = 2 always). The landing-edge beam had torsion above the threshold (flights on one face) that the first pass did not check | No checklist of the checks a member needs | §1.0 item 2. `calc\stair1_design.py` uses lambda = 2 / (1 + 50 rho'); `calc\landing_beams.py` checks the torsion threshold and designs hoops and Al |
+| L6 | Generic recommendations were used where the office does otherwise: nosing bars on steps over 1.5 m wide, DB10 distribution, top bars larger than the minimum | The instruction's `[REC]` / `[STD FIG]` text was followed as if it were office practice | §1.0 item 3. STAIRCASE §3.3 (DB12 for every stair bar) and §4.1 (no nosing bars by default; 0.0018bh top mat both ways) |
+| L7 | The model and the drawing disagreed and were found late. The stair 2 posts had their web along X (beta 0), so the 1.06 m cantilever side beams frame into the weak axis; this came up only at connection design. Members added on the drawings (C4, landing beams, stair 2 moves, the yard) were in the layout data but not in the model | Orientation and member set were not checked against the model before detailing | §1.0 item 5. Each addition goes onto the next-model list in STATUS (IHR D-M4) |
+| L8 | Labels overlapped things on the plans. "UP" sat on a landing beam line; SB3 marks crossed the hidden pile cap outline; the C4 mark sat on a plan dimension's extension line; a slab tag and a level text crossed a break line | The placement check (`put()` against the boxes and the member bodies) does not see hidden lines, dimension extension lines or break lines | §1.0 item 10. Render every changed area at 150 - 200 dpi. Possible engine work: add those lines to the placement check |
+| L9 | Revision descriptions ran past their title-block cell with no `!!` line. The title block shows only the last 4 revision rows | The IHR job imports the **main checkout's** `drafter` (`paths.DRAFTER`), not the worktree copy, so toolkit changes made in a worktree do not reach the project until merged. Why the revision-row fit check stayed silent was not traced | Keep revision text to about 28 characters (the RPM limit) and look at the title block on the plot. Before relying on a toolkit check or changing shared code, confirm which `drafter` the project imports. Trace the silent check before the next issue |
+| L10 | Scripted edits broke text. A rule inserted by string matching landed in the middle of a sentence (FLOOR_PLAN FP9.2, markup of B3). Python run from Bash lost backslashes three times: a project path in `jobs/README.md`, and a `"\n"` in a calc's `write_text` that became a real line break and a syntax error | Patch scripts matched a line inside a paragraph. Backslashes went through a Bash heredoc (§8) | Edit docs with the Edit tool, then re-read the whole paragraph. Never pass paths or escapes through a Bash heredoc: write the script with the Write tool, or use `chr(92)` / `chr(10)`. Scan every edited file for control characters and 0x7F - 0x9F (§8) |
+| L11 | A section view outgrew the frame after a tag and notes were added (ST-1 B-B into the title block) | Added content was not budgeted on the sheet | The build's "outside drawing area" check caught it. Re-check the stack of views when a view gets taller. Remove duplicate tags (one tag per member per sheet) |
+| L12 | Plan labels were placed by a list of candidate positions. When all of them failed, the mark was dropped silently (C4 on grid A, the stair 2 side beams) | The placer skips a failed label without a warning | After a plan change, check that every member mark is present. Give a dropped mark a fallback position (IHR `ihr_plans.py`: slide along the member, or a fixed position). Possible engine work: warn on a dropped mark |
+| L13 | A new member was about to take an existing mark (landing-edge beam as B3) whose support bars exceed the need by two bars | The mark rule was not checked for added members | §1.0 item 6; FP10.1 |
+
+**Process:** a correction that applies a written rule costs a full review cycle: build, plot, print and the
+engineer's markup. Twenty-one prints in four days is the measure to bring down. Run §1.0 before every print, and put
+open engineering choices to the engineer in one question round, before drawing.

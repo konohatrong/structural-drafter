@@ -154,7 +154,12 @@ and entity lineweights stay ByLayer / Default and are never used to set a pen.
 - **Review prints are AutoCAD plots** (user correction, 2026-10-11, CHATAM first plan print: "linetype, scale,
   weight ... its all note in the rule"): the ezdxf render draws viewport linetypes solid and substitutes the font, so
   a print made with it shows every hidden beam as solid. Send the AutoCAD plot; run the FP17 checklist before the
-  first print, not after the review.
+  first print, not after the review. The same correction again on IHR draft A1 (user, 2026-11-22: "check linetype,
+  weight and scale"): A1 had been plotted with `plot.py --ezdxf` although the Core Console was installed. In the
+  engine's composed sheets a 1:100 plan is a block at 1/100 on a sheet composed at 1:25. AutoCAD draws the block's
+  linetypes at world size, so the dashes plot at pattern × 45 / 100 (HIDDEN 2.9 / 1.4 mm). The ezdxf render scales
+  them with the insert, to a quarter of that length, so they read as solid. Plot without `--ezdxf`, and check one hidden
+  beam, one grid line and one bracket at 200 dpi before sending.
 
 ---
 
@@ -341,6 +346,18 @@ above is continuous; what lies below the slab is hidden.
   (column - beam width) / 2 - so the facade line is straight; inner beams stay centred on the grid. The outer face is
   then the slab edge (continuous), the inner face hidden under the slab. State it in the plan notes. Worked example:
   BANWA2 S-102 / S-103 (`bw_plans.building_outline`, `flush`: C1 450, B 400 out by 25 mm, B6 / RB1 300 by 75 mm).
+  Again on IHR draft A2 (user, 2026-11-22: "align perimeter beam at outermost column face also slab edge align the
+  same, this apply to every floor"): A2 had every perimeter beam centred on the grid. Apply it on every plan from the
+  first draft. A line is on the outline when the level's slab, or the building footprint on a plan without a slab, lies
+  on one side of it only, and it meets a column. IHR `ihr_plans.flush`: 300 mm beams 50 mm out, 250 mm beams 75 mm
+  out, the analysis model on the grid. A line that is on the outline only along part of its length is flush too (user, 2026-11-23, IHR
+  markup of B2: "align outermost column face": the 1F row 6 beam, on the outline only from X 9.00 to C beside stair 2).
+  So the test samples the whole line, and an opening is not outline. Where a beam ends on another beam at an outside
+  corner, it runs to that beam's far face, so the corner is square with no notch (same markup: "refine beam
+  join" at the yard corners; `ihr_plans.extend_ends`). The slab runs to that outer face **wherever slab lies beside the beam**, also when the beam line
+  continues past the slab (user, 2026-11-22, IHR A3: "align these slab edge at outermost column face": the A and C
+  lines run on to grid 1 where the 1F / 2F slab stops, and the slab had stayed on the grid; `slab_poly` takes each
+  beam strip within reach of the slab).
 - **Every beam under or on an AR wall** has its face on the wall face that is flush with the column face, inside
   the building as on the perimeter (user, 2026-10-17; FP13.7 rule 2).
 - **A beam along an opening or a free slab edge** (user, 2026-10-11, CHATAM 2F: "keep inner line only"): the slab
@@ -367,6 +384,18 @@ above is continuous; what lies below the slab is hidden.
   with a mitred corner: merge the chain of one width and offset it as one line, never two square-ended strips
   (`ch_plans.beam_body`).
 - Steel beams in an RC plan: by their outline or centre line with the section designation (steel S1).
+  The outline is the union of the member strips at the projected width, each end that meets another member run to
+  that member's far face, so corners are square with no notch and no overlapping rectangles (user, 2026-11-22, IHR
+  A3: "improve steel beam present showing outline of member"; `ihr_plans.steel_frame`). A steel stair frame lies
+  inside the AR stair box: the outer faces of its posts sit on the box line, never past it (IHR A3: "align staircase
+  frame inside stair boundary"; stair 2 lines X 9.55 / 12.25 -> 9.70 / 12.10 for the AR box 9.60 - 12.20). The
+  model is updated to match. Each stringer lies inside its own flight: the inner stringers have their flange edge on
+  the flight's inner edge, so the well between the flights stays clear (user, 2026-11-23, IHR markup of B4: "align
+  inside stringer within this staircase boundary both side"; stair 2 inner stringers C 150x75 X 10.85 / 10.95, in the
+  200 mm well, -> 10.7625 / 11.0375 for the AR flights 9.60 - 10.80 and 11.00 - 12.20).
+- **Purlins under a roof sheet are hidden lines, the edge purlins included** (user, 2026-11-23, IHR markup of B3:
+  "use hidden line for purlin with edge purlin also"): on the kitchen roof P1 @ 1.00 m from the row 6 edge to the eave,
+  on the canopy P2 @ 0.90 m including both edges (layer `S-PURLIN`, colour 7, HIDDEN).
 - **Steel beams joining at a steel column** (user, 2026-10-18, NSO markup of A24: "STEEL BEAM JOIN AT COLUMN SHOW ON
   PLAN", "50 gap just for drawing"): the column is drawn at the joint as its true section (steel S4.15), solid, on
   the plan of the level where the beams join it, even where it stops under them; every steel beam stops **50 mm
@@ -498,6 +527,17 @@ above is continuous; what lies below the slab is hidden.
   table gives the lines per level (`B1 6.5 m FL (GF12/2F8)`).
   A line carrying a lower top (a step, a toilet, an entrance) is its own mark. A step beam's top is the higher slab
   on it; a beam under no slab takes the level's nominal top.
+  **Grouping by the design** (user, 2026-11-20, IHR: "merge ground floor beam mark and 1st floor beam mark then we
+  can have less beam mark", then the bar rule chosen). When the marks come from the analysis, the ground-floor beams
+  are never a separate `GB` series. Within one section and one span class, the line that needs the most bars leads.
+  Another line joins its mark when the mark's bars cover it on both faces with **at most one bar more per face**. The
+  mark is designed for the largest demand among its lines. A 15 % moment band is too tight: on IHR it kept 21 marks,
+  because the 1F and 2F span moments differ by more than 15 %. The bar rule gives 12 marks (B1 - B7, RB1 - RB5).
+  IHR `04 Code\calc\beam_design.py` (`EXTRA`).
+  The engineer then merged these by hand into 6 marks, changing sizes so that marks of one size could merge: B at
+  300 x 600, 250 x 500 and 200 x 400, and every RB at 250 x 500 (user, 2026-11-20). Propose few section sizes. Once
+  the engineer sets the marks, they are data (`beam_marks.py`), and the design checks those marks rather than
+  regrouping (`beam_design.py --marks`).
   Draft rule for **A**: flag a line whose internal span is no longer than half its longer neighbour as a candidate, and
   confirm it by analysis.
   Worked example: NSO A19 had 19 RC marks in place of 33 per span; A21, shared by floors, has 16
@@ -514,7 +554,18 @@ above is continuous; what lies below the slab is hidden.
   the midpoint falls on a grid line, the grid line is interrupted locally under the text.
 - **A main beam is one member from column to column**, even where secondary beams frame into it and the analysis model
   splits it at every joint. It is marked **once, with a bracket over its length** and the mark at the middle of the
-  bracket (user, 2026-10-06: "this is main beam use bracket to present length of main beam avoid misunderstanding").
+  bracket (user, 2026-10-06: "this is main beam use bracket to present length of main beam avoid misunderstanding";
+  again 2026-11-22 on IHR A1, where every span between the secondary beams had been marked: "main beam as horizontal
+  beam mark as single beam with bracket". IHR `ihr_plans.spans` takes the column-to-column span of a line through
+  two or more columns as one member; `bracket` draws it).
+  **A horizontal beam line with no columns is a main beam too** (user, 2026-11-22, IHR markup of A3: "B3 is main
+  beam align horizontally then single mark requires"). On IHR this is the front beam on Y 1.50 and the WC edge on
+  Y 9.40, which span between the column lines while the intermediate beams cross them. The line is one member
+  between its end supports, marked once, with a bracket when beams frame in. Its supports include the main beams that cross it:
+  the IHR front B3 on Y 1.50 is carried at B by the B2 running to the column B-1, so it has two spans, A - B and
+  B - C, each with its own mark (user, 2026-11-23, IHR markup of B1: "not single span along building width"). A
+  cantilever from a column also supports it (IHR markup of B3: "not single along width": the yard edge B3 carried at
+  B by the cantilever B2C).
   An edge beam has its bracket on the outside of the slab. A beam with no beam framing into it keeps the plain mark at
   mid-span - a split of the beam in the analysis model (mesh nodes) is not a beam framing in (BANWA2 secondaries B1,
   B2, B3, B5, RB5 lost their brackets, 07/10/2026; `beam_marks` tests the beam directions at the inner nodes).
@@ -961,6 +1012,11 @@ North arrow on every plan sheet, same size and place; the plan always drawn in t
 | 2026-10-17 | NSO A7 markups and the engineer's DWG edit of A8 (user): edges, voids and steps on the member faces; the void is the AR opening framed by secondary beams; curved edge beams into a column; bands and canopies on cantilever arms and edge beams; a beam between two levels shows both faces; the engineer's CAD edit read back as a markup (FP13.7 rules 5 - 9, FP9.4) |
 | 2026-10-17 | NSO foundation plan (user): column marks on the foundation plan only; floor and roof plans show the column symbol without a mark; a column starting on a beam marked where it starts (FP9.1, FP10.4) |
 | 2026-10-17 | NSO step symbol (user): a level change with no beam under it carries the step symbol - leg from the higher side, drop along the line, arrow into the lower side, the drop in mm (FP9.5) |
+| 2026-11-23 | IHR markups of B3 and B4 (user): a cantilever from a column is a support of a horizontal line (FP10.2); purlins hidden with the edge purlins; steel stair stringers inside their own flight, the well clear (FP9.2) |
+| 2026-11-22 | IHR markup of A3 (user): slab edge on the outer beam face wherever slab lies beside the beam (FP9.2); horizontal beam lines without columns are main beams, one bracketed mark (FP10.2); steel beams as one union outline with square corners; steel stair frame inside the AR stair box |
+| 2026-11-22 | IHR markup of A2 (user): perimeter beams flush with the outer column face and the slab edge on it, every floor (FP9.2, BANWA 2 rule applied again) |
+| 2026-11-22 | IHR draft A1 (user): review prints from AutoCAD, never the ezdxf preview (dashes of scaled views; FP3); main beams marked once with a bracket (FP10.2); column sheets with the full-height elevation (RC 15.2) |
+| 2026-11-20 | IHR beam marks from the design (user): no GB series, ground floor and floors above in one B series; lines of one section and span class share a mark when its bars cover each with at most one bar more per face (FP10.1) |
 | 2026-10-18 | NSO beam names and groups (user): B / RB / SB running numbers, ...C cantilever from the named beam, ...A all-span reinforcement; one mark per support type, top level and span (FP10.1) |
 | 2026-10-18 | NSO markup of A24 (user): steel beams joining at a steel column stop 50 mm short of its true outline, the column drawn solid at the joint (FP9.2) |
 | 2026-10-18 | NSO markup of A25 (user): steel column marks at the symbol's bottom right where the column starts, stubs are SC columns (FP10.4); steel columns listed in the legend as "SC1 - section (kg/m)" with no symbol (FP14.1) |

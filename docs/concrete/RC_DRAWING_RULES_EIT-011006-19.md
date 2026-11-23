@@ -208,6 +208,19 @@ Details must be clear, complete, and consistent with the plans (Ch. 5).
 ### 15.2 Columns [STD §6.3, FIG 6.3–6.4]
 Provide a **full-height elevation** (typical: bars and laps) plus a **column schedule**.
 
+**Never a sections-only sheet** (user correction, 2026-11-22, IHR draft A1: "check how we present column detail
+properly we do detail along the height"). Draft A1 drew one section per mark with a table, and no column along its
+height. The column sheet carries two things:
+- the drawn schedule: marks across, storeys down (top to bottom), the section in each cell (below);
+- the column along its full height with the project's own levels: footing top, every floor, the roof. The floor beams
+  are non-focus stubs. It shows the bars with their laps, the ties with the first and last tie, the joint ties, the
+  bars into the footing and the top bend, and the section letters that match the storey rows of the schedule.
+
+The detailing follows the frame type of the typical column details (STR-ST-1101 TABLE 11: ordinary, intermediate or
+special). Worked example: IHR `04 Code\drawings\ihr_schedules.py` (`col_schedule` at 1:25, `col_elevation` at 1:50;
+ordinary frame, gravity design). NSO 3303 is the intermediate-frame version: schedule plus an N.T.S. typical
+arrangement.
+
 **Elevation must show:**
 - Column between floors
 - Floor levels
@@ -444,6 +457,21 @@ Plan required. One plan is enough unless bars change with height.
   - the wall bars and the base slab bars are separate pieces: in a wall detail the base slab is non-focus (grey
     hatch, its bars grey dashed) and its thickness is not dimensioned there.
 - Spacing is written in mm (`DB12@200`, §3.7.3). Bar marks go in Ø4 bubbles.
+- **Bars across a hooked bar, cut in the section, sit on the line through the centres of its hook fillets** (user,
+  2026-11-22, IHR markup of pile caps A5: "align dot rebar inside line center of hook fillet"). The end dots sit at
+  the fillet centres and the rest are spaced evenly between, on the inside of the bend: above bottom bars hooked
+  up, below top bars with legs down. The fillet centre is 3.5 db from the bar centre line (the radius of `bar()`).
+  Worked example: IHR `ihr_fdn.fillet_dots`, pile caps PC1 - PC4.
+- **Parts inside or beyond the section plane are grey hidden lines** (same markup: "grey hidden line"). On IHR these
+  are the pile head embedded in a cap and the perimeter ties seen beyond in a cap section: hidden linetype,
+  colour 8.
+- **Single-pile cap (PC1): the top bars each way run down the cap faces to 75 mm above the cap bottom and end in a
+  90 deg standard hook (12 db) turned inward, on both sides** (user, 2026-11-23, IHR markup of A7: "standard hook
+  extend to 75 mm before footing cap the 90deg std hook both side"; BANWA 2 PC1 had legs down 300 mm). In a cap
+  too narrow for outward tails, the column bars' 90 deg tails turn inward toward the core (IHR D-FD4). Its perimeter
+  ties (3 sets) are equally spaced along the legs, between the top bars and the hooks, each on the leg lines (user,
+  2026-11-23, IHR markup of A8: "equally distribute with main rebar alignment concern"). Worked
+  example: IHR `ihr_fdn.cap_detail`.
 
 ### 19.7 Bar ends and lap splices (office rule, user 2026-09-30)
 - **Bar ends are plain**: no slash / tick at the end of a straight bar on any drawing. A plain end means the bar stops; a bar drawn to a break line continues; hooks are drawn as bent.

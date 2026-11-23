@@ -64,6 +64,10 @@ Fix the disagreement in the documents, not only in one drawing.
 | Hand a standard set for review, or issue it | `standard_drawings/README.md` |
 | Anything with MIDAS GEN NX (API, model from drawings, loads, results, report, plug-in) | `midas/MIDAS_GEN_NX_INSTRUCTION.md` (rules M1 – M12 and its router), then `midas/README.md` |
 
+**Before every review print**, run the self-review in `DRAWING_PRODUCTION.md` §1.0: the system agreed before the
+bars, a complete calc, office preferences, geometry against the AR, the model as built, marks, the sheet checklists,
+an AutoCAD plot, the changed areas looked at close up, records. The lessons behind it are in §10 of that file.
+
 **Before issue**, run every checklist that applies:
 - every set: EIT §17 (sheet) and guide §8 (annotation);
 - steel: S10;
@@ -79,6 +83,8 @@ Fix the disagreement in the documents, not only in one drawing.
    update it at the end. Its code lives in `04 Code` (the drawing job in `04 Code\drawings`), its outputs in the
    numbered folders. New projects are not added to this repository; `jobs/` holds the worked examples.
 1. **Data first.**
+   - Agree the structural system with the engineer before detailing a new member: supports, spans, governing checks
+     and the options, with numbers (`DRAWING_PRODUCTION.md` §1.0 item 1, lesson L4).
    - Every size, length, force, weld and bolt comes from one source: the design calc (`calc_*.py`) or the member
      catalogue.
    - Drawings and notes never retype a number.
@@ -97,7 +103,9 @@ Fix the disagreement in the documents, not only in one drawing.
 6. **Plot** with AutoCAD (`plot.py`) and confirm `font check OK`.
 7. **Test.** Run `pytest -q` at the repository root.
 8. **Report** honestly: what changed, what was verified, what is still assumed or open. Send the review PDF (on a
-   project, a dated copy in `07 Review`).
+   project, a dated copy in `07 Review`). Only an AutoCAD plot is a review print.
+9. **Learn.** Each markup that applies a rule already written is a miss of the self-review: add the miss to the
+   lessons (`DRAWING_PRODUCTION.md` §10) and, where it can be checked, to the engine.
 
 ## 3. How the rules grow
 

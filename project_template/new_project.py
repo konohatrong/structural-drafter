@@ -21,6 +21,10 @@ from pathlib import Path
 HERE = Path(__file__).resolve().parent
 TREE = HERE / "tree"
 DRAFTER = HERE.parent
+if ".claude" in DRAFTER.parts and "worktrees" in DRAFTER.parts:
+    # run from a Claude Code worktree (deleted after the session): the project must point at the main checkout
+    # (Ihara, 20/11/2026: paths.py named ...\.claude\worktrees\<name>)
+    DRAFTER = Path(*DRAFTER.parts[:DRAFTER.parts.index(".claude")])
 
 # empty folders the template needs (git keeps no empty folders)
 SUBDIRS = [
