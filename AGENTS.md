@@ -172,7 +172,7 @@ From the repository root, in PowerShell:
 
 ```powershell
 pip install -r requirements.txt                       # ezdxf, fonttools, pymupdf, matplotlib, numpy, shapely
-python project_template\new_project.py "<name>" --code <PPPP> --root "G:\My Drive\Works\##2026" --fea-local D:\Workspace
+python project_template\new_project.py "<name>" --code <PPPP> --root "G:\My Drive\Works\##2026" --fea-local C:\Workspace\##2026
 $env:PYTHONIOENCODING = "utf-8"
 python jobs\steel_roof_truss\build.py                 # these write to the job's own out folder
 python jobs\steel_roof_truss\plot.py --ezdxf

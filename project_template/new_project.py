@@ -1,9 +1,9 @@
 r"""Create a new project folder from the office template (docs/general/PROJECT_WORKFLOW.md).
 
     python project_template\new_project.py "BANWA 3" --code BW3 --root "G:\My Drive\Works\##2026"
-    python project_template\new_project.py "BANWA 3" --code BW3 --root "G:\My Drive\Works\##2026" --fea-local D:\Workspace
+    python project_template\new_project.py "BANWA 3" --code BW3 --root "G:\My Drive\Works\##2026" --fea-local C:\Workspace\##2026
     python project_template\new_project.py --office-template "G:\My Drive\Works\##Project Structures"
-    python project_template\new_project.py --adopt "G:\My Drive\Works\20250908 CHATAM HOTEL" --code CHT --fea-local D:\Workspace
+    python project_template\new_project.py --adopt "G:\My Drive\Works\20250908 CHATAM HOTEL" --code CHT --fea-local C:\Workspace\##2026
 
 The folder is named "YYYYMMDD - <name>" (today, or --date). The template is `project_template/tree/`: edit it there
 to change every future project. The script never writes into an existing project folder.
@@ -46,13 +46,13 @@ OFFICE_OLD = [("Transfer in", "01 Transfer in"), ("Calculation", "05 Calculation
 OFFICE_EXAMPLE = OFFICE_OLD[-1][1]
 OFFICE_VALUES = {"PROJECT": "<project name>", "CODE": "<PPPP>", "DATE": "YYYYMMDD", "DATE_TEXT": "DD/MM/YYYY",
                  "STARTED": "DD/MM/YYYY",
-                 "DRAFTER": str(DRAFTER), "FEA_RUN": r"D:\Workspace\<YYYYMMDD - project name>\FEA run"}
+                 "DRAFTER": str(DRAFTER), "FEA_RUN": r"C:\Workspace\##2026\<YYYYMMDD - project name>\FEA run"}
 OFFICE_README = r"""# Office project structure (template)
 
 Create a new project with the script, which names the folder, fills the names and paths and makes `04 Code` a git
 repository:
 
-    python "{drafter}\project_template\new_project.py" "<project name>" --code <PPPP> --root "G:\My Drive\Works\##2026" --fea-local D:\Workspace
+    python "{drafter}\project_template\new_project.py" "<project name>" --code <PPPP> --root "G:\My Drive\Works\##2026" --fea-local C:\Workspace\##2026
 
 Or copy this whole folder and rename it `YYYYMMDD - <project name>`; then replace `<project name>`, `<PPPP>` and
 `DD/MM/YYYY` in `PROJECT.md`, `STATUS.md` and the READMEs, set `FEA_RUN` in `04 Code\paths.py`, and delete this file.
@@ -90,6 +90,20 @@ def copy_tree(folder, values, overwrite=True):
         (folder / sub).mkdir(parents=True, exist_ok=True)
 
 
+def make_fea_run(fea_run):
+    """Create the GEN NX working folder before anything else is written: a --fea-local on a drive this PC does not
+    have (Kokoku, 25/11/2026: D:\\Workspace on a PC with C: only) used to stop the script after the template was
+    copied, leaving a half-made project folder."""
+    fea_run = Path(fea_run)
+    if fea_run.anchor and not Path(fea_run.anchor).exists():
+        raise SystemExit(f"!! --fea-local: drive {fea_run.anchor} not found on this PC. Nothing was written. "
+                         f"Use a local folder that exists, e.g. C:\\Workspace\\##2026")
+    try:
+        fea_run.mkdir(parents=True, exist_ok=True)
+    except OSError as e:
+        raise SystemExit(f"!! --fea-local: cannot create {fea_run} ({e}). Nothing was written")
+
+
 def create(name, code, root, date=None, fea_local=None, git=True):
     date = date or dt.date.today().strftime("%Y%m%d")
     d = dt.datetime.strptime(date, "%Y%m%d")
@@ -100,6 +114,8 @@ def create(name, code, root, date=None, fea_local=None, git=True):
     values = {"PROJECT": name, "CODE": code.upper(), "DATE": date, "DATE_TEXT": d.strftime("%d/%m/%Y"),
               "STARTED": d.strftime("%d/%m/%Y"), "DRAFTER": str(DRAFTER), "FEA_RUN": str(fea_run)}
 
+    if fea_local:
+        make_fea_run(fea_run)              # first: a bad --fea-local must stop before the project folder is made
     copy_tree(folder, values)
     fea_run.mkdir(parents=True, exist_ok=True)
 
@@ -115,7 +131,7 @@ def create(name, code, root, date=None, fea_local=None, git=True):
     print(f"FEA working folder {fea_run}")
     if not fea_local and any(s in str(folder) for s in SYNCED):
         print("   note: the project is on a synced drive; GEN NX result files reach several GB per run. "
-              "Consider --fea-local D:\\Workspace (see PROJECT_WORKFLOW.md W2.4).")
+              "Consider --fea-local C:\\Workspace\\##2026 (see PROJECT_WORKFLOW.md W2.4).")
     print("next: fill PROJECT.md sections 1 - 3 and 02 Design basis\\DESIGN_BASIS.md, then STATUS.md")
     return folder
 
@@ -142,6 +158,9 @@ def adopt(folder, code, name=None, fea_local=None, git=True):
     date = folder.name[:8] if folder.name[:8].isdigit() else dt.date.today().strftime("%Y%m%d")
     d = dt.datetime.strptime(date, "%Y%m%d")
     name = name or folder.name[8:].strip(" -") or folder.name
+    fea_run = Path(fea_local) / folder.name / "FEA run" if fea_local else folder / "03 FEA" / "run"
+    if fea_local:
+        make_fea_run(fea_run)              # before any folder is renamed
     for old, new in OFFICE_OLD[:-1]:
         o, n = folder / old, folder / new
         if o.is_dir() and not n.exists():
@@ -149,7 +168,6 @@ def adopt(folder, code, name=None, fea_local=None, git=True):
             print(f"renamed {old} -> {new}")
         elif o.is_dir():
             print(f"!! both {old} and {new} exist: merge them by hand")
-    fea_run = Path(fea_local) / folder.name / "FEA run" if fea_local else folder / "03 FEA" / "run"
     values = {"PROJECT": name, "CODE": code.upper(), "DATE": date, "STARTED": d.strftime("%d/%m/%Y"),
               "DATE_TEXT": dt.date.today().strftime("%d/%m/%Y"),      # the day the folder was adopted
               "DRAFTER": str(DRAFTER), "FEA_RUN": str(fea_run)}
@@ -193,7 +211,7 @@ def main(argv=None):
     ap.add_argument("--code", help="EIT 13 project abbreviation, 2 - 4 letters (e.g. BW3)")
     ap.add_argument("--root", help=r'parent folder, e.g. "G:\My Drive\Works\##2026"')
     ap.add_argument("--date", help="YYYYMMDD start date (default today)")
-    ap.add_argument("--fea-local", help=r"local disk folder for GEN NX runs, e.g. D:\Workspace")
+    ap.add_argument("--fea-local", help=r"local disk folder for GEN NX runs, e.g. C:\Workspace\##2026")
     ap.add_argument("--no-git", action="store_true", help="do not make 04 Code a git repository")
     ap.add_argument("--adopt", metavar="FOLDER",
                     help="bring an existing project folder into the structure in place (with --code)")

@@ -48,6 +48,23 @@ def test_new_project(tmp_path):
         np_.create("Test Job", "tj", tmp_path, date="20261011", git=False)
 
 
+@pytest.mark.skipif(sys.platform != "win32", reason="drive letters")
+def test_missing_fea_drive_writes_nothing(tmp_path):
+    """A --fea-local on a drive the PC does not have stops before anything is written (Kokoku, 25/11/2026)."""
+    import string
+    np_ = load()
+    drive = next(f"{c}:\\" for c in reversed(string.ascii_uppercase) if not Path(f"{c}:\\").exists())
+    with pytest.raises(SystemExit, match="not found on this PC"):
+        np_.create("Test Job", "tj", tmp_path, date="20261011", fea_local=drive + "Workspace", git=False)
+    assert not (tmp_path / "20261011 - Test Job").exists()
+
+    prj = tmp_path / "20250908 OLD JOB"
+    (prj / "CAD").mkdir(parents=True)
+    with pytest.raises(SystemExit, match="not found on this PC"):
+        np_.adopt(prj, "oj", fea_local=drive + "Workspace", git=False)
+    assert (prj / "CAD").is_dir() and not (prj / "06 CAD").exists()        # nothing renamed
+
+
 def test_office_template(tmp_path):
     np_ = load()
     for d in ["CAD", "Calculation", "Transfer in", "Transfer out/EXAMPLE/CAD", "Transfer out/EXAMPLE/PDF"]:

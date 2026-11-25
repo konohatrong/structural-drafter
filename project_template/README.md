@@ -4,7 +4,7 @@ The office folder structure for a new structural project, and the script that cr
 it is `docs/general/PROJECT_WORKFLOW.md`.
 
 ```powershell
-python project_template\new_project.py "BANWA 3" --code BW3 --root "G:\My Drive\Works\##2026" --fea-local D:\Workspace
+python project_template\new_project.py "BANWA 3" --code BW3 --root "G:\My Drive\Works\##2026" --fea-local C:\Workspace\##2026
 ```
 
 | File | What it is |

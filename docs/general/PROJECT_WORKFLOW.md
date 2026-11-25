@@ -10,12 +10,17 @@ the SSK, BANWA 2 and SPF jobs taught (W9).
 ## W1. Create the folder
 
 ```powershell
-python project_template\new_project.py "<name>" --code <PPPP> --root "G:\My Drive\Works\##2026" --fea-local D:\Workspace
+python project_template\new_project.py "<name>" --code <PPPP> --root "G:\My Drive\Works\##2026" --fea-local C:\Workspace\##2026
 ```
 
 The script (`project_template/README.md`) copies the template, fills the name, the code and the paths, and makes
 `04 Code` a git repository. Then fill `PROJECT.md` §1 – §3 and `02 Design basis\DESIGN_BASIS.md`. Change the template
 in `project_template/tree/`, never project by project.
+
+`--fea-local` must be a folder on a local drive that this PC has. The office PC has only C:, and the projects since
+NHK and Ihara use `C:\Workspace\##2026`. The script creates the FEA folder first. If it cannot, it stops and writes
+nothing, and `--adopt` renames nothing. (Kokoku, 25/11/2026: `D:\Workspace` stopped the script after the template was
+copied, and the half-made folder had to be removed.)
 
 The office copy `G:\My Drive\Works\##Project Structures\` (for copying by hand, with `_HOW TO USE.md`) is generated
 from the same template: after a change to `tree/`, refresh it with
@@ -166,7 +171,7 @@ A project kept in the earlier office folders (CAD, Calculation, Transfer in, Tra
 brought into the structure in place when the engineer asks:
 
 ```powershell
-python project_template\new_project.py --adopt "<project folder>" --code <PPPP> --fea-local D:\Workspace
+python project_template\new_project.py --adopt "<project folder>" --code <PPPP> --fea-local C:\Workspace\##2026
 ```
 
 The old folders are renamed (Transfer in → `01`, Calculation → `05`, CAD → `06`, Transfer out → `09 Publish`), the
@@ -184,4 +189,5 @@ with a full path) is reloaded once.
 | Received DWG and the converted DXF confused; an outdated plan used as the source | SSK, 04/10/2026 | W2.1, `01 Transfer in` README |
 | Review PDF locked in a viewer while rebuilding | SPF, BANWA 2 | outputs in `06 CAD\out`, review copies in `07 Review` |
 | Work handed between sessions with decisions buried in long notes | BANWA 2, 09 – 10/10/2026 | `STATUS.md` §0, W6 |
+| `--fea-local D:\Workspace` on a PC without D: stopped the script after the template was copied (half-made folder) | Kokoku, 25/11/2026 | W1: FEA folder made first, `make_fea_run()` |
 | A weight typed in two places and different | BANWA 2 purlins, 10/10/2026 | W2.3 |
